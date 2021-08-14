@@ -1,0 +1,109 @@
+@use "../../styles/customFormFields";
+@use "../../styles/colors" as c;
+@import '../../styles/libraries/include-media';
+
+@include customFormFields.input;
+@include customFormFields.textarea;
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  padding: 3rem;
+
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: c.$clr-shadow 0 0 5px;
+  width: 33rem;
+
+  // Styling for the forename and surname
+  .nameContainer {
+    display: flex;
+
+    label {
+      width: 100%;
+    }
+
+    label:first-child {
+      margin-right: 0.5rem;
+    }
+    label:last-child {
+      margin-left: 0.5rem;
+    }
+  }
+
+  textarea {
+    border-radius: 5px;
+    height: 140px;
+  }
+
+  // Styling for the status-message and button
+  .buttonAndMessageContainer {
+    display: flex;
+    justify-content: space-between;
+
+    .statusMessage {
+      font-size: 12px;
+      margin-right: 1rem;
+      margin-top: 1rem;
+      color: green;
+
+      &.error {
+        color: red;
+      }
+    }
+
+    .submitButton {
+      align-self: flex-end;
+      width: 9rem;
+      display: inline-block;
+      background-color: c.$clr-dark-orange;
+      color: white;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 3px;
+      box-shadow: c.$clr-shadow 0px 0px 4px;
+      transition: background-color 0.2s;
+
+      margin: 20px 0 3px;
+
+      &:hover {
+        background-color: darken(c.$clr-dark-orange, 2%);
+        cursor: pointer;
+      }
+      &:active {
+        background-color: darken(c.$clr-dark-orange, 5%);
+      }
+    }
+  }
+
+  @include media('>900px', '<=1100px') {
+    .nameContainer {
+      flex-direction: column;
+      label:first-child {
+        margin-right: 0;
+      }
+      label:last-child {
+        margin-left: 0;
+      }
+    }
+  }
+  @include media('<=570px') {
+    width: 95%;
+
+    .nameContainer {
+      flex-direction: column;
+      label:first-child {
+        margin-right: 0;
+      }
+      label:last-child {
+        margin-left: 0;
+      }
+    }
+  }
+}

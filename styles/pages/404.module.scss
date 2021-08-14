@@ -1,0 +1,14 @@
+/** Contains styling for the 404 error message page. */
+@use "../texts" as t;
+
+.container {
+  margin-top: 6rem;
+  margin-left: 2rem;
+  text-align: center;
+  float: left;
+
+  p {
+    @include t.normalText();
+    margin: 0;
+  }
+}

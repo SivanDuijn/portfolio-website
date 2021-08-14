@@ -1,0 +1,154 @@
+@use "../../styles/colors" as c;
+@import '../../styles/libraries/include-media';
+
+/** Takes care of the width of the usecases and the slide animation */
+@mixin usecaseWidths($width, $numberOfUsecases) {
+  .usecasesContainer {
+    width: $width * $numberOfUsecases;
+
+    .usecasesBox .usecaseContent {
+      min-width: $width - 2rem;
+
+      @keyframes slideInFromLeft {
+        from {
+          transform: translateX(-$width);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+      @keyframes slideInFromRight {
+        from {
+          transform: translateX($width);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+    }
+  }
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+
+  background-color: white;
+  box-shadow: c.$clr-shadow 0 0 5px;
+  border-radius: 10px;
+
+  .arrow {
+    width: 25px;
+    cursor: pointer;
+    transition: fill 0.15s ease-in-out;
+
+    &:hover {
+      fill: c.$clr-extra-dark-grey;
+    }
+  }
+
+  @include usecaseWidths(18rem, 1);
+
+  .usecasesContainer {
+    overflow-x: hidden;
+
+    .usecasesBox {
+      display: flex;
+      justify-content: center;
+
+      .usecaseContent {
+        margin: 0 1rem;
+
+        padding-top: 9rem;
+        padding-bottom: 2rem;
+
+        background-repeat: no-repeat;
+
+        .title {
+          font-weight: 600;
+          font-size: 20px;
+        }
+        .text {
+          color: c.$clr-darkgrey-text;
+          font-size: 15px;
+          line-height: 1.4rem;
+        }
+
+        &.fraudDetection {
+          background-image: url('/images/usecase-backgrounds/fraud-detection.png');
+          background-size: 80%;
+          background-position: center 1rem;
+        }
+        &.advertisement {
+          background-image: url('/images/usecase-backgrounds/advertisement.png');
+          background-size: 80%;
+          background-position: 80% 0;
+        }
+        &.supplyChains {
+          background-image: url('/images/usecase-backgrounds/supply-chains.png');
+          background-size: 100%;
+          background-position: 0 0;
+        }
+        &.yours {
+          background-image: url('/images/usecase-backgrounds/yours.png');
+          background-size: 75%;
+          background-position: center 2rem;
+        }
+      }
+
+      animation-duration: 0.8s;
+      &.slideInFromLeft {
+        animation-name: slideInFromLeft;
+      }
+      &.slideInFromRight {
+        animation-name: slideInFromRight;
+      }
+    }
+  }
+
+  @include media('>1300px') {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0 1rem;
+
+    .arrow {
+      width: 40px;
+      fill: white;
+      filter: drop-shadow(c.$clr-shadow 0 0 5px);
+
+      &:hover {
+        fill: darken(white, 10);
+      }
+    }
+
+    // Use a usecase width of 25rem and display 3 usecases
+    @include usecaseWidths(25rem, 3);
+    .usecasesContainer {
+      padding: 1rem 0;
+
+      .usecasesBox .usecaseContent {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: c.$clr-shadow 0 0 5px;
+        padding-right: 3rem;
+        padding-left: 3rem;
+
+        &.fraudDetection {
+          background-size: 55%;
+        }
+        &.advertisement {
+          background-size: 55%;
+          background-position: 70% 0;
+        }
+        &.supplyChains {
+          background-size: 75%;
+          background-position: 50% 0;
+        }
+        &.yours {
+          background-size: 55%;
+        }
+      }
+    }
+  }
+}
