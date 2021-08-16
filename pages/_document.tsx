@@ -8,10 +8,9 @@ class MyDocument extends Document {
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link
-            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600;700;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600;700;800&family=Source+Code+Pro:wght@200;300;400;500;600;700;900&display=swap"
             rel="stylesheet"
           />
-
           {/* <link
             rel="apple-touch-icon"
             sizes="180x180"

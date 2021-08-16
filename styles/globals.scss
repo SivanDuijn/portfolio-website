@@ -38,10 +38,10 @@ input {
   text-shadow: white 1px 1px, white 0 0 2px;
 }
 
-.learn-more-link {
-  p {
+.nav-link {
+  a {
     //     @include t.normalText(c.$clr-dark-orange);
-    color: c.$clr-dark-orange !important;
+    // color: c.$clr-soft-red !important;
     font-weight: 600;
     line-height: 1.6em;
     font-size: 16px;
@@ -58,11 +58,11 @@ input {
     width: 100%;
     transform: scaleX(0);
     height: 2px;
-    bottom: 0px;
+    bottom: -3px;
     left: 0;
-    background-color: c.$clr-dark-orange;
+    background-color: c.$clr-soft-red;
     transform-origin: bottom left;
-    transition: transform 0.2s ease-out;
+    transition: transform 0.4s ease-out;
   }
 
   &:hover:after {

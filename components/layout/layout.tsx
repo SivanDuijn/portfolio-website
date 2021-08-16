@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import styles from './layout.module.scss';
 
 import { useRouter } from 'next/dist/client/router';
 import Footer from './footer';
+import Navigation from './navigation';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -30,17 +31,21 @@ export default function Layout({ children, isHomePage = false }: LayoutProps) {
     return () => window.removeEventListener('resize', updateMedia);
   }, []);
 
-
   return (
     <>
       <Head>
-        <meta name="description" content="Data analysis for the masses." />
-        <meta name="og:title" content={'GraphPolaris'} />
+        <meta
+          name="description"
+          content="A website featuring my personal projects and expirements."
+        />
+        <meta name="og:title" content={'Sivan Duijn'} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
       <div className={styles.container}>
         <div className={styles.contentWrap}>
+          <Navigation />
+
           <main>{children}</main>
         </div>
         {/* <Footer /> */}
