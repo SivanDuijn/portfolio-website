@@ -8,6 +8,7 @@ import styles from './layout.module.scss';
 import { useRouter } from 'next/dist/client/router';
 import Footer from './footer';
 import Navigation from './navigation';
+import P5CircuitText from '../p5-circuit-text/p5-circuit-text';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -44,6 +45,8 @@ export default function Layout({ children, isHomePage = false }: LayoutProps) {
 
       <div className={styles.container}>
         <div className={styles.contentWrap}>
+          <P5CircuitText />
+
           <Navigation />
 
           <main>{children}</main>
