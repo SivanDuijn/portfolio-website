@@ -1,0 +1,24 @@
+@use './colors' as c;
+
+@mixin underscoreLink($color: c.$clr-soft-red, $bottom: -3px) {
+  display: inline-block;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: $bottom;
+    left: 0;
+    background-color: $color;
+    transform-origin: bottom left;
+    transition: transform 0.4s ease-out;
+  }
+
+  &:hover:after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+}

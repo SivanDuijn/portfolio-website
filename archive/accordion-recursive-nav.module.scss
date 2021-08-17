@@ -1,0 +1,67 @@
+/* Styling for the navigation accordion menu. */
+.navigation {
+  display: flex;
+  flex-direction: column;
+
+  .subSection {
+    /* Style the button/a that are used to close and open the accordion. */
+    .accordionButton {
+      font-weight: 800;
+      color: rgb(119, 119, 119);
+      width: 100%;
+      text-align: left;
+      padding-left: 0.3rem;
+    }
+
+    /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+    .active,
+    .accordion:hover {
+      color: #ff6e6e;
+    }
+
+    /* Style the accordion panel. Note: hidden by default */
+    .panel {
+      display: flex;
+      flex-direction: column;
+
+      padding: 0 18px;
+      background-color: white;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease-out;
+    }
+
+    .subSectionTitle {
+      display: flex;
+      align-items: center;
+
+      svg {
+        transition: transform 0.3s ease-in-out;
+
+        &.rotate90 {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  /* Styling for a simple link, a leaf of the navigation tree. */
+  .navItem {
+    color: rgb(100, 100, 100);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    padding-left: calc(0.3rem + 25px);
+    // line-height: 25px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+
+    transition: color 0.2s;
+
+    &.selected,
+    &:hover {
+      color: #ff4343;
+    }
+  }
+}
