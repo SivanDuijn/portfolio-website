@@ -44,9 +44,10 @@ export default function Layout({ children, isHomePage = false }: LayoutProps) {
       </Head>
 
       <div className={styles.container}>
-        <div className={styles.contentWrap}>
+        <div className={styles.headerContainer}>
           <P5CircuitText />
-
+        </div>
+        <div className={styles.contentWrap}>
           <Navigation />
 
           <main>{children}</main>

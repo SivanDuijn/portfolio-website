@@ -31,6 +31,7 @@ export default class Character {
       h: number;
     };
     this.width = bbox.w;
+    this.width = this.char == 'j' ? this.width - 18 : this.width;
     this.height = bbox.h;
 
     this.calcPoints();

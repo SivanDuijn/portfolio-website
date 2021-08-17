@@ -86,7 +86,7 @@ function RenderDropDown({ nav }: { nav: NavSection }) {
       <ul className={styles.dropdownMenu}>
         {nav.subSections.map((sub, i) => (
           <li key={sub.name} className={styles.dropdownItem}>
-            <Link href={sub.url}>
+            <Link href={nav.url + sub.url}>
               <a className={styles.navText}>{sub.name}</a>
             </Link>
           </li>
