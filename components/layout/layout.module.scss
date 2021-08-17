@@ -12,12 +12,14 @@
     width: 100%;
     display: flex;
     justify-content: center;
+
+    cursor: pointer;
   }
   // Takes care of padding around the main content
   .contentWrap {
     width: 100%;
     max-width: 88rem;
-    padding: 0rem 3rem 3rem;
+    padding: 3rem 3rem 3rem;
     margin: 0 auto;
     flex: 1;
   }

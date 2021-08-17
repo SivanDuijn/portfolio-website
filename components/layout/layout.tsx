@@ -12,10 +12,9 @@ import P5CircuitText from '../p5-circuit-text/p5-circuit-text';
 
 interface LayoutProps {
   children: React.ReactNode;
-  isHomePage?: boolean;
 }
 
-export default function Layout({ children, isHomePage = false }: LayoutProps) {
+export default function Layout({ children }: LayoutProps) {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   // Used to determine whether the small screen nav overlay will be shown or not
   const [showOverlay, setShowOverlay] = useState(false);
@@ -44,12 +43,13 @@ export default function Layout({ children, isHomePage = false }: LayoutProps) {
       </Head>
 
       <div className={styles.container}>
-        <div className={styles.headerContainer}>
+        <div className={styles.headerContainer} onClick={() => router.push('/')}>
           <P5CircuitText />
         </div>
-        <div className={styles.contentWrap}>
-          <Navigation />
 
+        <Navigation />
+
+        <div className={styles.contentWrap}>
           <main>{children}</main>
         </div>
         {/* <Footer /> */}

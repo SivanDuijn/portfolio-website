@@ -1,10 +1,9 @@
-import React from 'react';
-import Layout from '../../components/layout/layout';
+import React, { ReactElement } from 'react';
 
 export default function AutoDeskLift() {
   return (
-    // <Layout>
-    <p>hoi</p>
-    // </Layout>
+    <div style={{ textAlign: 'center' }}>
+      <p>hoi</p>
+    </div>
   );
 }
