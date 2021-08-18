@@ -4,7 +4,7 @@ import { CLLineStart, CLLine, CLCircle, CircuitLineItem } from './Line';
 import Utils from '../../utils';
 
 export default class CircuitLine {
-  public p5: p5;
+  public p: p5;
   public pos: p5.Vector;
   public vec: p5.Vector;
   public CLItems: CircuitLineItem[] = [];
@@ -15,11 +15,11 @@ export default class CircuitLine {
   public maxNCLItems = 4;
   public waitTime = 0;
 
-  constructor(p5: p5, pos: p5.Vector) {
-    this.p5 = p5;
+  constructor(p: p5, pos: p5.Vector) {
+    this.p = p;
     this.pos = pos;
-    this.vec = this.p5.createVector(1, 1);
-    // this.reset();
+    this.vec = this.p.createVector(1, 1);
+    this.reset();
   }
 
   update() {
@@ -28,32 +28,31 @@ export default class CircuitLine {
       if (this.timer == this.waitTime) this.timer = 0;
       else this.timer--;
     } else if (this.isEnding)
-      // check if we are in the ending phase
+      // If all CLItems are finished, update the fading out process
       this.updateFade();
     else if (this.CLItems.length > 0) {
-      // else we just update
-      let i = this.CLItems[this.CLItems.length - 1];
-      if (i.finished) {
-        if (this.CLItems.length == this.maxNCLItems - 1)
-          this.CLItems.push(new CLCircle(this.p5, (i as CLLine).endPnt.copy(), (i as CLLine).vec));
-        else if (this.CLItems.length == this.maxNCLItems) this.isEnding = true;
-        else this.addNewLine(i as CLLine);
-      } else i.update();
+      // else we just update.
+
+      // Loop through all CLItems until one that is not finished yet
+      for (let i = 0; i < this.CLItems.length; i++) {
+        this.CLItems[i].update();
+
+        if (!this.CLItems[i].finished) break;
+      }
+
+      // Check if al CLItems are finished
+      if (this.CLItems.every((cli) => cli.finished)) this.isEnding = true;
     }
   }
 
   show(color: p5.Color) {
-    if (this.timer >= 0) this.CLItems.forEach((l) => l.show(color, this.alpha));
-  }
+    if (this.timer >= 0) {
+      // Loop through all CLItems until one that is not finished yet
+      for (let i = 0; i < this.CLItems.length; i++) {
+        this.CLItems[i].show(color, this.alpha);
 
-  private addNewLine(l: CLLine) {
-    // Cheator completor, refactor this!
-    let v = l.vec.copy();
-    if (l.maxLength == 2.5) this.CLItems.push(new CLLine(this.p5, l.endPnt, v, 15));
-    else {
-      if (Utils.GetRandomInt(1) == 0) v.rotate(this.p5.HALF_PI / 2);
-      else v.rotate(-this.p5.HALF_PI / 2);
-      this.CLItems.push(new CLLine(this.p5, l.endPnt, v, 5));
+        if (!this.CLItems[i].finished) break;
+      }
     }
   }
 
@@ -67,10 +66,12 @@ export default class CircuitLine {
 
   setVector(v: p5.Vector) {
     this.vec = v;
+    this.pos.x -= this.vec.x * 0.5;
+    this.pos.y -= this.vec.y * 0.5;
   }
 
   reset() {
-    this.CLItems = [new CLLineStart(this.p5, this.pos, this.vec)];
+    this.generateCircuitItems();
     this.alpha = 255;
     this.timer = -1;
     this.isEnding = false;
@@ -78,16 +79,40 @@ export default class CircuitLine {
     this.waitTime = Utils.GetRandomInt(2000) * -1;
   }
 
+  /** Generates a new CLItems array. */
+  generateCircuitItems() {
+    // Generate the start line with the little beginning blocky thing
+    // So two array items
+    // const startLine = new CLLineStart(this.p, this.pos, this.vec);
+    // let nextData = startLine.generateNextLineItemVectors();
+    let nextItem: CircuitLineItem = new CLLine(this.p, this.pos, this.vec, 15);
+
+    this.CLItems = [nextItem];
+
+    // push some random lines
+    let nextData = nextItem.generateNextLineItemVectors();
+    nextItem = new CLCircle(this.p, nextData.startPos, nextData.vec, 3);
+    this.CLItems.push(nextItem);
+
+    nextData = nextItem.generateNextLineItemVectors(45 * (Utils.GetRandomInt(2) == 0 ? 1 : -1));
+    nextItem = new CLLine(this.p, nextData.startPos, nextData.vec, 3);
+    this.CLItems.push(nextItem);
+
+    nextData = nextItem.generateNextLineItemVectors();
+    nextItem = new CLCircle(this.p, nextData.startPos, nextData.vec, Utils.GetRandomInt(10) + 5);
+    this.CLItems.push(nextItem);
+  }
+
   pointOnItsWay(chars: Character[], angle: number): boolean {
-    let rad = this.p5.radians(angle / 2);
-    let vRight = this.p5.createVector(this.vec.x, this.vec.y).rotate(rad);
-    let vLeft = this.p5.createVector(this.vec.x, this.vec.y).rotate(-rad);
+    let rad = this.p.radians(angle / 2);
+    let vRight = this.p.createVector(this.vec.x, this.vec.y).rotate(rad);
+    let vLeft = this.p.createVector(this.vec.x, this.vec.y).rotate(-rad);
 
     return chars.some((c) => {
       return c.cLines.some((cl) => {
         if (cl == this) return false;
 
-        let vToPnt = this.p5.createVector(cl.pos.x - this.pos.x, cl.pos.y - this.pos.y);
+        let vToPnt = this.p.createVector(cl.pos.x - this.pos.x, cl.pos.y - this.pos.y);
 
         let vRightCross = vToPnt.cross(vRight);
         let vLeftCross = vToPnt.cross(vLeft);

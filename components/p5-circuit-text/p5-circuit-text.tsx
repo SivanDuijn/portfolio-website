@@ -26,33 +26,33 @@ export default function P5CircuitText({
   }, [text, fontSize, spacing]);
 
   //See annotations in JS for more information
-  const setup = (p5: p5, canvasParentRef: Element) => {
-    const font = p5.loadFont('/fonts/Aileron-BoldItalic.otf', () => {
-      p5.createCanvas(700, 190).parent(canvasParentRef);
+  const setup = (p: p5, canvasParentRef: Element) => {
+    const font = p.loadFont('/fonts/Aileron-BoldItalic.otf', () => {
+      p.createCanvas(700, 190).parent(canvasParentRef);
 
-      circuitText.current = new Text(p5, text, font, fontSize, spacing);
+      circuitText.current = new Text(p, text, font, fontSize, spacing);
       circuitText.current.generateChars();
-      circuitText.current.removeColliding(80);
+      circuitText.current.removeColliding(70);
     });
   };
 
-  const draw = (p5: p5) => {
+  const draw = (p: p5) => {
     if (window && circuitText.current) {
       const cText = circuitText.current;
 
-      p5.background('white');
-      p5.translate(p5.width / 2 - cText.bbox.w / 2, p5.height / 2 + cText.bbox.h / 2 - 10);
+      p.background('white');
+      p.translate(p.width / 2 - cText.bbox.w / 2, p.height / 2 + cText.bbox.h / 2 - 10);
 
       const textColor = '#430082';
-      p5.translate(0, -10);
-      // p5.strokeCap(p5.SQUARE);
-      p5.stroke(textColor);
-      p5.strokeWeight(3);
+      p.translate(0, -10);
+      p.strokeCap(p.SQUARE);
+      p.stroke(textColor);
+      p.strokeWeight(3);
       cText.updateCircuitLines();
-      cText.showCircuitLines(p5.color(textColor));
+      cText.showCircuitLines(p.color(textColor));
 
-      p5.fill(textColor);
-      p5.noStroke();
+      p.fill(textColor);
+      p.noStroke();
       cText.showText();
     }
   };

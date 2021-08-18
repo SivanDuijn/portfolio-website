@@ -6,14 +6,14 @@ export default class Text {
   private angle: number = 80; // Default angle for removing colliding lines within a character.
   public bbox = { x: 0, y: 0, w: 0, h: 0 };
 
-  public p5: p5;
+  public p: p5;
   public str: string;
   private font: p5.Font;
   public fontSize: number;
   public spacing: number;
 
-  constructor(p5: p5, str: string, font: p5.Font, fontSize: number, spacing = 20) {
-    this.p5 = p5;
+  constructor(p: p5, str: string, font: p5.Font, fontSize: number, spacing = 20) {
+    this.p = p;
     this.str = str;
     this.font = font;
     this.fontSize = fontSize;
@@ -21,8 +21,8 @@ export default class Text {
 
     if (str.length == 0) console.log('Text cannot be empty!');
 
-    this.p5.textFont(this.font);
-    this.p5.textSize(this.fontSize);
+    this.p.textFont(this.font);
+    this.p.textSize(this.fontSize);
   }
 
   generateChars() {
@@ -33,11 +33,11 @@ export default class Text {
       let newChar;
 
       if (this.chars.length == 0)
-        newChar = new Character(this.p5, this.font, this.fontSize, this.p5.createVector(0, 0), e);
+        newChar = new Character(this.p, this.font, this.fontSize, this.p.createVector(0, 0), e);
       else {
         let c = this.chars[this.chars.length - 1];
-        let pos = this.p5.createVector(c.pos.x + c.width + this.spacing, c.pos.y);
-        newChar = new Character(this.p5, this.font, this.fontSize, pos, e);
+        let pos = this.p.createVector(c.pos.x + c.width + this.spacing, c.pos.y);
+        newChar = new Character(this.p, this.font, this.fontSize, pos, e);
       }
 
       this.chars.push(newChar);
@@ -90,7 +90,7 @@ export default class Text {
 
     if (args?.newFontSize) {
       this.fontSize = args.newFontSize;
-      this.p5.textSize(this.fontSize);
+      this.p.textSize(this.fontSize);
     }
     if (args?.newSpacing) this.spacing = args.newSpacing;
 

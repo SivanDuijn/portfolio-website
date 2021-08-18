@@ -12,13 +12,13 @@ export default class Character {
 
   // private possibleStartingPnts: p5.Vector[] = [];
 
-  private p5: p5;
+  private p: p5;
   private font: p5.Font;
   private fontSize: number;
   public pos: p5.Vector;
 
-  constructor(p5: p5, font: p5.Font, fontSize: number, pos: p5.Vector, char: string) {
-    this.p5 = p5;
+  constructor(p: p5, font: p5.Font, fontSize: number, pos: p5.Vector, char: string) {
+    this.p = p;
     this.font = font;
     this.fontSize = fontSize;
     this.pos = pos;
@@ -39,11 +39,12 @@ export default class Character {
   }
 
   showText() {
-    this.p5.text(this.char, this.pos.x, this.pos.y);
-    // this.p5.stroke('purple'); // Change the color
-    // this.p5.strokeWeight(2); // Make the points 10 pixels in size
+    // this.p.noStroke();
+    this.p.text(this.char, this.pos.x, this.pos.y);
+    // this.p.stroke('red'); // Change the color
+    // this.p.strokeWeight(2); // Make the points 10 pixels in size
     // this.cLines.forEach((cl) => {
-    //   this.p5.point(cl.pos.x, cl.pos.y);
+    //   this.p.point(cl.pos.x, cl.pos.y);
     //   // this.p5.line(cl.pos.x, cl.pos.y, cl.pos.x + cl.vec.x * 10, cl.pos.y + cl.vec.y * 10);
     // });
   }
@@ -72,14 +73,14 @@ export default class Character {
     }
   }
 
-  calcPoints(sampleFactor = 0.15) {
+  calcPoints(sampleFactor = 0.3) {
     this.cLines = [];
     this.font
       .textToPoints(this.char, this.pos.x, this.pos.y, this.fontSize, {
         sampleFactor: sampleFactor,
         simplifyThreshold: 0,
       })
-      .forEach((pnt) => this.cLines.push(new CircuitLine(this.p5, pnt)));
+      .forEach((pnt) => this.cLines.push(new CircuitLine(this.p, pnt)));
   }
 
   calcCLLineVectors() {
@@ -88,21 +89,12 @@ export default class Character {
       const prevPoint = this.cLines[i - 1 < 0 ? this.cLines.length - 1 : i - 1].pos;
       const nextPoint = this.cLines[i + 1 > this.cLines.length - 1 ? 0 : i + 1].pos;
 
-      const v = this.p5.createVector(nextPoint.x - prevPoint.x, nextPoint.y - prevPoint.y);
+      const v = this.p.createVector(nextPoint.x - prevPoint.x, nextPoint.y - prevPoint.y);
       v.normalize();
 
-      v.rotate(this.p5.PI / 2);
+      v.rotate(this.p.PI / 2);
       this.cLines[i].setVector(v);
     }
-
-    // old shit
-    // const center = this.p5.createVector(0, 0);
-    // this.cLines.forEach((pnt) => {
-    //   center.add(pnt.pos.x, pnt.pos.y);
-    // });
-
-    // center.div(this.cLines.length);
-    // this.cLines.forEach((cl) => cl.calcVector(center));
   }
 
   removeColliding(chars: Character[], angle: number) {
