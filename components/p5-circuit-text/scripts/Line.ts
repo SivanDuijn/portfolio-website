@@ -10,6 +10,45 @@ export abstract class CircuitLineItem {
   abstract show(color: p5.Color, alpha: number): void;
 }
 
+export class CLLineStart extends CircuitLineItem {
+  public length = 0;
+  public maxLength = 2.5;
+  public velocity = 0.1;
+  public endPnt: p5.Vector; // the end of the line
+
+  constructor(public p: p5, public pos: p5.Vector, public vec: p5.Vector) {
+    super(p, pos);
+
+    this.endPnt = this.p.createVector(
+      this.pos.x + this.vec.x * this.maxLength,
+      this.pos.y + this.vec.y * this.maxLength,
+    );
+  }
+
+  update(): void {
+    if (!this.finished) {
+      // only update if we haven't finished yet
+
+      this.length += this.velocity;
+      if (this.length > this.maxLength) this.finished = true;
+    }
+  }
+  show(color: p5.Color, alpha: number): void {
+    color.setAlpha(alpha);
+    this.p.stroke(color);
+    this.p.strokeWeight(6);
+    if (!this.finished)
+      this.p.line(
+        this.pos.x,
+        this.pos.y,
+        this.pos.x + this.vec.x * this.length,
+        this.pos.y + this.vec.y * this.length,
+      );
+    else this.p.line(this.pos.x, this.pos.y, this.endPnt.x, this.endPnt.y);
+    this.p.strokeWeight(3);
+  }
+}
+
 /** The line of a for a CircuitLine */
 export class CLLine extends CircuitLineItem {
   public length = 0;

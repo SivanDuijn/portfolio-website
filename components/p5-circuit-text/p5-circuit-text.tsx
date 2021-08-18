@@ -45,6 +45,7 @@ export default function P5CircuitText({
 
       const textColor = '#430082';
       p5.translate(0, -10);
+      // p5.strokeCap(p5.SQUARE);
       p5.stroke(textColor);
       p5.strokeWeight(3);
       cText.updateCircuitLines();

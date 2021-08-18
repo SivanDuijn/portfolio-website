@@ -1,6 +1,6 @@
 import p5 from 'p5';
 import Character from './Character';
-import { CLLine, CLCircle, CircuitLineItem } from './Line';
+import { CLLineStart, CLLine, CLCircle, CircuitLineItem } from './Line';
 import Utils from '../../utils';
 
 export default class CircuitLine {
@@ -12,7 +12,7 @@ export default class CircuitLine {
   public isFinished = false;
   public alpha = 255;
   public timer = 0;
-  public maxNCLItems = 3;
+  public maxNCLItems = 4;
   public waitTime = 0;
 
   constructor(p5: p5, pos: p5.Vector) {
@@ -47,11 +47,14 @@ export default class CircuitLine {
   }
 
   private addNewLine(l: CLLine) {
+    // Cheator completor, refactor this!
     let v = l.vec.copy();
-    if (Utils.GetRandomInt(1) == 0) v.rotate(this.p5.HALF_PI / 2);
-    else v.rotate(-this.p5.HALF_PI / 2);
-
-    this.CLItems.push(new CLLine(this.p5, l.endPnt, v, 5));
+    if (l.maxLength == 2.5) this.CLItems.push(new CLLine(this.p5, l.endPnt, v, 15));
+    else {
+      if (Utils.GetRandomInt(1) == 0) v.rotate(this.p5.HALF_PI / 2);
+      else v.rotate(-this.p5.HALF_PI / 2);
+      this.CLItems.push(new CLLine(this.p5, l.endPnt, v, 5));
+    }
   }
 
   private updateFade() {
@@ -62,13 +65,12 @@ export default class CircuitLine {
     } else this.timer += 1;
   }
 
-  calcVector(center: p5.Vector) {
-    this.vec = this.p5.createVector(this.pos.x - center.x, this.pos.y - center.y);
-    this.vec.normalize();
+  setVector(v: p5.Vector) {
+    this.vec = v;
   }
 
   reset() {
-    this.CLItems = [new CLLine(this.p5, this.pos, this.vec, 15)];
+    this.CLItems = [new CLLineStart(this.p5, this.pos, this.vec)];
     this.alpha = 255;
     this.timer = -1;
     this.isEnding = false;
