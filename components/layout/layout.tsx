@@ -45,7 +45,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className={styles.headerContainer} onClick={() => router.push('/')}>
           <P5CircuitText
             text={isSmallScreen ? 'Sivan' : 'Sivan Duijn'}
-            fontSize={isSmallScreen ? 60 : 90}
+            fontSize={isSmallScreen ? 80 : 90}
           />
         </div>
 

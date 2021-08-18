@@ -8,7 +8,7 @@ export default class Character {
   public activeCLs: number[] = []; // array of indices for cLines array
   public width: number;
   public height: number;
-  public linesPerChar = 5;
+  public linesPerChar = 3;
 
   // private possibleStartingPnts: p5.Vector[] = [];
 
