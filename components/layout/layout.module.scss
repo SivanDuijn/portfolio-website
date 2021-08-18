@@ -9,11 +9,11 @@
 
   // Container for the p5 circuit text
   .headerContainer {
-    width: 100%;
     display: flex;
     justify-content: center;
-
+    width: 100%;
     cursor: pointer;
+    overflow-x: hidden;
   }
   // Takes care of padding around the main content
   .contentWrap {

@@ -16,13 +16,12 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  // Used to determine whether the small screen nav overlay will be shown or not
-  const [showOverlay, setShowOverlay] = useState(false);
-  // Use the router to underline current page nav
+  const smallScreenSize = 630;
+
   const router = useRouter();
 
   const updateMedia = (): void => {
-    setIsSmallScreen(window.innerWidth <= 630);
+    setIsSmallScreen(window.innerWidth <= smallScreenSize);
   };
 
   useEffect(() => {
@@ -44,7 +43,10 @@ export default function Layout({ children }: LayoutProps) {
 
       <div className={styles.container}>
         <div className={styles.headerContainer} onClick={() => router.push('/')}>
-          <P5CircuitText />
+          <P5CircuitText
+            text={isSmallScreen ? 'Sivan' : 'Sivan Duijn'}
+            fontSize={isSmallScreen ? 60 : 90}
+          />
         </div>
 
         <Navigation />

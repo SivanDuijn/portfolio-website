@@ -9,48 +9,50 @@ const Sketch = dynamic(import('react-p5'), {
   loading: () => <div>Loading...</div>,
 });
 
-export default function P5CircuitText() {
-  const text = useRef<Text>();
-  // let text: Text;
+export default function P5CircuitText({
+  text,
+  fontSize,
+  spacing = 10,
+}: {
+  text: string;
+  fontSize: number;
+  spacing?: number;
+}) {
+  const circuitText = useRef<Text>();
+
+  useEffect(() => {
+    if (circuitText.current && text != circuitText.current?.str)
+      circuitText.current.changeText(text, { newFontSize: fontSize, newSpacing: spacing });
+  }, [text, fontSize, spacing]);
 
   //See annotations in JS for more information
   const setup = (p5: p5, canvasParentRef: Element) => {
     const font = p5.loadFont('/fonts/Aileron-BoldItalic.otf', () => {
       p5.createCanvas(700, 190).parent(canvasParentRef);
 
-      let str = 'Sivan Duijn';
-
-      let spacing = 10;
-      let fontSize = 90;
-
-      text.current = new Text(p5, str, font, fontSize, spacing);
-
-      if (text.current) {
-        text.current.generateChars();
-        console.log(text);
-        text.current.removeColliding(80);
-      }
+      circuitText.current = new Text(p5, text, font, fontSize, spacing);
+      circuitText.current.generateChars();
+      circuitText.current.removeColliding(80);
     });
   };
 
   const draw = (p5: p5) => {
-    if (window && text.current) {
-      p5.background('white');
-      p5.translate(
-        p5.width / 2 - text.current.bbox.w / 2,
-        p5.height / 2 + text.current.bbox.h / 2 - 10,
-      );
+    if (window && circuitText.current) {
+      const cText = circuitText.current;
 
-      const textColor = 'indigo';
+      p5.background('white');
+      p5.translate(p5.width / 2 - cText.bbox.w / 2, p5.height / 2 + cText.bbox.h / 2 - 10);
+
+      const textColor = '#430082';
       p5.translate(0, -10);
       p5.stroke(textColor);
       p5.strokeWeight(3);
-      text.current.updateCircuitLines();
-      text.current.showCircuitLines(p5.color(textColor));
+      cText.updateCircuitLines();
+      cText.showCircuitLines(p5.color(textColor));
 
       p5.fill(textColor);
       p5.noStroke();
-      text.current.showText();
+      cText.showText();
     }
   };
 

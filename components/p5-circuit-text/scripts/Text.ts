@@ -9,8 +9,8 @@ export default class Text {
   public p5: p5;
   public str: string;
   private font: p5.Font;
-  public readonly fontSize: number;
-  public readonly spacing: number;
+  public fontSize: number;
+  public spacing: number;
 
   constructor(p5: p5, str: string, font: p5.Font, fontSize: number, spacing = 20) {
     this.p5 = p5;
@@ -85,8 +85,14 @@ export default class Text {
     this.chars.forEach((c) => c.showCircuitLines(color));
   }
 
-  changeText(str: string) {
+  changeText(str: string, args?: { newFontSize?: number; newSpacing?: number }) {
     if (str.length == 0) console.log('Text cannot be empty!');
+
+    if (args?.newFontSize) {
+      this.fontSize = args.newFontSize;
+      this.p5.textSize(this.fontSize);
+    }
+    if (args?.newSpacing) this.spacing = args.newSpacing;
 
     this.str = str;
 

@@ -1,6 +1,6 @@
 @use './colors' as c;
 
-@mixin underscoreLink($color: c.$clr-soft-red, $bottom: -3px) {
+@mixin underscoreLink($color: c.$clr-nav-link, $bottom: -3px) {
   display: inline-block;
   position: relative;
 

@@ -41,7 +41,7 @@ input {
 .nav-link {
   a {
     //     @include t.normalText(c.$clr-dark-orange);
-    // color: c.$clr-soft-red !important;
+    // color: c.$clr-nav-link !important;
     font-weight: 600;
     line-height: 1.6em;
     font-size: 16px;
@@ -60,7 +60,7 @@ input {
     height: 2px;
     bottom: -3px;
     left: 0;
-    background-color: c.$clr-soft-red;
+    background-color: c.$clr-nav-link;
     transform-origin: bottom left;
     transition: transform 0.4s ease-out;
   }
