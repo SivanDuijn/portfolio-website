@@ -1,7 +1,8 @@
 export default function AllProjects() {
   return (
-    <div style={{ textAlign: 'center', marginTop: '5rem', color: 'grey' }}>
-      <h2>About 👋</h2>
+    <div style={{ textAlign: 'center', color: 'grey' }}>
+      <h2>Hi there! 👋</h2>
+      <h4>⚡ 🚦 - under construction - 🚦 ⚡</h4>
     </div>
   );
 }

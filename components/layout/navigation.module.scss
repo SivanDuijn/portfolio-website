@@ -34,9 +34,11 @@
 
   // Specific styling for the big screen navigation bar
   .bigNav {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    max-width: 88rem;
+    margin: 0 auto;
 
     .dropdownContainer {
       .textContainer {

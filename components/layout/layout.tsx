@@ -1,12 +1,8 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
-import Image from 'next/image';
-import cn from 'classnames';
 import styles from './layout.module.scss';
 
 import { useRouter } from 'next/dist/client/router';
-import Footer from './footer';
 import Navigation from './navigation';
 import P5CircuitText from '../p5-circuit-text/p5-circuit-text';
 
@@ -54,7 +50,6 @@ export default function Layout({ children }: LayoutProps) {
         <div className={styles.contentWrap}>
           <main>{children}</main>
         </div>
-        {/* <Footer /> */}
       </div>
     </>
   );

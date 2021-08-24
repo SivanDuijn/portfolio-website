@@ -21,6 +21,14 @@ a {
   box-sizing: border-box;
 }
 
+a {
+  color: c.$clr-nav-link;
+  transition: color 0.1s;
+  &:hover {
+    color: darken(c.$clr-nav-link, 10);
+  }
+}
+
 input {
   font-family: 'Source Code Pro', monospace;
 }

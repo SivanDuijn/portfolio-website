@@ -1,0 +1,28 @@
+// This fire contains styling for the sd-software page
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  // margin-top: '5rem';
+  color: grey;
+
+  section {
+    padding: 1rem 3rem;
+
+    p {
+      // font-size: 15px;
+      font-weight: 500;
+    }
+  }
+
+  .interested {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.title {
+  text-align: center;
+  color: grey;
+}
