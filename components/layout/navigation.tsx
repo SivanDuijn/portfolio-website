@@ -35,8 +35,8 @@ const navs: NavSection[] = [
     ],
   },
   {
-    name: 'SD Software',
-    url: '/sd-software',
+    name: 'SiSoftware',
+    url: '/si-software',
     subSections: [],
   },
   {
