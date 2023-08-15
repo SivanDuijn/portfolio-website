@@ -1,6 +1,6 @@
-import p5 from 'p5';
-import CircuitLine from './CircuitLine';
-import Utils from '../../utils';
+import p5 from "p5";
+import CircuitLine from "./CircuitLine";
+import Utils from "../../utils";
 
 export default class Character {
   public readonly char: string;
@@ -17,21 +17,32 @@ export default class Character {
   private fontSize: number;
   public pos: p5.Vector;
 
-  constructor(p: p5, font: p5.Font, fontSize: number, pos: p5.Vector, char: string) {
+  constructor(
+    p: p5,
+    font: p5.Font,
+    fontSize: number,
+    pos: p5.Vector,
+    char: string
+  ) {
     this.p = p;
     this.font = font;
     this.fontSize = fontSize;
     this.pos = pos;
     this.char = char;
 
-    const bbox = this.font.textBounds(this.char, this.pos.x, this.pos.y, this.fontSize) as {
+    const bbox = this.font.textBounds(
+      this.char,
+      this.pos.x,
+      this.pos.y,
+      this.fontSize
+    ) as {
       x: number;
       y: number;
       w: number;
       h: number;
     };
     this.width = bbox.w;
-    if (this.char == 'j') this.width -= 18; // Correct width for the letter j with 'Aileron-BoldItalic' font, dirty fix
+    if (this.char == "j") this.width -= 18; // Correct width for the letter j with 'Aileron-BoldItalic' font, dirty fix
 
     this.height = bbox.h;
 
@@ -56,7 +67,9 @@ export default class Character {
   }
   updateCircuitLines() {
     // remove finished lines from the activeCls list
-    this.activeCLs = this.activeCLs.filter((acl) => !this.cLines[acl].isFinished);
+    this.activeCLs = this.activeCLs.filter(
+      (acl) => !this.cLines[acl].isFinished
+    );
 
     if (this.cLines.length > 0 && this.activeCLs.length < this.linesPerChar) {
       let rnd = Utils.GetRandomInt(this.cLines.length);
@@ -68,7 +81,10 @@ export default class Character {
 
   activateCircuitLine(i: number) {
     // Check if the i-th line is not yet active and 3 away from other start points/lines
-    if (!this.activeCLs.includes(i) && this.activeCLs.every((acl) => Math.abs(i - acl) > 3)) {
+    if (
+      !this.activeCLs.includes(i) &&
+      this.activeCLs.every((acl) => Math.abs(i - acl) > 3)
+    ) {
       this.cLines[i].reset();
       this.activeCLs.push(i);
     }
@@ -87,10 +103,15 @@ export default class Character {
   calcCLLineVectors() {
     // Different tactic, calculate vec from 2 neighboring points
     for (let i = 0; i < this.cLines.length; i++) {
-      const prevPoint = this.cLines[i - 1 < 0 ? this.cLines.length - 1 : i - 1].pos;
-      const nextPoint = this.cLines[i + 1 > this.cLines.length - 1 ? 0 : i + 1].pos;
+      const prevPoint =
+        this.cLines[i - 1 < 0 ? this.cLines.length - 1 : i - 1].pos;
+      const nextPoint =
+        this.cLines[i + 1 > this.cLines.length - 1 ? 0 : i + 1].pos;
 
-      const v = this.p.createVector(nextPoint.x - prevPoint.x, nextPoint.y - prevPoint.y);
+      const v = this.p.createVector(
+        nextPoint.x - prevPoint.x,
+        nextPoint.y - prevPoint.y
+      );
       v.normalize();
 
       v.rotate(this.p.PI / 2);
