@@ -1,12 +1,12 @@
-import p5 from 'p5';
-import Utils from '../../utils';
+import p5 from "p5";
+import Utils from "../../utils";
 
 /** Abstract class for a general circuit line with a update and show function. */
 export abstract class CircuitLineItem {
   public finished = false;
   public p: p5;
   public startPos: p5.Vector;
-  public abstract type = 'abstract';
+  // public abstract type = 'abstract';
 
   constructor(p: p5, startPos: p5.Vector) {
     this.p = p;
@@ -20,7 +20,10 @@ export abstract class CircuitLineItem {
    * Should generate startpos and vector to be used by the following CircuitLineItem after this one.
    * @param angle A possible angle to change the vector.
    */
-  abstract generateNextLineItemVectors(angle?: number): { startPos: p5.Vector; vec: p5.Vector };
+  abstract generateNextLineItemVectors(angle?: number): {
+    startPos: p5.Vector;
+    vec: p5.Vector;
+  };
 }
 
 export class CLLineStart extends CircuitLineItem {
@@ -29,7 +32,7 @@ export class CLLineStart extends CircuitLineItem {
   private maxLength = 3;
   private velocity = 0.1;
   private endPos: p5.Vector; // the end of the line
-  public type = 'CLLineStart';
+  public type = "CLLineStart";
 
   constructor(p: p5, startPos: p5.Vector, vec: p5.Vector) {
     super(p, startPos);
@@ -37,7 +40,7 @@ export class CLLineStart extends CircuitLineItem {
 
     this.endPos = this.p.createVector(
       this.startPos.x + this.vec.x * this.maxLength,
-      this.startPos.y + this.vec.y * this.maxLength,
+      this.startPos.y + this.vec.y * this.maxLength
     );
   }
 
@@ -59,15 +62,24 @@ export class CLLineStart extends CircuitLineItem {
         this.startPos.x,
         this.startPos.y,
         this.startPos.x + this.vec.x * this.length,
-        this.startPos.y + this.vec.y * this.length,
+        this.startPos.y + this.vec.y * this.length
       );
-    else this.p.line(this.startPos.x, this.startPos.y, this.endPos.x, this.endPos.y);
+    else
+      this.p.line(
+        this.startPos.x,
+        this.startPos.y,
+        this.endPos.x,
+        this.endPos.y
+      );
     // Reset default values
     this.p.strokeWeight(3);
     this.p.strokeCap(this.p.ROUND);
   }
 
-  generateNextLineItemVectors(angle = 0): { startPos: p5.Vector; vec: p5.Vector } {
+  generateNextLineItemVectors(angle = 0): {
+    startPos: p5.Vector;
+    vec: p5.Vector;
+  } {
     // Copy the current vector and rotate by the provided angle.
     const vec = this.vec.copy().rotate((angle / 180) * this.p.PI);
     return { startPos: this.endPos.copy(), vec };
@@ -81,7 +93,7 @@ export class CLLine extends CircuitLineItem {
   private maxLength;
   private velocity = 0.1;
   private endPos: p5.Vector; // the end of the line
-  public type = 'CLLine';
+  public type = "CLLine";
 
   constructor(p: p5, startPos: p5.Vector, vec: p5.Vector, minLength: number) {
     super(p, startPos);
@@ -91,7 +103,7 @@ export class CLLine extends CircuitLineItem {
 
     this.endPos = this.p.createVector(
       this.startPos.x + this.vec.x * this.maxLength,
-      this.startPos.y + this.vec.y * this.maxLength,
+      this.startPos.y + this.vec.y * this.maxLength
     );
   }
 
@@ -112,12 +124,21 @@ export class CLLine extends CircuitLineItem {
         this.startPos.x,
         this.startPos.y,
         this.startPos.x + this.vec.x * this.length,
-        this.startPos.y + this.vec.y * this.length,
+        this.startPos.y + this.vec.y * this.length
       );
-    else this.p.line(this.startPos.x, this.startPos.y, this.endPos.x, this.endPos.y);
+    else
+      this.p.line(
+        this.startPos.x,
+        this.startPos.y,
+        this.endPos.x,
+        this.endPos.y
+      );
   }
 
-  generateNextLineItemVectors(angle = 0): { startPos: p5.Vector; vec: p5.Vector } {
+  generateNextLineItemVectors(angle = 0): {
+    startPos: p5.Vector;
+    vec: p5.Vector;
+  } {
     // Copy the current vector and rotate by the provided angle.
     const vec = this.vec.copy().rotate((angle / 180) * this.p.PI);
     return { startPos: this.endPos.copy(), vec };
@@ -125,7 +146,7 @@ export class CLLine extends CircuitLineItem {
 }
 
 export class CLCircle extends CircuitLineItem {
-  public type = 'CLCircle';
+  public type = "CLCircle";
   private vec: p5.Vector;
   private a = 0; // alpha to use if not finished
   private d: number; // diameter
@@ -161,7 +182,10 @@ export class CLCircle extends CircuitLineItem {
     this.p.circle(this.startPos.x, this.startPos.y, this.d);
   }
 
-  generateNextLineItemVectors(angle = 0): { startPos: p5.Vector; vec: p5.Vector } {
+  generateNextLineItemVectors(angle = 0): {
+    startPos: p5.Vector;
+    vec: p5.Vector;
+  } {
     const vec = this.vec.copy().rotate((angle / 180) * this.p.PI);
 
     const startPos = this.startPos.copy().add(vec.copy().setMag(this.d / 2));

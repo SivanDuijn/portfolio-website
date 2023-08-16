@@ -1,147 +1,229 @@
 import { Inter } from "next/font/google";
 import P5CircuitText from "@/components/p5-circuit-text/p5-circuit-text";
 import clsx from "clsx";
+import { useMemo } from "react";
+import Tilt from "react-parallax-tilt";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const links = useMemo(
+    () => [
+      {
+        url: "#projects",
+        title: "Projects",
+        description:
+          "Explore projects I've worked on, related to woodworking, electronics and programming.",
+      },
+      {
+        url: "#top",
+        title: "Work",
+        description: "Gain insights into my professional background.",
+      },
+      {
+        url: "",
+        title: "About",
+        description: "Delve deeper into my persona and interests",
+      },
+      {
+        url: "",
+        title: "Get in Touch",
+        description: "Find out how to best contact me.",
+      },
+    ],
+    []
+  );
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      {/* <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-  </div>*/}
-
+    <main className={clsx(inter.className)}>
       <div
+        id="top"
         className={clsx(
-          "absolute",
-          // "before:absolute",
-          // "before:h-[300px]",
-          // "before:w-[480px]",
-          // "before:-translate-x-1/2",
-          // "before:rounded-full",
-          // "before:bg-gradient-to-br",
-          // "before:from-transparent",
-          // "before:to-blue-100/10",
-          // "before:blur-2xl",
-          // "before:content-['']",
-          "after:absolute",
-          "after:-z-20",
-          "after:h-[180px]",
-          "after:w-[240px]",
-          "after:-translate-x-[90%]",
-          "after:bg-gradient-conic",
-          "after:from-sky-900",
-          // "after:from-orange-700",
-          "after:via-[#0141ff]/40",
-          // "after:via-red-600/40",
-          "after:blur-2xl",
-          "after:content-['']"
-          // "before:dark:bg-gradient-to-br",
-          // "before:dark:from-transparent",
-          // "before:dark:to-blue-700/10",
-          // "after:dark:from-sky-900",
-          // "after:dark:via-[#0141ff]/40",
-          // "before:lg:h-[360px]"
+          "flex",
+          "min-h-screen",
+          "flex-col",
+          "items-center",
+          "justify-between",
+          "p-24",
+          "m-0"
         )}
-      ></div>
+      >
+        <div
+          className={clsx(
+            "absolute",
+            "after:absolute",
+            "after:content-['']",
+            "after:w-[700px]",
+            "after:h-[320px]",
+            "after:rounded-full",
+            "after:rotate-[176deg]",
+            "after:blur-[200px]",
+            "after:opacity-25",
+            "after:-translate-x-1/2",
+            "after:-translate-y-16",
+            "after:bg-gradient-conic",
+            "after:from-[#0141ff]/40",
+            "after:to-sky-600"
+          )}
+        ></div>
 
-      <P5CircuitText text="Welcome" fontSize={80} />
+        <div className={clsx("z-10")}>
+          <P5CircuitText text="Welcome" fontSize={80} />
+        </div>
 
-      <p className={clsx("text-3xl", "font-extrabold")}>
-        My name is Sivan Duijn
-      </p>
+        <p className={clsx("text-3xl", "font-extrabold")}>
+          My name is Sivan Duijn
+        </p>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+        <div
+          className={clsx(
+            "grid",
+            "lg:grid-cols-4",
+            "text-center",
+            "lg:text-left",
+            "lg:max-w-5xl",
+            "lg:w-full"
+          )}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
+          {links.map((link) => (
+            <a
+              key={link.url}
+              href={link.url}
+              className={clsx(
+                "group",
+                "rounded-lg",
+                "border",
+                "border-transparent",
+                "px-5",
+                "py-4",
+                "transition-colors",
+                "hover:border-neutral-700",
+                "hover:bg-neutral-800/30"
+              )}
+            >
+              <div>
+                <h2 className={clsx("mb-3", "text-2xl", "font-semibold")}>
+                  {link.title}{" "}
+                  <span
+                    className={clsx(
+                      "inline-block",
+                      "transition-transform",
+                      "group-hover:translate-x-1",
+                      "motion-reduce:transform-none"
+                    )}
+                  >
+                    -&gt;
+                  </span>
+                </h2>
+                <p
+                  className={clsx(
+                    "m-0",
+                    "max-w-[30ch]",
+                    "text-sm",
+                    "opacity-50"
+                  )}
+                >
+                  {link.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
         <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="#projects"
+          className={clsx(
+            "absolute",
+            "group",
+            "right-0",
+            "bottom-0",
+            "w-16",
+            "h-24",
+            "flex",
+            "justify-center",
+            "items-center",
+            "bg-gradient-to-t",
+            "from-sky-900/50",
+            "font-serif",
+            "text-3xl",
+            "text-gray-400"
+          )}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
+          <span className={clsx("group-hover:translate-y-2", "transition")}>
+            &#8595;
+          </span>
         </a>
+      </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* PROJECTS */}
+      <div id="projects" className={clsx("bg-[#111111]", "p-24")}>
+        <div
+          className={clsx("flex", "flex-col", "justify-center", "items-center")}
         >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+          <Tilt
+            perspective={500}
+            glareMaxOpacity={0}
+            tiltMaxAngleX={13}
+            tiltMaxAngleY={13}
+            className={clsx("cursor-pointer")}
+            style={{
+              transformStyle: "preserve-3d",
+            }}
+          >
+            <div
+              className={clsx(
+                "absolute",
+                "block",
+                "bottom-0",
+                "left-28",
+                "w-56",
+                "overflow-visible"
+              )}
+            >
+              <Image
+                className={clsx("object-left-bottom", "w-full", "h-auto")}
+                src="/imgs/projects/chinese-lantern/thumbnail.jpeg"
+                width={0}
+                height={0}
+                sizes="100vw"
+                // layout="fill"
+                // objectFit="contain"
+                alt={""}
+              />
+            </div>
+            <div
+              className={clsx("group", "p-8")}
+              style={{
+                transform: "translateZ(20px)",
+              }}
+            >
+              <h2
+                className={clsx(
+                  "mb-4",
+                  "max-w-[8rem]",
+                  "text-2xl",
+                  "font-extrabold"
+                )}
+              >
+                Chinese Lantern Lamp
+              </h2>
+              <div className={clsx("h-1", "w-48", "mb-4", "bg-white")}></div>
+              <p className={clsx("font-mono", "text-sm", "text-gray-400")}>
+                00
+              </p>
+              <div
+                className={clsx(
+                  "text-gray-500",
+                  "-translate-x-1",
+                  "group-hover:translate-x-2",
+                  "transition"
+                )}
+              >
+                &#8594;
+              </div>
+            </div>
+          </Tilt>
+        </div>
       </div>
     </main>
   );
