@@ -1,13 +1,27 @@
 import { Inter } from "next/font/google";
-import P5CircuitText from "@/components/p5-circuit-text/p5-circuit-text";
+import P5CircuitText from "@/components/p5CircuitText/p5CircuitText";
 import clsx from "clsx";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Tilt from "react-parallax-tilt";
 import Image from "next/image";
+import { JumblingText } from "@/components/textJumbler/JumblingText";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const smallScreenSize = 630;
+
+  const updateMedia = (): void => {
+    setIsSmallScreen(window.innerWidth <= smallScreenSize);
+  };
+
+  useEffect(() => {
+    updateMedia();
+    window.addEventListener("resize", updateMedia);
+    return () => window.removeEventListener("resize", updateMedia);
+  }, []);
+
   const links = useMemo(
     () => [
       {
@@ -22,12 +36,12 @@ export default function Home() {
         description: "Gain insights into my professional background.",
       },
       {
-        url: "",
+        url: "0",
         title: "About",
         description: "Delve deeper into my persona and interests",
       },
       {
-        url: "",
+        url: "1",
         title: "Get in Touch",
         description: "Find out how to best contact me.",
       },
@@ -36,7 +50,7 @@ export default function Home() {
   );
 
   return (
-    <main className={clsx(inter.className)}>
+    <main className={clsx("bg-black", "text-white", inter.className)}>
       <div
         id="top"
         className={clsx(
@@ -45,7 +59,9 @@ export default function Home() {
           "flex-col",
           "items-center",
           "justify-between",
-          "p-24",
+          "p-10",
+          "pt-12",
+          "sm:p-24",
           "m-0"
         )}
       >
@@ -69,12 +85,32 @@ export default function Home() {
         ></div>
 
         <div className={clsx("z-10")}>
-          <P5CircuitText text="Welcome" fontSize={80} />
+          <P5CircuitText text={"Welcome"} fontSize={isSmallScreen ? 50 : 80} />
         </div>
 
-        <p className={clsx("text-3xl", "font-extrabold")}>
-          My name is Sivan Duijn
-        </p>
+        <JumblingText
+          initialText=""
+          changeInto={[
+            "My name is Sivan Duijn",
+            "Take a look around",
+            "Make yourself at home",
+            "Grab a coffee or tea",
+            "Sit back and enjoy!",
+            "•͡˘㇁•͡˘",
+            "ʕ·͡ᴥ·ʔ",
+            "	ʕノ•ᴥ•ʔノ ︵ ┻━┻",
+            "╭(ʘ̆~◞౪◟~ʘ̆)╮",
+            "(◕ᴥ◕ʋ)",
+          ]}
+          repeat
+          className={clsx(
+            "mb-16",
+            "font-mono",
+            "text-xl",
+            "sm:text-3xl",
+            "font-extrabold"
+          )}
+        />
 
         <div
           className={clsx(
@@ -83,7 +119,9 @@ export default function Home() {
             "text-center",
             "lg:text-left",
             "lg:max-w-5xl",
-            "lg:w-full"
+            "lg:w-full",
+            "mb-8",
+            "lg:m-0"
           )}
         >
           {links.map((link) => (
@@ -96,14 +134,22 @@ export default function Home() {
                 "border",
                 "border-transparent",
                 "px-5",
-                "py-4",
+                "py-2",
+                "lg:py-4",
                 "transition-colors",
-                "hover:border-neutral-700",
-                "hover:bg-neutral-800/30"
+                "lg:hover:border-neutral-700",
+                "lg:hover:bg-neutral-800/30"
               )}
             >
               <div>
-                <h2 className={clsx("mb-3", "text-2xl", "font-semibold")}>
+                <h2
+                  className={clsx(
+                    "mb-3",
+                    "text-xl",
+                    "lg:text-2xl",
+                    "font-semibold"
+                  )}
+                >
                   {link.title}{" "}
                   <span
                     className={clsx(
@@ -121,7 +167,9 @@ export default function Home() {
                     "m-0",
                     "max-w-[30ch]",
                     "text-sm",
-                    "opacity-50"
+                    "opacity-50",
+                    "hidden",
+                    "lg:block"
                   )}
                 >
                   {link.description}
@@ -165,6 +213,7 @@ export default function Home() {
             glareMaxOpacity={0}
             tiltMaxAngleX={13}
             tiltMaxAngleY={13}
+            gyroscope
             className={clsx("cursor-pointer")}
             style={{
               transformStyle: "preserve-3d",

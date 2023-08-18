@@ -1,5 +1,5 @@
+import { getRandomInt } from "@/components/utils";
 import p5 from "p5";
-import Utils from "../../utils";
 
 /** Abstract class for a general circuit line with a update and show function. */
 export abstract class CircuitLineItem {
@@ -99,7 +99,7 @@ export class CLLine extends CircuitLineItem {
     super(p, startPos);
     this.vec = vec;
 
-    this.maxLength = Utils.GetRandomInt(15) + minLength;
+    this.maxLength = getRandomInt(15) + minLength;
 
     this.endPos = this.p.createVector(
       this.startPos.x + this.vec.x * this.maxLength,

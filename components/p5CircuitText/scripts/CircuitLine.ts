@@ -1,7 +1,7 @@
-import p5 from 'p5';
-import Character from './Character';
-import { CLLineStart, CLLine, CLCircle, CircuitLineItem } from './Line';
-import Utils from '../../utils';
+import p5 from "p5";
+import Character from "./Character";
+import { CLLineStart, CLLine, CLCircle, CircuitLineItem } from "./Line";
+import { getRandomInt } from "@/components/utils";
 
 export default class CircuitLine {
   public p: p5;
@@ -76,7 +76,7 @@ export default class CircuitLine {
     this.timer = -1;
     this.isEnding = false;
     this.isFinished = false;
-    this.waitTime = Utils.GetRandomInt(2000) * -1;
+    this.waitTime = getRandomInt(2000) * -1;
   }
 
   /** Generates a new CLItems array. */
@@ -94,12 +94,19 @@ export default class CircuitLine {
     nextItem = new CLCircle(this.p, nextData.startPos, nextData.vec, 3);
     this.CLItems.push(nextItem);
 
-    nextData = nextItem.generateNextLineItemVectors(45 * (Utils.GetRandomInt(2) == 0 ? 1 : -1));
+    nextData = nextItem.generateNextLineItemVectors(
+      45 * (getRandomInt(2) == 0 ? 1 : -1)
+    );
     nextItem = new CLLine(this.p, nextData.startPos, nextData.vec, 3);
     this.CLItems.push(nextItem);
 
     nextData = nextItem.generateNextLineItemVectors();
-    nextItem = new CLCircle(this.p, nextData.startPos, nextData.vec, Utils.GetRandomInt(10) + 5);
+    nextItem = new CLCircle(
+      this.p,
+      nextData.startPos,
+      nextData.vec,
+      getRandomInt(10) + 5
+    );
     this.CLItems.push(nextItem);
   }
 
@@ -112,7 +119,10 @@ export default class CircuitLine {
       return c.cLines.some((cl) => {
         if (cl == this) return false;
 
-        let vToPnt = this.p.createVector(cl.pos.x - this.pos.x, cl.pos.y - this.pos.y);
+        let vToPnt = this.p.createVector(
+          cl.pos.x - this.pos.x,
+          cl.pos.y - this.pos.y
+        );
 
         let vRightCross = vToPnt.cross(vRight);
         let vLeftCross = vToPnt.cross(vLeft);

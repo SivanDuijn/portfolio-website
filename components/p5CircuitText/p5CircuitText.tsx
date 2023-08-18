@@ -25,7 +25,7 @@ export default function P5CircuitText({
   const circuitText = useRef<Text>();
 
   useEffect(() => {
-    if (circuitText.current && text != circuitText.current?.str)
+    if (circuitText.current)
       circuitText.current.changeText(text, {
         newFontSize: fontSize,
         newSpacing: spacing,

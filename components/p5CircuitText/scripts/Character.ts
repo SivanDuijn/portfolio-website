@@ -1,6 +1,6 @@
 import p5 from "p5";
 import CircuitLine from "./CircuitLine";
-import Utils from "../../utils";
+import { getRandomInt } from "@/components/utils";
 
 export default class Character {
   public readonly char: string;
@@ -72,7 +72,7 @@ export default class Character {
     );
 
     if (this.cLines.length > 0 && this.activeCLs.length < this.linesPerChar) {
-      let rnd = Utils.GetRandomInt(this.cLines.length);
+      let rnd = getRandomInt(this.cLines.length);
       this.activateCircuitLine(rnd);
     }
 
