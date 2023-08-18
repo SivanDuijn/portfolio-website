@@ -62,7 +62,9 @@ export default function Home() {
           "p-10",
           "pt-12",
           "sm:p-24",
-          "m-0"
+          "m-0",
+          "relative",
+          "overflow-x-hidden"
         )}
       >
         <div
@@ -204,7 +206,7 @@ export default function Home() {
       </div>
 
       {/* PROJECTS */}
-      <div id="projects" className={clsx("bg-[#111111]", "p-24")}>
+      <div id="projects" className={clsx("bg-[#111111]", "py-24", "pr-16")}>
         <div
           className={clsx("flex", "flex-col", "justify-center", "items-center")}
         >
@@ -225,7 +227,8 @@ export default function Home() {
                 "block",
                 "bottom-0",
                 "left-28",
-                "w-56",
+                "w-48",
+                "md:w-56",
                 "overflow-visible"
               )}
             >
