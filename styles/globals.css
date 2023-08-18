@@ -3,25 +3,35 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --translateYSkyBlue: -18rem;
+  --translateYBlue: 10rem 11rem;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (min-width: 768px) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --translateYSkyBlue: -10rem;
+    --translateYBlue: 10rem 16rem;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.backgroundColorShadowSkyBlue::after {
+  position: absolute;
+  content: "";
+  width: 900px;
+  height: 700px;
+  border-radius: 300px;
+  filter: blur(100px);
+  transform: translateX(-80%) translateY(var(--translateYSkyBlue)) rotate(40deg);
+  background: radial-gradient(
+    rgba(2, 132, 199, 0.7) 50px,
+    black 50%
+  ); /* rgba(196, 55, 0, 0.74)  */
+}
+.backgroundColorShadowBlue::before {
+  box-shadow: var(--translateYBlue) 9999px 180px rgba(17, 148, 255, 0.5); /* rgba(221, 11, 0, 0.49) */
+  position: absolute;
+  content: "";
+  width: 0px;
+  height: 0px;
+  border-radius: 9999px;
 }
