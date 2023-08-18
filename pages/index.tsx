@@ -215,7 +215,6 @@ export default function Home() {
             glareMaxOpacity={0}
             tiltMaxAngleX={13}
             tiltMaxAngleY={13}
-            gyroscope
             className={clsx("cursor-pointer")}
             style={{
               transformStyle: "preserve-3d",
