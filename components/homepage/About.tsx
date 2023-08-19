@@ -54,12 +54,11 @@ export function About() {
               About me
             </h2>
             <p className={clsx("text-sm", "md:text-base")}>
-              Hello! I&apos;m a versatile enthusiast, passionate about
-              programming, woodwork, tinkering with electronics, drumming, and
-              diving into artistic projects. Currently, I&apos;m completing my
-              Master&apos;s degree in Game and Media Technology at Utrecht
-              University, following a cum laude Bachelor&apos;s degree in
-              Computer Science.
+              Hello! I&apos;m passionate about programming, woodwork, tinkering
+              with electronics, drumming, and diving into artistic projects.
+              Currently, I&apos;m completing my Master&apos;s degree in Game and
+              Media Technology at Utrecht University, after a cum laude
+              Bachelor&apos;s degree in Computer Science 🎉.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>
               Professional Path
