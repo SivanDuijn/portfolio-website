@@ -16,18 +16,18 @@ export function Welcome() {
         description:
           "Explore projects I've worked on, related to woodworking, electronics and programming.",
       },
+      // {
+      //   url: "#work",
+      //   title: "Work",
+      //   description: "Gain insights into my professional background.",
+      // },
       {
-        url: "#top",
-        title: "Work",
-        description: "Gain insights into my professional background.",
-      },
-      {
-        url: "0",
+        url: "#about",
         title: "About",
-        description: "Delve deeper into my persona and interests",
+        description: "Delve deeper into my persona and interests.",
       },
       {
-        url: "1",
+        url: "#contact",
         title: "Get in Touch",
         description: "Find out how to best contact me.",
       },
@@ -91,9 +91,11 @@ export function Welcome() {
 
       <div
         className={clsx(
-          "grid",
+          "flex",
           "z-10",
-          "lg:grid-cols-4",
+          "flex-col",
+          "lg:flex-row",
+          "justify-around",
           "text-center",
           "lg:text-left",
           "lg:max-w-5xl",
@@ -108,14 +110,13 @@ export function Welcome() {
             href={link.url}
             className={clsx(
               "group",
+              "max-w-[16rem]",
               "rounded-lg",
               "border",
               "border-transparent",
               "px-5",
               "py-2",
-              "lg:py-4",
-              "transition-colors",
-              "bg-transparent"
+              "lg:py-4"
             )}
           >
             <div>

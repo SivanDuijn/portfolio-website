@@ -6,24 +6,26 @@ export function ProjectsOverview() {
   return (
     <div
       id="projects"
-      className={clsx("bg-[#0e0e0e]", "flex", "justify-center")}
+      className={clsx("bg-[#0e0e0e]", "flex", "flex-col", "items-center")}
     >
-      <div className={clsx("lg:max-w-6xl", "lg:w-full")}>
+      <div className={clsx("pl-0", "md:pl-16", "md:max-w-6xl", "md:w-full")}>
         <div
           className={clsx(
             "group",
             "inline-block",
-            "text-[#282828]",
+            "text-[#c0c0c0]",
             "font-extrabold",
-            "text-5xl",
-            "md:text-7xl",
-            "md:ml-16",
-            "mt-8"
+            "text-4xl",
+            "md:text-6xl",
+            "mt-12",
+            "md:mt-16"
           )}
         >
-          <p>PROJECTS</p>
-          <UnderlineSVG />
+          <h1>PROJECTS</h1>
+          <UnderlineSVG color="#777777" />
         </div>
+      </div>
+      <div className={clsx("md:max-w-6xl", "md:w-full")}>
         {/* <div
           className={clsx(
             "inline-block",
@@ -43,11 +45,16 @@ export function ProjectsOverview() {
         <div
           className={clsx(
             "grid",
-            "lg:grid-cols-2",
+            "md:grid-cols-2",
             "grid-cols-1",
             "items-end",
-            "py-24",
-            "mt-16"
+            "space-y-20",
+            "py-0",
+            "mr-8",
+            "md:py-20",
+            "mt-8",
+            "mb-16",
+            "md:my-16"
           )}
         >
           <ProjectCard
