@@ -32,13 +32,15 @@ export function About() {
             "flex-col",
             "md:flex-row",
             "items-center",
-            "md:items-normal",
+            "md:items-start",
             "pt-16",
             "md:pt-24",
             "px-16"
           )}
         >
-          <div className={clsx("pt-2", "max-w-[12rem]", "mb-8")}>
+          <div
+            className={clsx("pt-2", "max-w-[12rem]", "mb-8", "min-w-[10rem]")}
+          >
             <Image
               src={"/imgs/me-slovakia.jpg"}
               alt="A profile picture showing my face"
@@ -77,8 +79,6 @@ export function About() {
             "flex",
             "flex-col",
             "md:flex-row",
-            "items-center",
-            "md:items-normal",
             "pt-6",
             "md:pt-16",
             "px-16",
@@ -115,10 +115,10 @@ export function About() {
               friends.
             </p>
           </div>
-          <div className={clsx("pt-4", "hidden", "md:block")}>
+          <div className={clsx("pt-4", "hidden", "md:block", "min-w-[10rem]")}>
             <Image
               src={"/imgs/me-drumming.jpeg"}
-              alt="A profile picture showing my drumming"
+              alt="A profile picture showing me drumming"
               width={1100}
               height={0}
             />
