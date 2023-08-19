@@ -11,6 +11,7 @@ export function ProjectsOverview() {
       <div className={clsx("lg:max-w-6xl", "lg:w-full")}>
         <div
           className={clsx(
+            "group",
             "inline-block",
             "text-[#282828]",
             "font-extrabold",

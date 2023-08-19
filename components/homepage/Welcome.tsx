@@ -3,6 +3,7 @@ import P5CircuitText from "../p5CircuitText/p5CircuitText";
 import { JumblingText } from "../textJumbler/JumblingText";
 import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 import { useMemo } from "react";
+import { UnderlineSVG } from "../UnderlineSVG";
 
 export function Welcome() {
   const isSmallScreen = useIsSmallScreen();
@@ -114,21 +115,21 @@ export function Welcome() {
               "py-2",
               "lg:py-4",
               "transition-colors",
-              "lg:hover:border-neutral-700",
-              "lg:hover:bg-neutral-800/30"
+              "bg-transparent"
             )}
           >
             <div>
               <h2
                 className={clsx(
+                  "inline-block",
                   "mb-3",
                   "text-xl",
                   "lg:text-2xl",
                   "font-semibold"
                 )}
               >
-                {link.title}{" "}
-                <span
+                {link.title}
+                {/* <span
                   className={clsx(
                     "inline-block",
                     "transition-transform",
@@ -137,7 +138,18 @@ export function Welcome() {
                   )}
                 >
                   -&gt;
-                </span>
+                </span> */}
+                <UnderlineSVG
+                  className="mt-0"
+                  hover
+                  widthRatio={1}
+                  extraLengthLeft={-2}
+                  r={5}
+                  cx={-10}
+                  cy={-8}
+                  strokeWidth={2}
+                  color="#999"
+                />
               </h2>
               <p
                 className={clsx(
