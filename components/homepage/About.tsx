@@ -16,13 +16,13 @@ export function About() {
             "text-[#c0c0c0]",
             "font-extrabold",
             "text-4xl",
-            "md:text-6xl",
+            "md:text-5xl",
             "mt-12",
             "md:mt-16"
           )}
         >
           <h1>ABOUT</h1>
-          <UnderlineSVG color="#777777" />
+          <UnderlineSVG />
         </div>
       </div>
       <div className={clsx("lg:max-w-6xl", "lg:w-full")}>
@@ -58,7 +58,7 @@ export function About() {
               with electronics, drumming, and diving into artistic projects.
               Currently, I&apos;m completing my Master&apos;s degree in Game and
               Media Technology at Utrecht University, after a cum laude
-              Bachelor&apos;s degree in Computer Science 🎉.
+              Bachelor&apos;s degree in Computer Science.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>
               Professional Path
@@ -79,7 +79,6 @@ export function About() {
             "flex-col",
             "md:flex-row",
             "pt-6",
-            "md:pt-16",
             "px-16",
             "pb-16"
           )}
@@ -91,27 +90,39 @@ export function About() {
             {/* <br /> */}
             <p className={clsx("text-sm", "md:text-base")}>
               While my academic focus is on Computer Science, my curiosity
-              extends far beyond code. I harbor an interest in topics like
+              extends beyond code. I harbor an interest in topics like
               electronic prototyping, 3D modeling, and art that combines
               technology with aspects from nature. Think about the innovative
-              creations by Studio Drift and Daan Roosegaarde. My projects page
-              showcases some exciting endeavors, featuring Arduinos, Raspberry
+              creations by{" "}
+              <a
+                href="https://studiodrift.com"
+                className={clsx("underline", "hover:text-blue-300")}
+                target="_blank"
+              >
+                Studio Drift
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://www.studioroosegaarde.net/projects"
+                className={clsx("underline", "hover:text-blue-300")}
+                target="_blank"
+              >
+                Studio Roosegaarde
+              </a>
+              . You can see I have build projects featuring Arduinos, Raspberry
               Pi&apos;s, LED&apos;s combined with materials nature has to offer
-              like wood and dandelion seeds. My ultimate aspiration is to
-              utilize these skills to contribute positively to society, whether
-              through art or environmental initiatives.
+              like wood and dandelion seeds.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>
               Balance in Life
             </h2>
             {/* <br /> */}
             <p className={clsx("text-sm", "md:text-base")}>
-              Beyond the digital realm, I find joy in woodworking, music, and
-              the rhythmic art of drumming. In my free time, you&apos;ll have
-              good chance finding me crafting wooden spoons or baking homemade
-              bread. Playing the drums and hiking are my sources for relaxation
-              and inspiration. And of course, I enjoy having a good beer with
-              friends.
+              Beyond the digital realm, I find joy in woodworking, aikido, and
+              drumming. In my free time, you&apos;ll have good chance finding me
+              crafting wooden spoons or baking homemade bread. Playing the drums
+              and hiking are my sources for relaxation and inspiration. And of
+              course, I enjoy having a good beer with friends.
             </p>
           </div>
           <div className={clsx("pt-4", "hidden", "md:block", "min-w-[10rem]")}>

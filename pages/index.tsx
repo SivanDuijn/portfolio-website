@@ -3,6 +3,8 @@ import clsx from "clsx";
 import { Welcome } from "@/components/homepage/Welcome";
 import { ProjectsOverview } from "@/components/homepage/ProjectsOverview";
 import { About } from "@/components/homepage/About";
+import { Contact } from "@/components/homepage/Contact";
+import { Footer } from "@/components/homepage/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,6 +14,8 @@ export default function Home() {
       <Welcome />
       <ProjectsOverview />
       <About />
+      <Contact />
+      <Footer />
     </main>
   );
 }

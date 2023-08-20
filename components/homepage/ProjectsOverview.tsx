@@ -6,7 +6,7 @@ export function ProjectsOverview() {
   return (
     <div
       id="projects"
-      className={clsx("bg-[#0e0e0e]", "flex", "flex-col", "items-center")}
+      className={clsx("bg-[#141414]", "flex", "flex-col", "items-center")}
     >
       <div className={clsx("pl-0", "md:pl-16", "md:max-w-6xl", "md:w-full")}>
         <div
@@ -16,13 +16,13 @@ export function ProjectsOverview() {
             "text-[#c0c0c0]",
             "font-extrabold",
             "text-4xl",
-            "md:text-6xl",
+            "md:text-5xl",
             "mt-12",
             "md:mt-16"
           )}
         >
           <h1>PROJECTS</h1>
-          <UnderlineSVG color="#777777" />
+          <UnderlineSVG />
         </div>
       </div>
       <div className={clsx("md:max-w-6xl", "md:w-full")}>

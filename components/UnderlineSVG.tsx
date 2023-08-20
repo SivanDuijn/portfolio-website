@@ -21,7 +21,7 @@ export function UnderlineSVG(props: UnderlineSVGProps) {
   const strokeWidth = props.strokeWidth ?? 3;
   const extraLengthRight = 10;
   const widthRatio = props.widthRatio ?? 1.2;
-  const color = props.color ?? "#282828";
+  const color = props.color ?? "#777777";
 
   return (
     <div className={clsx("mt-1", props.className, "relative")}>
