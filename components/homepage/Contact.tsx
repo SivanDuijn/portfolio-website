@@ -33,7 +33,9 @@ export function Contact() {
           "justify-items-end",
           "lg:max-w-6xl",
           "lg:w-full",
-          "p-16"
+          "py-16",
+          "px-10",
+          "sm:px-16"
         )}
       >
         <p>
@@ -57,7 +59,9 @@ export function Contact() {
               extraLengthLeft={-15}
               widthRatio={0.3}
             />
-            <div className={clsx("flex", "flex-row")}>
+            <div
+              className={clsx("flex", "flex-row", "text-sm", "sm:text-base")}
+            >
               <div className={clsx("font-semibold", "mr-8")}>
                 <p className="mb-2">LinkedIn</p>
                 <p>Email</p>

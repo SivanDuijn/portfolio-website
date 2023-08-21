@@ -59,13 +59,15 @@ export function ProjectsOverview() {
         >
           <ProjectCard
             index={0}
-            title={"Chinese Lantern Lamp"}
+            title={"Physalis Glow Light"}
             imgUrl={"chinese-lantern/thumbnail.jpeg"}
+            url={"chinese-lantern-lamp"}
           />
           <ProjectCard
             index={1}
             title={"Flock Lights"}
             imgUrl={"flock-lights/thumbnail.jpeg"}
+            url={"flock-lights"}
           />
         </div>
       </div>

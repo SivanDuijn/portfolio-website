@@ -35,7 +35,8 @@ export function About() {
             "md:items-start",
             "pt-16",
             "md:pt-24",
-            "px-16"
+            "px-10",
+            "sm:px-16"
           )}
         >
           <div
@@ -79,8 +80,9 @@ export function About() {
             "flex-col",
             "md:flex-row",
             "pt-6",
-            "px-16",
-            "pb-16"
+            "pb-16",
+            "px-10",
+            "sm:px-16"
           )}
         >
           <div className={clsx("pr-0", "md:pr-16")}>
@@ -110,8 +112,8 @@ export function About() {
                 Studio Roosegaarde
               </a>
               . You can see I have build projects featuring Arduinos, Raspberry
-              Pi&apos;s, LED&apos;s combined with materials nature has to offer
-              like wood and dandelion seeds.
+              Pi&apos;s and LED&apos;s combined with materials nature has to
+              offer like wood and dandelion seeds.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>
               Balance in Life
