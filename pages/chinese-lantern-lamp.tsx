@@ -1,7 +1,6 @@
 import { ProjectContainer } from "@/components/ProjectContainer";
 import clsx from "clsx";
 import Image from "next/image";
-import LiteYouTubeEmbed from "react-lite-youtube-embed";
 
 export default function ChineseLanterLamp() {
   return (
