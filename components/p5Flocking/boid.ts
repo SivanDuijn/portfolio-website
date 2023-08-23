@@ -1,225 +1,151 @@
+import { vecToP5Vec } from "./utils";
+import { Vector } from "./vector";
 import * as p5 from "p5";
-import BoidUtils from "./boidUtils";
-export default class Boid {
-  public vel: p5.Vector;
-  flockForceToApply: p5.Vector;
-  color: p5.Color;
 
-  constructor(private p: p5, public pos: p5.Vector) {
-    this.vel = p5.Vector.random3D();
-    this.flockForceToApply = p.createVector(0, 0, 0);
-    this.color = p.color(p.random(255), p.random(255), p.random(255));
+export type Boid = {
+  pos: Vector;
+  vel: Vector;
+  color: number[];
+};
+
+export function updateBoid(
+  b: Boid,
+  force: Vector,
+  maxSpeed: number,
+  boxSize: number,
+  deltaTime = 1
+) {
+  b.vel.add(Vector.mul(force, deltaTime));
+  b.vel.limitLength(maxSpeed);
+
+  b.pos.add(Vector.mul(b.vel, deltaTime));
+  if (b.pos.x < 0) b.pos.x = boxSize;
+  else if (b.pos.x > boxSize) b.pos.x = 0;
+  if (b.pos.y < 0) b.pos.y = boxSize;
+  else if (b.pos.y > boxSize) b.pos.y = 0;
+  if (b.pos.z < 0) b.pos.z = boxSize;
+  else if (b.pos.z > boxSize) b.pos.z = 0;
+}
+
+export function showBoid(p: p5, b: Boid) {
+  p.push();
+  p.normalMaterial();
+  p.translate(vecToP5Vec(p, b.pos));
+  p.fill(b.color);
+  p.sphere(5);
+  p.pop();
+}
+
+export function calcFlockForce(
+  b: Boid,
+  allBoids: Boid[],
+  perceptionRadius: number,
+  maxSpeed: number,
+  maxForce: number,
+  sepMultiplier: number,
+  aliMultiplier: number,
+  cohMultiplier: number
+) {
+  const bsInView = calcBoidsInView(b, allBoids, perceptionRadius);
+  if (bsInView.length === 0) return new Vector(0, 0, 0);
+
+  const sep = calcSeparation(b, bsInView, perceptionRadius);
+  let ali = calcAlignment(b, bsInView);
+  let coh = calcCohesion(b, bsInView);
+
+  sep.mul(maxForce);
+  ali = steerForceFromVector(b, ali, maxSpeed, maxForce);
+  coh = steerTowardsDestination(b, coh, maxSpeed, maxForce);
+
+  sep.mul(sepMultiplier);
+  ali.mul(aliMultiplier);
+  coh.mul(cohMultiplier);
+  return Vector.add(sep, ali).add(coh);
+}
+
+export function calcBoidsInView(
+  b: Boid,
+  allBoids: Boid[],
+  perceptionRadius: number
+) {
+  // excluding ourself
+  let boidsInView = [];
+  for (const otherB of allBoids) {
+    if (
+      b != otherB &&
+      b.pos.dist(otherB.pos) <= perceptionRadius //&&
+      //Math.abs(this.vel.angleBetween(p5.Vector.sub(b.pos, this.pos))) <= perceptionAngle
+    )
+      boidsInView.push(otherB);
+  }
+  return boidsInView;
+}
+
+export function calcSeparation(
+  b: Boid,
+  bsInView: Boid[],
+  perceptionRadius: number
+) {
+  if (bsInView.length == 0) return new Vector(0, 0, 0);
+
+  let s = new Vector(0, 0, 0);
+
+  for (let bInView of bsInView) {
+    let pushForce = Vector.sub(b.pos, bInView.pos);
+    // scale it so the nearer the bigger the force
+    let l = pushForce.length();
+    pushForce.setLength(1 - l / perceptionRadius);
+    s.add(pushForce);
   }
 
-  setFromExisting(b: Boid) {
-    // pos should already be set
-    this.vel = b.vel.copy();
-    this.color = b.color;
-  }
-  copy() {
-    let r = new Boid(this.p, this.pos.copy());
-    r.setFromExisting(this);
-    return r;
-  }
+  s.div(bsInView.length);
+  return s;
+}
 
-  applyDestinationSteer(dest: p5.Vector, maxSpeed: number, maxForce: number) {
-    let seek = this.steerTowards(dest.copy(), maxSpeed, maxForce);
-    //seek.limit(maxForce);
-    seek.mult(0.3);
-    //console.log(seek.mag());
-    BoidUtils.addVector(this.flockForceToApply, seek);
-  }
+export function calcAlignment(b: Boid, bsInView: Boid[]) {
+  if (bsInView.length == 0) return new Vector(0, 0, 0);
 
-  calcFlockForce(
-    boids: Boid[],
-    perceptionRadius: number,
-    perceptionAngle: number,
-    maxSpeed: number,
-    maxForce: number,
-    sizeBox: p5.Vector,
-    sepMultiplier: number,
-    debug: string[]
-  ) {
-    this.flockForceToApply.set(0, 0, 0);
+  let a = b.vel.copy().normalize();
 
-    let bsInView = this.calcBoidsInView(
-      boids,
-      perceptionRadius,
-      perceptionAngle,
-      sizeBox
-    );
-    let s = this.calcSeparation(
-      bsInView,
-      perceptionRadius,
-      maxSpeed,
-      maxForce
-    ).mult(sepMultiplier);
-    let c = this.calcCohesion(bsInView, maxSpeed, maxForce).mult(0.4);
-    let a = this.calcAlignment(bsInView, maxSpeed, maxForce).mult(0.2);
+  for (let bInView of bsInView)
+    if (bInView.vel.length() > 0) a.add(bInView.vel.copy().normalize());
 
-    //console.log(`s: ${s.mag()}  c: ${c.mag()}   a: ${a.mag()} `);
+  a.div(bsInView.length + 1);
+  return a;
+}
 
-    this.flockForceToApply = BoidUtils.addVector(BoidUtils.addVector(s, c), a);
-  }
+export function calcCohesion(b: Boid, bsInView: Boid[]) {
+  if (bsInView.length == 0) return new Vector(0, 0, 0);
 
-  calcBoidsInView(
-    boids: Boid[],
-    perceptionRadius: number,
-    perceptionAngle: number,
-    sizeBox: p5.Vector
-  ) {
-    // excluding ourself
-    let bs = [];
-    for (let b of boids) {
-      let boid = BoidUtils.correctEdgeOverflowPerceptionR(
-        this.p,
-        this.pos,
-        b,
-        sizeBox,
-        perceptionRadius
-      );
+  let c = b.pos.copy();
 
-      if (
-        this != boid &&
-        this.pos.dist(boid.pos) <= perceptionRadius //&&
-        //Math.abs(this.vel.angleBetween(p5.Vector.sub(b.pos, this.pos))) <= perceptionAngle
-      )
-        bs.push(boid);
-    }
-    return bs;
-  }
+  for (let bInView of bsInView) c.add(bInView.pos);
 
-  calcSeparation(
-    bsInView: Boid[],
-    perceptionRadius: number,
-    maxSpeed: number,
-    maxForce: number
-  ) {
-    if (bsInView.length == 0) return this.p.createVector();
+  c.div(bsInView.length + 1);
+  return c;
+}
 
-    let s = this.p.createVector();
+export function steerTowardsDestination(
+  b: Boid,
+  destination: Vector,
+  maxSpeed: number,
+  maxForce: number
+) {
+  if (b.pos == destination) return new Vector(0, 0, 0);
+  const vec = destination.copy();
+  vec.sub(b.pos);
+  return steerForceFromVector(b, vec, maxSpeed, maxForce);
+}
 
-    for (let bInView of bsInView) {
-      let pushForce = p5.Vector.sub(this.pos, bInView.pos);
-      // scale it so the nearer the bigger the force
-      let l = pushForce.mag();
-      pushForce.normalize().mult(1 - l / perceptionRadius);
-      BoidUtils.addVector(s, pushForce);
-    }
-
-    s.div(bsInView.length);
-    //return this.steerForceFromVector(s, maxSpeed, maxForce);
-
-    s.mult(maxForce);
-    return s;
-  }
-  calcAlignment(bsInView: Boid[], maxSpeed: number, maxForce: number) {
-    if (bsInView.length == 0) return this.p.createVector();
-
-    let averageHeading = this.vel.copy().normalize();
-
-    for (let bInView of bsInView)
-      if (bInView.vel.mag() > 0)
-        BoidUtils.addVector(averageHeading, bInView.vel.copy().normalize());
-
-    averageHeading.div(bsInView.length + 1);
-    return this.steerForceFromVector(averageHeading, maxSpeed, maxForce);
-  }
-  calcCohesion(bsInView: Boid[], maxSpeed: number, maxForce: number) {
-    if (bsInView.length == 0) return this.p.createVector();
-
-    let centerOfMass = this.pos.copy();
-
-    for (let bInView of bsInView)
-      BoidUtils.addVector(centerOfMass, bInView.pos);
-
-    centerOfMass.div(bsInView.length + 1);
-    return this.steerTowards(centerOfMass, maxSpeed, maxForce);
-  }
-
-  steerTowards(dest: p5.Vector, maxSpeed: number, maxForce: number) {
-    if (this.pos == dest) return this.p.createVector();
-
-    dest.sub(this.pos);
-    return this.steerForceFromVector(dest, maxSpeed, maxForce);
-  }
-  steerForceFromVector(desired: p5.Vector, maxSpeed: number, maxForce: number) {
-    desired.setMag(maxSpeed);
-    desired.sub(this.vel);
-    desired.mult(maxForce / maxSpeed);
-    return desired;
-  }
-
-  update(
-    maxSpeed: number,
-    maxForce: number,
-    secondsPast: number,
-    boxSize: p5.Vector
-  ) {
-    this.flockForceToApply.limit(maxForce);
-    this.flockForceToApply.mult(secondsPast);
-    // this.vel.add(this.flockForceToApply);
-    this.vel.x += this.flockForceToApply.x;
-    this.vel.y += this.flockForceToApply.y;
-    this.vel.z += this.flockForceToApply.z;
-    // console.log(this.flockForceToApply);
-    // console.log(this.vel);
-    //console.log(this.flockForceToApply.mag());
-    this.vel.limit(maxSpeed);
-    //console.log(this.vel.mag());
-    const deltaVel = p5.Vector.mult(this.vel, secondsPast);
-    this.pos.x += deltaVel.x;
-    this.pos.y += deltaVel.y;
-    this.pos.z += deltaVel.z;
-    // this.pos.add(deltaVel);
-
-    this.pos.x = BoidUtils.correctEdgeAxis(this.pos.x, 0, boxSize.x);
-    this.pos.y = BoidUtils.correctEdgeAxis(this.pos.y, 0, boxSize.y);
-    this.pos.z = BoidUtils.correctEdgeAxis(this.pos.z, 0, boxSize.z);
-  }
-
-  show(perceptionRadius: number, perceptionAngle: number, debug: String[]) {
-    // this.p.push();
-    // this.p.strokeWeight(2);
-    // this.p.stroke(255, 0, 0);
-    // this.p.line(this.pos.x, this.pos.y, this.pos.z, this.pos.x + 200, this.pos.y, this.pos.z);
-    // this.p.stroke(0, 255, 0);
-    // this.p.line(this.pos.x, this.pos.y, this.pos.z, this.pos.x, this.pos.y + 200, this.pos.z);
-    // this.p.stroke(0, 0, 255);
-    // this.p.line(this.pos.x, this.pos.y, this.pos.z, this.pos.x, this.pos.y, this.pos.z + 200);
-    // this.p.pop();
-
-    this.p.push();
-    if (debug.includes("direction")) {
-      const perceptionDir = this.vel.copy().setMag(perceptionRadius);
-      const b = this.p.createVector(
-        this.pos.x + perceptionDir.x,
-        this.pos.y + perceptionDir.y,
-        this.pos.z + perceptionDir.z
-      );
-
-      this.p.stroke(255);
-      this.p.line(this.pos.x, this.pos.y, this.pos.z, b.x, b.y, b.z);
-    }
-
-    this.p.normalMaterial();
-    this.p.translate(this.pos);
-    this.p.fill(this.color);
-    this.p.sphere(5);
-    this.p.fill(255, 255, 255, 100);
-
-    if (debug.includes("perception")) {
-      // show cone
-      let a = this.p.createVector(0, -1, 0);
-      let cross = p5.Vector.cross(a, this.vel) as unknown as p5.Vector;
-      this.p.rotate(a.angleBetween(this.vel), cross);
-
-      let h = this.p.cos(perceptionAngle) * perceptionRadius;
-      let r = this.p.sin(perceptionAngle) * perceptionRadius;
-      this.p.translate(0, -h / 2, 0);
-      this.p.cone(r, h);
-    }
-
-    this.p.pop();
-  }
+export function steerForceFromVector(
+  b: Boid,
+  desired: Vector,
+  maxSpeed: number,
+  maxForce: number
+) {
+  const vec = desired.copy();
+  vec.setLength(maxSpeed);
+  vec.sub(b.vel);
+  vec.mul(maxForce / maxSpeed);
+  return vec;
 }

@@ -31,9 +31,6 @@ export default function FlockLights() {
         distance. A bicycle wheel with rope woven between the spokes as a
         ceiling for the spheres to hang from.
       </p>
-      <div>
-        <P5Flocking />
-      </div>
     </ProjectContainer>
   );
 }

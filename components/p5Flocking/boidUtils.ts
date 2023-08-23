@@ -1,5 +1,5 @@
 import * as p5 from "p5";
-import Boid from "./boid";
+import Boid from "./boidOld";
 
 export default class BoidUtils {
   static addVector(v1: p5.Vector, v2: p5.Vector) {
