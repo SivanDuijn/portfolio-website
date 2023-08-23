@@ -1,3 +1,4 @@
+import BoidUtils from "@/components/p5Flocking/boidUtils";
 import { getRandomInt } from "@/components/utils";
 import p5 from "p5";
 
@@ -188,7 +189,10 @@ export class CLCircle extends CircuitLineItem {
   } {
     const vec = this.vec.copy().rotate((angle / 180) * this.p.PI);
 
-    const startPos = this.startPos.copy().add(vec.copy().setMag(this.d / 2));
+    const startPos = BoidUtils.addVector(
+      this.startPos.copy(),
+      vec.copy().setMag(this.d / 2)
+    );
 
     return { startPos, vec };
   }
