@@ -13,7 +13,7 @@ export default function ChineseLanterLamp() {
         className={clsx("flex", "flex-col-reverse", "items-center", "md:block")}
       >
         <Image
-          className={clsx("float-right", "ml-0", "md:ml-8", "mb-4", "mt-8")}
+          className={clsx("float-right", "ml-0", "md:ml-8", "mb-4", "mt-2")}
           src="/imgs/projects/chinese-lantern/physalis-alkekengi.jpg"
           alt="Physalis alkekengi"
           width={300}
@@ -37,7 +37,7 @@ export default function ChineseLanterLamp() {
           maybe with a lot more lights it will have a better effect.
         </p>
       </div>
-      <div className={clsx("flex", "justify-center", "mt-16")}>
+      <div className={clsx("flex", "justify-center", "mt-6", "md:mt-16")}>
         <iframe
           className={clsx("max-w-xs", "sm:max-w-none")}
           width="560"
@@ -48,6 +48,14 @@ export default function ChineseLanterLamp() {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         ></iframe>
+      </div>
+      <div className={clsx("flex", "mt-8", "justify-center")}>
+        <Image
+          src="/imgs/projects/chinese-lantern/in-daylight.jpg"
+          alt="Physalis glow light in daylight"
+          width={300}
+          height={300}
+        />
       </div>
     </ProjectContainer>
   );

@@ -52,7 +52,8 @@ export function ProjectsOverview() {
             "py-0",
             "mr-8",
             "md:py-20",
-            "mt-8",
+            "mt-16",
+            "md:mt-6",
             "mb-16",
             "md:my-16"
           )}
@@ -68,6 +69,18 @@ export function ProjectsOverview() {
             title={"Flock Lights"}
             imgUrl={"flock-lights/thumbnail.jpeg"}
             url={"flock-lights"}
+          />
+          <ProjectCard
+            index={2}
+            title={"Book Glow Shelf"}
+            imgUrl={"book-glow-shelf/thumbnail.jpg"}
+            url={"book-glow-shelf"}
+          />
+          <ProjectCard
+            index={3}
+            title={"Dandelion Glow"}
+            imgUrl={"dandelion-glow/thumbnail.jpeg"}
+            url={"dandelion-glow"}
           />
         </div>
       </div>

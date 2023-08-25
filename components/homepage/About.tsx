@@ -92,7 +92,9 @@ export function About() {
             {/* <br /> */}
             <p className={clsx("text-sm", "md:text-base")}>
               While my academic focus is on Computer Science, my curiosity
-              extends beyond code. I harbor an interest in topics like
+              extends beyond code. I had a year break from Computer Science
+              where I attended the Hout- en Meubeleringscollege to follow my
+              woodworking ambitions. I harbor an interest in topics like
               electronic prototyping, 3D modeling, and art that combines
               technology with aspects from nature. Think about the innovative
               creations by{" "}
@@ -124,7 +126,7 @@ export function About() {
               drumming. In my free time, you&apos;ll have good chance finding me
               crafting wooden spoons or baking homemade bread. Playing the drums
               and hiking are my sources for relaxation and inspiration. And of
-              course, I enjoy having a good beer with friends.
+              course, I enjoy having a quality beer with friends.
             </p>
           </div>
           <div className={clsx("pt-4", "hidden", "md:block", "min-w-[10rem]")}>
