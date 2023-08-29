@@ -1,6 +1,7 @@
 import { ProjectContainer } from "@/components/ProjectContainer";
 import clsx from "clsx";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function FlockLights() {
   return (
@@ -27,13 +28,19 @@ export default function FlockLights() {
         <br />
         The lamp itself is crafted using WS2812b individually addressable LEDs
         attached to ping pong balls. A Raspberry Pi serves as the controller for
-        these LEDs, orchestrating a simulation of birds in flight. The Raspberry
-        Pi knows the coordinates of each ping pong ball, a task that required a
-        bit of effort to measure. This information allows it to calculate the
-        distance between each sphere and any nearby bird, thereby adjusting the
-        intensity of the LEDs accordingly. The spheres are suspended from a
-        bicycle wheel with rope woven between the spokes, forming an intriguing
-        ceiling display.
+        these LEDs the{" "}
+        <Link
+          href={"/flocking-simulation"}
+          className={clsx("underline", "hover:text-blue-300")}
+        >
+          flocking simulation
+        </Link>
+        . The Raspberry Pi knows the coordinates of each ping pong ball, a task
+        that required a bit of effort to measure. This information allows it to
+        calculate the distance between each sphere and any nearby bird, thereby
+        adjusting the intensity of the LEDs accordingly. The spheres are
+        suspended from a bicycle wheel with rope woven between the spokes,
+        forming an intriguing ceiling display.
       </p>
       <div
         className={clsx(
