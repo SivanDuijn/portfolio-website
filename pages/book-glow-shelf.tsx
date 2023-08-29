@@ -1,5 +1,6 @@
 import { ProjectContainer } from "@/components/ProjectContainer";
 import clsx from "clsx";
+import Head from "next/head";
 import Image from "next/image";
 
 export default function BookGlowShelf() {

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { UnderlineSVG } from "./UnderlineSVG";
 import { ReactNode } from "react";
 import Link from "next/link";
+import Head from "next/head";
 
 export type ProjectContainerProps = {
   title: string;
@@ -23,6 +24,9 @@ export function ProjectContainer(props: ProjectContainerProps) {
         "min-h-screen"
       )}
     >
+      <Head>
+        <title>{props.title}</title>
+      </Head>
       <Link
         href={"/#projects"}
         className={clsx(

@@ -82,6 +82,18 @@ export function ProjectsOverview() {
             imgUrl={"dandelion-glow/thumbnail.jpeg"}
             url={"dandelion-glow"}
           />
+          <ProjectCard
+            index={4}
+            title={"Flocking Simulation"}
+            imgUrl={"flocking-simulation/thumbnail.png"}
+            url={"flocking-simulation"}
+          />
+          <ProjectCard
+            index={5}
+            title={"Model Search Engine"}
+            imgUrl={"3D-model-search-engine/thumbnail.png"}
+            url={"3D-model-search-engine"}
+          />
         </div>
       </div>
     </div>

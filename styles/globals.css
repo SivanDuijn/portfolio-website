@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,6 +13,10 @@
     --translateYSkyBlue: -10rem;
     --translateYBlue: 10rem 16rem;
   }
+}
+
+select {
+  background-color: #2b2a33;
 }
 
 .backgroundColorShadowSkyBlue::after {

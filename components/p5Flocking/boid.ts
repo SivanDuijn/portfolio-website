@@ -28,11 +28,23 @@ export function updateBoid(
 }
 
 export function showBoid(p: p5, b: Boid) {
+  const h = 24;
+
   p.push();
   p.normalMaterial();
-  p.translate(vecToP5Vec(p, b.pos));
   p.fill(b.color);
-  p.sphere(5);
+  // p.sphere(5);
+
+  const y = p.createVector(0, 1, 0);
+  const v = vecToP5Vec(p, b.vel);
+  const theta = v.angleBetween(y);
+  const n = y.cross(v).div(p.sin(theta));
+
+  p.translate(vecToP5Vec(p, b.pos));
+  p.translate(p.createVector(0, h / 2, 0));
+  p.rotate(theta, [n.x, n.y, n.z]);
+
+  p.cone(5, h, 0);
   p.pop();
 }
 

@@ -17,7 +17,7 @@ export type P5FlockingProps = {
 export function P5Flocking(props: P5FlockingProps) {
   const flock = useRef<Flock>();
 
-  const amount = 300;
+  const amount = 400;
   const perceptionRadius = 100;
   const maxSpeed = 2;
   const maxForce = 0.03;
@@ -25,13 +25,13 @@ export function P5Flocking(props: P5FlockingProps) {
   const sepMultiplier = useRef(5);
   const aliMultiplier = useRef(0.15);
   const cohMultiplier = useRef(0.4);
-  const seekMultiplier = 0.1;
+  const seekMultiplier = 0.08;
 
   const boxSize = 1000;
 
   const size = props.size ?? 700;
 
-  const deltaTimeModifier = 0.8;
+  const deltaTimeModifier = 0.5;
 
   // possible values:
   // "first"            to only apply debugsettings for the first bird
@@ -103,7 +103,9 @@ export function P5Flocking(props: P5FlockingProps) {
   return (
     <div className={clsx("flex", "flex-col", "justify-center", "items-center")}>
       <span className={clsx("border-2")}>
-        <Sketch setup={setup} draw={draw} />
+        <div className={clsx("overflow-hidden", "max-w-[80vw]")}>
+          <Sketch setup={setup} draw={draw} />
+        </div>
       </span>
       <div
         className={clsx(
@@ -142,7 +144,7 @@ export function P5Flocking(props: P5FlockingProps) {
           />
         </div>
         <div>
-          <p>Alignment</p>
+          <p>Cohesion</p>
           <input
             type="range"
             min="0"
