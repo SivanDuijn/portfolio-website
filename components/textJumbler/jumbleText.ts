@@ -118,5 +118,5 @@ export function jumbleText(
     jumbleDown(initialText, { min: 0, max: initialText.length - 1 }, [
       ...changeInto,
     ]);
-  }, waitBetweenMs);
+  }, 1000);
 }
