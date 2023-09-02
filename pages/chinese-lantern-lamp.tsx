@@ -20,13 +20,13 @@ export default function ChineseLanterLamp() {
           height={300}
         />
         <p className={clsx("text-justify")}>
-          A decorative mood light made from the seed shells of chinese lantern
-          plant (Physalis alkekengi). It uses copper wire from a microwave,
-          orange LED&apos;s and a piece of birch wood for the trunk. In this
-          piece of birch wood an Arduino nano is hidden as the brains for this
-          lamp. A simple switch is provided to turn the lamp on and of. There
-          are two lighting modes, one were all lanterns are on, and one where
-          they slowly fade in and out.
+          A decorative mood light made from the seed shells of the chinese
+          lantern plant (Physalis alkekengi). It uses copper wire from a
+          microwave, orange LED&apos;s and a piece of birch wood for the trunk.
+          In this piece of birch wood an Arduino nano is hidden as the brains
+          for this lamp. A simple switch is provided to turn the lamp on and of.
+          There are two lighting modes, one were all lanterns are on, and one
+          where they slowly fade in and out.
           <br />
           <br />
           On this Arduino nano an algorithm runs that lights the lantern shells
