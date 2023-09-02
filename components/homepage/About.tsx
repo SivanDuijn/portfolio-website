@@ -113,9 +113,9 @@ export function About() {
               >
                 Studio Roosegaarde
               </a>
-              . You can see I have build projects featuring Arduinos, Raspberry
-              Pi&apos;s and LED&apos;s combined with materials nature has to
-              offer like wood and dandelion seeds.
+              . I have build projects featuring Arduinos, Raspberry Pi&apos;s
+              and LED&apos;s combined with materials nature has to offer like
+              wood and dandelion seeds.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>
               Balance in Life
