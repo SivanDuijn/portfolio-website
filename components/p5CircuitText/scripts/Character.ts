@@ -50,15 +50,22 @@ export default class Character {
     this.calcCLLineVectors();
   }
 
-  showText() {
-    // this.p.noStroke();
-    this.p.text(this.char, this.pos.x, this.pos.y);
-    // this.p.stroke('red'); // Change the color
-    // this.p.strokeWeight(2); // Make the points 10 pixels in size
-    // this.cLines.forEach((cl) => {
-    //   this.p.point(cl.pos.x, cl.pos.y);
-    //   // this.p5.line(cl.pos.x, cl.pos.y, cl.pos.x + cl.vec.x * 10, cl.pos.y + cl.vec.y * 10);
-    // });
+  showText(debug?: boolean) {
+    if (debug) {
+      this.p.noStroke();
+      this.p.text(this.char, this.pos.x, this.pos.y);
+      this.p.stroke("red"); // Change the color
+      this.p.strokeWeight(2); // Make the points 10 pixels in size
+      this.cLines.forEach((cl) => {
+        // this.p.point(cl.pos.x, cl.pos.y);
+        this.p.line(
+          cl.pos.x,
+          cl.pos.y,
+          cl.pos.x + cl.vec.x * 15,
+          cl.pos.y + cl.vec.y * 15
+        );
+      });
+    } else this.p.text(this.char, this.pos.x, this.pos.y);
   }
 
   showCircuitLines(color: p5.Color) {

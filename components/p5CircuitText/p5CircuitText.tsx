@@ -15,25 +15,30 @@ export default function P5CircuitText({
   spacing = 10,
   height = 190,
   color = "#FFFFFF",
+  debug,
 }: {
   text: string;
   fontSize: number;
   spacing?: number;
   height?: number;
   color?: string;
+  debug?: boolean;
 }) {
   const circuitText = useRef<Text>();
 
   useEffect(() => {
-    if (circuitText.current)
-      circuitText.current.changeText(text, {
-        newFontSize: fontSize,
-        newSpacing: spacing,
-      });
+    setTimeout(() => {
+      if (circuitText.current)
+        circuitText.current.changeText(text, {
+          newFontSize: fontSize,
+          newSpacing: spacing,
+        });
+    }, 100);
   }, [text, fontSize, spacing]);
 
   //See annotations in JS for more information
   const setup = (p: p5, canvasParentRef: Element) => {
+    console.log("setup");
     const font = p.loadFont("/fonts/Aileron-Bold.otf", () => {
       const x = p.createCanvas(700, height).parent(canvasParentRef);
       (x as any).drawingContext.shadowBlur = 16;
@@ -65,7 +70,7 @@ export default function P5CircuitText({
 
       p.fill(color);
       p.noStroke();
-      cText.showText();
+      cText.showText(debug);
     }
   }
 

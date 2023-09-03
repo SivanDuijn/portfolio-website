@@ -1,5 +1,5 @@
-import p5 from 'p5';
-import Character from './Character';
+import p5 from "p5";
+import Character from "./Character";
 
 export default class Text {
   private chars: Character[] = [];
@@ -12,31 +12,46 @@ export default class Text {
   public fontSize: number;
   public spacing: number;
 
-  constructor(p: p5, str: string, font: p5.Font, fontSize: number, spacing = 20) {
+  constructor(
+    p: p5,
+    str: string,
+    font: p5.Font,
+    fontSize: number,
+    spacing = 20
+  ) {
     this.p = p;
     this.str = str;
     this.font = font;
     this.fontSize = fontSize;
     this.spacing = spacing;
 
-    if (str.length == 0) console.log('Text cannot be empty!');
+    if (str.length == 0) console.log("Text cannot be empty!");
 
     this.p.textFont(this.font);
     this.p.textSize(this.fontSize);
   }
 
   generateChars() {
-    let letters = this.str.split('');
+    let letters = this.str.split("");
     this.chars = [];
 
     letters.forEach((e) => {
       let newChar;
 
       if (this.chars.length == 0)
-        newChar = new Character(this.p, this.font, this.fontSize, this.p.createVector(0, 0), e);
+        newChar = new Character(
+          this.p,
+          this.font,
+          this.fontSize,
+          this.p.createVector(0, 0),
+          e
+        );
       else {
         let c = this.chars[this.chars.length - 1];
-        let pos = this.p.createVector(c.pos.x + c.width + this.spacing, c.pos.y);
+        let pos = this.p.createVector(
+          c.pos.x + c.width + this.spacing,
+          c.pos.y
+        );
         newChar = new Character(this.p, this.font, this.fontSize, pos, e);
       }
 
@@ -74,8 +89,8 @@ export default class Text {
     };
   }
 
-  showText() {
-    this.chars.forEach((c) => c.showText());
+  showText(debug?: boolean) {
+    this.chars.forEach((c) => c.showText(debug));
   }
 
   updateCircuitLines() {
@@ -85,8 +100,11 @@ export default class Text {
     this.chars.forEach((c) => c.showCircuitLines(color));
   }
 
-  changeText(str: string, args?: { newFontSize?: number; newSpacing?: number }) {
-    if (str.length == 0) console.log('Text cannot be empty!');
+  changeText(
+    str: string,
+    args?: { newFontSize?: number; newSpacing?: number }
+  ) {
+    if (str.length == 0) console.log("Text cannot be empty!");
 
     if (args?.newFontSize) {
       this.fontSize = args.newFontSize;

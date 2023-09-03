@@ -94,6 +94,12 @@ export function ProjectsOverview() {
             imgUrl={"3D-model-search-engine/thumbnail.png"}
             url={"3D-model-search-engine"}
           />
+          <ProjectCard
+            index={6}
+            title={"Circuit Text"}
+            imgUrl={"circuit-text/thumbnail.png"}
+            url={"circuit-text"}
+          />
         </div>
       </div>
     </div>

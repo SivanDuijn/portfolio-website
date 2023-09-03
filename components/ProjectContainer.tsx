@@ -7,7 +7,7 @@ import Head from "next/head";
 
 export type ProjectContainerProps = {
   title: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   index: number;
   children?: ReactNode;
 };
@@ -60,7 +60,8 @@ export function ProjectContainer(props: ProjectContainerProps) {
           "px-8",
           "sm:px-16",
           "py-20",
-          "sm:py-24"
+          "sm:py-24",
+          "overflow-x-hidden"
         )}
       >
         <div
@@ -74,12 +75,14 @@ export function ProjectContainer(props: ProjectContainerProps) {
             "pb-16"
           )}
         >
-          <Image
-            src={props.thumbnailUrl}
-            width={200}
-            height={200}
-            alt={"Image for " + props.title}
-          />
+          {props.thumbnailUrl && (
+            <Image
+              src={props.thumbnailUrl}
+              width={200}
+              height={200}
+              alt={"Image for " + props.title}
+            />
+          )}
           <div>
             <div className={clsx("py-6", "pl-0", "lg:pl-16", "inline-block")}>
               <h2
