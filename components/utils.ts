@@ -8,7 +8,10 @@ export function replaceCharAt(
   index: number
 ): string {
   if (index > str.length - 1) return str;
-  return str.substring(0, index) + char + str.substring(index + 1);
+  let a = str.split("");
+  a[index] = char;
+  return a.join("");
+  // return str.substring(0, index) + char + str.substring(index + 1);
 }
 
 export function shuffle<T>(array: T[]) {

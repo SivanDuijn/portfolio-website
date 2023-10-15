@@ -24,7 +24,7 @@ export function Welcome() {
       {
         url: "#about",
         title: "About",
-        description: "Delve deeper into my persona and interests.",
+        description: "More about me and my interests.",
       },
       {
         url: "#contact",

@@ -56,7 +56,7 @@ export function jumbleText(
           changeIntoArr,
           ++iteration
         );
-      }, 5);
+      }, 1);
     else if (changeIntoArr.length > 0)
       setTimeout(() => {
         jumbleDown(text, { min: 0, max: text.length - 1 }, changeIntoArr);
