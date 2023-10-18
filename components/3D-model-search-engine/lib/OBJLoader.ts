@@ -1,6 +1,6 @@
 import OBJParser from "obj-file-parser-ts";
 import * as THREE from "three";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 
 /** Parses and loads a .obj model */
 export default function LoadOBJModel(model: string): THREE.BufferGeometry {
