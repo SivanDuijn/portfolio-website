@@ -32,7 +32,7 @@ export function Welcome() {
         description: "Find out how to best contact me.",
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -49,15 +49,11 @@ export function Welcome() {
         "sm:p-24",
         "m-0",
         "relative",
-        "overflow-x-hidden"
+        "overflow-x-hidden",
       )}
     >
       <div
-        className={clsx(
-          "absolute",
-          "backgroundColorShadowSkyBlue",
-          "backgroundColorShadowBlue"
-        )}
+        className={clsx("absolute", "backgroundColorShadowSkyBlue", "backgroundColorShadowBlue")}
       ></div>
 
       <div className={clsx("z-10")}>
@@ -65,13 +61,10 @@ export function Welcome() {
       </div>
 
       <JumblingText
-        initialText=""
-        changeInto={[
+        texts={[
           "My name is Sivan Duijn",
           "Take a look around",
-          "Make yourself at home",
-          "Grab a coffee or tea",
-          "Sit back and enjoy!",
+          "Enjoy!",
           "•͡˘㇁•͡˘",
           "ʕ·͡ᴥ·ʔ",
           "	ʕノ•ᴥ•ʔノ ︵ ┻━┻",
@@ -79,14 +72,7 @@ export function Welcome() {
           "(◕ᴥ◕ʋ)",
         ]}
         repeat
-        className={clsx(
-          "mb-16",
-          "font-mono",
-          "text-xl",
-          "sm:text-3xl",
-          "font-extrabold",
-          "z-10"
-        )}
+        className={clsx("mb-16", "font-mono", "text-xl", "sm:text-3xl", "font-extrabold", "z-10")}
       />
 
       <div
@@ -101,7 +87,7 @@ export function Welcome() {
           "lg:max-w-5xl",
           "lg:w-full",
           "mb-8",
-          "lg:m-0"
+          "lg:m-0",
         )}
       >
         {links.map((link) => (
@@ -116,18 +102,12 @@ export function Welcome() {
               "border-transparent",
               "px-5",
               "py-2",
-              "lg:py-4"
+              "lg:py-4",
             )}
           >
             <div>
               <h2
-                className={clsx(
-                  "inline-block",
-                  "mb-3",
-                  "text-xl",
-                  "lg:text-2xl",
-                  "font-semibold"
-                )}
+                className={clsx("inline-block", "mb-3", "text-xl", "lg:text-2xl", "font-semibold")}
               >
                 {link.title}
                 {/* <span
@@ -159,7 +139,7 @@ export function Welcome() {
                   "text-sm",
                   "opacity-50",
                   "hidden",
-                  "lg:block"
+                  "lg:block",
                 )}
               >
                 {link.description}
@@ -184,12 +164,10 @@ export function Welcome() {
           "from-sky-900/50",
           "font-serif",
           "text-3xl",
-          "text-gray-400"
+          "text-gray-400",
         )}
       >
-        <span className={clsx("group-hover:translate-y-2", "transition")}>
-          &#8595;
-        </span>
+        <span className={clsx("group-hover:translate-y-2", "transition")}>&#8595;</span>
       </a>
     </div>
   );

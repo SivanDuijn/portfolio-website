@@ -30,7 +30,7 @@ export class CLLineStart extends CircuitLineItem {
   private vec: p5.Vector;
   private length = 0;
   private maxLength = 3;
-  private velocity = 0.1;
+  private velocity = 0.17;
   private endPos: p5.Vector; // the end of the line
   public type = "CLLineStart";
 
@@ -40,7 +40,7 @@ export class CLLineStart extends CircuitLineItem {
 
     this.endPos = this.p.createVector(
       this.startPos.x + this.vec.x * this.maxLength,
-      this.startPos.y + this.vec.y * this.maxLength
+      this.startPos.y + this.vec.y * this.maxLength,
     );
   }
 
@@ -62,15 +62,9 @@ export class CLLineStart extends CircuitLineItem {
         this.startPos.x,
         this.startPos.y,
         this.startPos.x + this.vec.x * this.length,
-        this.startPos.y + this.vec.y * this.length
+        this.startPos.y + this.vec.y * this.length,
       );
-    else
-      this.p.line(
-        this.startPos.x,
-        this.startPos.y,
-        this.endPos.x,
-        this.endPos.y
-      );
+    else this.p.line(this.startPos.x, this.startPos.y, this.endPos.x, this.endPos.y);
     // Reset default values
     this.p.strokeWeight(3);
     this.p.strokeCap(this.p.ROUND);
@@ -91,7 +85,7 @@ export class CLLine extends CircuitLineItem {
   private vec: p5.Vector;
   private length = 0;
   private maxLength;
-  private velocity = 0.1;
+  private velocity = 0.17;
   private endPos: p5.Vector; // the end of the line
   public type = "CLLine";
 
@@ -103,7 +97,7 @@ export class CLLine extends CircuitLineItem {
 
     this.endPos = this.p.createVector(
       this.startPos.x + this.vec.x * this.maxLength,
-      this.startPos.y + this.vec.y * this.maxLength
+      this.startPos.y + this.vec.y * this.maxLength,
     );
   }
 
@@ -124,15 +118,9 @@ export class CLLine extends CircuitLineItem {
         this.startPos.x,
         this.startPos.y,
         this.startPos.x + this.vec.x * this.length,
-        this.startPos.y + this.vec.y * this.length
+        this.startPos.y + this.vec.y * this.length,
       );
-    else
-      this.p.line(
-        this.startPos.x,
-        this.startPos.y,
-        this.endPos.x,
-        this.endPos.y
-      );
+    else this.p.line(this.startPos.x, this.startPos.y, this.endPos.x, this.endPos.y);
   }
 
   generateNextLineItemVectors(angle = 0): {
@@ -150,7 +138,7 @@ export class CLCircle extends CircuitLineItem {
   private vec: p5.Vector;
   private a = 0; // alpha to use if not finished
   private d: number; // diameter
-  private speed = 4;
+  private speed = 7;
 
   constructor(p: p5, pos: p5.Vector, vec: p5.Vector, diameter: number) {
     super(p, pos);

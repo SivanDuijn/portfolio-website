@@ -1,122 +1,101 @@
-import { getRandomInt, replaceCharAt, shuffle } from "../utils";
+import { getRandomInt } from "../utils";
 
 export function jumbleText(
-  initialText: string,
-  changeInto: string[],
+  texts: string[],
   update: (text: string) => void,
-  args?: { waitBetweenMs?: number; repeat?: boolean }
+  args?: { waitBetweenMs?: number; repeat?: boolean },
 ) {
   const waitBetweenMs = args?.waitBetweenMs ?? 2000;
 
+  const textsArrays = texts.map((text) => Array.from(text).map((c) => (c === " " ? "\u00A0" : c)));
+
   const jumbleInto = (
-    text: string,
-    toText: string,
+    current: string[], // Assume same size as target, but with empty spaces
+    target: string[],
     range: { min: number; max: number }, // range of char indices allowed to change
-    unCorrectIndices: number[],
-    changeIntoArr: string[],
-    iteration = 0
+    correctIndices: Set<number>,
+    remainingTargets: string[][],
+    iteration = 0,
   ) => {
-    for (let i = 0; i <= (range.max - range.min) / 7; i++) {
-      let randomCharCode = 64 + getRandomInt(58);
-      if (randomCharCode === 64) randomCharCode = 160;
-      const randomChar = String.fromCharCode(randomCharCode);
-      let randomIndex = range.min + getRandomInt(range.max - range.min + 1);
+    for (let i = range.min; i <= range.max; i++) {
+      if (correctIndices.has(i)) continue;
 
-      // Don't allow to change a char that belongs in toText
-      // or into a whitespace on both ends
-      if (
-        !unCorrectIndices.includes(randomIndex) ||
-        ((randomIndex === range.min || randomIndex === range.max) &&
-          randomCharCode == 160)
-      )
-        continue;
+      if (range.min === 0 && getRandomInt(4) === 0) {
+        current[i] = target[i];
+        correctIndices.add(i);
+      } else {
+        let randomCharCode = 64 + getRandomInt(58);
+        if (randomCharCode === 64) randomCharCode = 160;
+        current[i] = String.fromCharCode(randomCharCode);
+      }
 
-      text = replaceCharAt(text, randomChar, randomIndex);
+      // if (current[i] === target[i]) correctIndices.add(i);
     }
 
-    if (range.min === 0 && iteration % 10 == 0) {
-      const i = unCorrectIndices.pop();
-      if (i !== undefined) text = replaceCharAt(text, toText.charAt(i), i);
-    }
+    update(current.join(""));
 
-    update(text);
-
-    if (range.min > 0 && iteration % 15 == 0) {
+    if (range.min > 0 && iteration % 2 == 0) {
       range.min--;
       range.max++;
     }
 
-    if (unCorrectIndices.length !== 0)
+    if (correctIndices.size !== target.length)
       setTimeout(() => {
-        jumbleInto(
-          text,
-          toText,
-          range,
-          unCorrectIndices,
-          changeIntoArr,
-          ++iteration
-        );
-      }, 1);
-    else if (changeIntoArr.length > 0)
+        jumbleInto(current, target, range, correctIndices, remainingTargets, ++iteration);
+      }, 50);
+    else if (remainingTargets.length > 0)
       setTimeout(() => {
-        jumbleDown(text, { min: 0, max: text.length - 1 }, changeIntoArr);
+        jumbleDown(current, { min: 0, max: current.length - 1 }, remainingTargets);
       }, waitBetweenMs);
     else if (args?.repeat)
       setTimeout(() => {
-        jumbleDown(text, { min: 0, max: text.length - 1 }, [...changeInto]);
+        jumbleDown(current, { min: 0, max: current.length - 1 }, [...textsArrays]);
       }, waitBetweenMs + 2000);
   };
 
   const jumbleDown = (
-    text: string,
+    current: string[],
     range: { min: number; max: number },
-    changeIntoArr: string[],
-    iteration = 0
+    remainingTargets: string[][],
+    iteration = 0,
   ) => {
-    for (let i = 0; i <= (range.max - range.min) / 7; i++) {
+    for (let i = range.min; i <= range.max; i++) {
       let randomCharCode = 64 + getRandomInt(58);
       if (randomCharCode === 64) randomCharCode = 160;
-      const randomChar = String.fromCharCode(randomCharCode);
-      let randomIndex = range.min + getRandomInt(range.max - range.min + 1);
-
-      text = replaceCharAt(text, randomChar, randomIndex);
+      current[i] = String.fromCharCode(randomCharCode);
     }
 
-    if (range.max - range.min >= 0 && iteration % 15 == 0) {
-      text = replaceCharAt(text, "\u00A0", range.min);
-      text = replaceCharAt(text, "\u00A0", range.max);
+    if (range.max - range.min >= 0 && iteration % 2 == 0) {
+      current[range.min] = "\u00A0";
+      current[range.max] = "\u00A0";
 
       range.min++;
       range.max--;
     }
 
-    update(text);
+    update(current.join(""));
 
     if (range.max - range.min < 0) {
       // Done with jumbling down
-      const toText = changeIntoArr.splice(0, 1)[0];
-      if (!toText) return;
+      const target = remainingTargets.shift();
+      if (!target) return;
 
-      const halfLength = toText.length >> 1;
+      const halfLength = target.length >> 1;
       const max = halfLength;
       let min = halfLength;
-      if (toText.length % 2 == 0) min--;
+      if (target.length % 2 == 0) min--;
 
-      toText.replace(" ", "\u00A0");
       jumbleInto(
-        "\u00A0".repeat(toText.length),
-        toText,
+        Array(target.length).fill("\u00A0"),
+        target,
         { min, max },
-        shuffle(Array.from({ length: toText.length }, (_, index) => index)),
-        changeIntoArr
+        new Set<number>(),
+        remainingTargets,
       );
-    } else
-      setTimeout(() => jumbleDown(text, range, changeIntoArr, ++iteration), 5);
+    } else setTimeout(() => jumbleDown(current, range, remainingTargets, ++iteration), 50);
   };
 
   setTimeout(() => {
-    jumbleDown(initialText, { min: 0, max: initialText.length - 1 }, [
-      ...changeInto,
-    ]);
+    jumbleDown([], { min: 1, max: 0 }, [...textsArrays]);
   }, 1000);
 }
