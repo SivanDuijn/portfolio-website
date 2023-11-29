@@ -40,7 +40,7 @@ export function Welcome() {
       id="top"
       className={clsx(
         "flex",
-        "min-h-screen",
+        "min-h-[100svh]",
         "flex-col",
         "items-center",
         "justify-between",
@@ -49,7 +49,7 @@ export function Welcome() {
         "sm:p-24",
         "m-0",
         "relative",
-        "overflow-x-hidden",
+        "overflow-hidden",
       )}
     >
       <div

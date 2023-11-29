@@ -23,14 +23,11 @@ select {
   position: absolute;
   content: "";
   width: 750px;
-  height: 700px;
+  height: 750px;
   border-radius: 300px;
   filter: blur(100px);
   transform: translateX(-80%) translateY(var(--translateYSkyBlue)) rotate(40deg);
-  background: radial-gradient(
-    rgba(2, 132, 199, 0.7) 50px,
-    black 50%
-  ); /* rgba(196, 55, 0, 0.74)  */
+  background: radial-gradient(rgba(2, 132, 199, 0.7) 50px, black 50%); /* rgba(196, 55, 0, 0.74)  */
 }
 .backgroundColorShadowBlue::before {
   box-shadow: var(--translateYBlue) 329px 180px rgba(17, 148, 255, 0.5); /* rgba(221, 11, 0, 0.49) */
