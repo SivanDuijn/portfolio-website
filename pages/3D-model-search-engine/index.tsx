@@ -13,19 +13,17 @@ export default function ModelSearchEngineOverview() {
       thumbnailUrl="/imgs/projects/3D-model-search-engine/thumbnail.png"
     >
       <p className={clsx("mb-8")}>
-        This is a multimedia retrieval pipeline build for the course Multimedia
-        Retrieval at Utrecht University. It is a 3D search engine that takes as
-        input a 3D model, and gives as output the top 10 closest models that
-        should look similar. Each model in the database is normalized, that is,
-        it is put in a unit box, uniformed the number of vertices and oriented
-        using PCA. Then, each model in the database is compared against each
-        based on certain descriptors and histograms.
+        This is a multimedia retrieval pipeline build for the course Multimedia Retrieval at Utrecht
+        University. It is a 3D search engine that takes as input a 3D model, and gives as output the
+        top 10 closest models that should look similar. Each model in the database is normalized,
+        that is, it is put in a unit box, uniformed the number of vertices and oriented using PCA.
+        Then, the models are compared against each other based on certain descriptors and
+        histograms.
         <br />
         <br />
-        Previously it was possible to upload a model and query the database
-        against it, but currently, there is backend connected to preprocess the
-        uploaded model. It is still a cool showcase for visualizing models and
-        seeing which ones are the most similar.
+        Previously it was possible to upload a model and query the database against it. But,
+        currently, there is no backend connected to preprocess the uploaded model. It is still a
+        valuable showcase for visualizing models and seeing which ones are the most similar.
       </p>
 
       <div className={clsx("text-center")}>
@@ -36,7 +34,7 @@ export default function ModelSearchEngineOverview() {
             "underline",
             "text-blue-400",
             "hover:text-blue-600",
-            "font-bold"
+            "font-bold",
           )}
           target="_blank"
         >
