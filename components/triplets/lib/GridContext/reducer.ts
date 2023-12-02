@@ -1,10 +1,10 @@
-import { getPlaneGrid } from ".";
+import { getEmptyShapePlanes } from ".";
 
 export interface GridState {
   gridSize: number;
-  leftPlaneGrid: number[][];
-  rightPlaneGrid: number[][];
-  bottomPlaneGrid: number[][];
+  xyShapePlane: number[][];
+  xzShapePlane: number[][];
+  yzShapePlane: number[][];
 }
 
 // Actions:
@@ -16,7 +16,7 @@ export enum GridActionKind {
 
 export interface ChangePlaneGridAction {
   type: GridActionKind.ChangePlaneGrid;
-  payload: { plane: "left" | "right" | "bottom"; i: number; j: number; value: number };
+  payload: { plane: "xy" | "xz" | "yz"; i: number; j: number; value: number };
 }
 export interface ChangeGridSizeAction {
   type: GridActionKind.ChangeGridSize;
@@ -24,7 +24,7 @@ export interface ChangeGridSizeAction {
 }
 export interface ResetPlaneGridAction {
   type: GridActionKind.ResetPlaneGrid;
-  payload: "left" | "right" | "bottom";
+  payload: "xy" | "xz" | "yz";
 }
 //
 
@@ -34,32 +34,43 @@ export function gridReducer(state: GridState, action: GridActions) {
   const { type, payload } = action;
   switch (type) {
     case GridActionKind.ChangePlaneGrid:
-      if (payload.plane === "left") state.leftPlaneGrid[payload.i][payload.j] = payload.value;
-      else if (payload.plane === "right")
-        state.rightPlaneGrid[payload.i][payload.j] = payload.value;
-      else if (payload.plane === "bottom")
-        state.bottomPlaneGrid[payload.i][payload.j] = payload.value;
-
-      return { ...state, leftPlaneGrid: [...state.leftPlaneGrid] };
+      switch (payload.plane) {
+        case "xy":
+          state.xyShapePlane[payload.i][payload.j] = payload.value;
+          return { ...state, xyShapePlane: [...state.xyShapePlane] };
+        case "xz":
+          state.xzShapePlane[payload.i][payload.j] = payload.value;
+          return { ...state, xzShapePlane: [...state.xzShapePlane] };
+        case "yz":
+          state.yzShapePlane[payload.i][payload.j] = payload.value;
+          return { ...state, yzShapePlane: [...state.yzShapePlane] };
+      }
+      break;
     case GridActionKind.ChangeGridSize:
-      console.log(payload);
       return {
         ...state,
-        ...getPlaneGrid(payload),
+        ...getEmptyShapePlanes(payload),
         gridSize: payload,
       };
     case GridActionKind.ResetPlaneGrid:
-      // eslint-disable-next-line no-case-declarations
-      let planeGrid = state.rightPlaneGrid;
-      if (payload === "left") planeGrid = state.leftPlaneGrid;
-      else if (payload === "right") planeGrid = state.rightPlaneGrid;
-      else if (payload === "bottom") planeGrid = state.bottomPlaneGrid;
-
-      planeGrid.forEach((row) => {
-        for (let i = 0; i < row.length; i++) row[i] = 0;
-      });
-
-      return { ...state, leftPlaneGrid: [...state.leftPlaneGrid] };
+      switch (payload) {
+        case "xy":
+          state.xyShapePlane.forEach((row) => {
+            for (let i = 0; i < row.length; i++) row[i] = 0;
+          });
+          return { ...state, xyShapePlane: [...state.xyShapePlane] };
+        case "xz":
+          state.xzShapePlane.forEach((row) => {
+            for (let i = 0; i < row.length; i++) row[i] = 0;
+          });
+          return { ...state, xzShapePlane: [...state.xzShapePlane] };
+        case "yz":
+          state.yzShapePlane.forEach((row) => {
+            for (let i = 0; i < row.length; i++) row[i] = 0;
+          });
+          return { ...state, yzShapePlane: [...state.yzShapePlane] };
+      }
+      break;
     default:
       return state;
   }

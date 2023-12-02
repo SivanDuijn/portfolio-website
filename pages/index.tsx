@@ -1,11 +1,11 @@
-import { Inter } from "next/font/google";
 import clsx from "clsx";
-import { Welcome } from "@/components/homepage/Welcome";
-import { ProjectsOverview } from "@/components/homepage/ProjectsOverview";
+import { Inter } from "next/font/google";
+import Head from "next/head";
 import { About } from "@/components/homepage/About";
 import { Contact } from "@/components/homepage/Contact";
 import { Footer } from "@/components/homepage/Footer";
-import Head from "next/head";
+import { ProjectsOverview } from "@/components/homepage/ProjectsOverview";
+import { Welcome } from "@/components/homepage/Welcome";
 
 const inter = Inter({ subsets: ["latin"] });
 

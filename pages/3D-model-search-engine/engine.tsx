@@ -1,17 +1,16 @@
+import clsx from "clsx";
+import Head from "next/head";
+import React, { useCallback, useRef } from "react";
+import { Toaster } from "react-hot-toast";
 import DescriptorHistograms from "@/components/3D-model-search-engine/DescriptorHistograms";
+import { ModelProvider } from "@/components/3D-model-search-engine/lib/contexts";
+import { MemoizedViewGLCanvas } from "@/components/3D-model-search-engine/model-viewer/ModelViewer";
+import ThreeJSViewGL from "@/components/3D-model-search-engine/model-viewer/viewGL";
 import ModelDescriptors from "@/components/3D-model-search-engine/ModelDescriptors";
 import ModelInformation from "@/components/3D-model-search-engine/ModelInformation";
 import ModelSelector from "@/components/3D-model-search-engine/ModelSelector";
 import Settings from "@/components/3D-model-search-engine/Settings";
 import TopClosestModels from "@/components/3D-model-search-engine/TopClosestModels";
-import { ModelProvider } from "@/components/3D-model-search-engine/lib/contexts";
-import { MemoizedViewGLCanvas } from "@/components/3D-model-search-engine/model-viewer/ModelViewer";
-import ThreeJSViewGL from "@/components/3D-model-search-engine/model-viewer/viewGL";
-import clsx from "clsx";
-import Head from "next/head";
-import React from "react";
-import { useCallback, useRef } from "react";
-import { Toaster } from "react-hot-toast";
 
 export default function ModelSearchEngine() {
   const viewGL = useRef<ThreeJSViewGL>();
@@ -32,12 +31,8 @@ export default function ModelSearchEngine() {
           </Head>
           <div className={clsx("grid", "lg:grid-cols-[1fr_auto_1fr]")}>
             <div className={clsx("grid", "lg:grid-rows-[auto_1fr]")}>
-              <ModelSelector
-                className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")}
-              />
-              <Settings
-                className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")}
-              />
+              <ModelSelector className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")} />
+              <Settings className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")} />
             </div>
             <div>
               <MemoizedViewGLCanvas
@@ -46,17 +41,11 @@ export default function ModelSearchEngine() {
               />
             </div>
             <div className={clsx("grid", "lg:grid-rows-[auto_1fr]")}>
-              <ModelInformation
-                className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")}
-              />
-              <ModelDescriptors
-                className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")}
-              />
+              <ModelInformation className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")} />
+              <ModelDescriptors className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")} />
             </div>
           </div>
-          <TopClosestModels
-            className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")}
-          />
+          <TopClosestModels className={clsx("border-2", "border-slate-200", "mx-2", "mt-4")} />
           <DescriptorHistograms
             className={clsx(
               "border-2",
@@ -65,7 +54,7 @@ export default function ModelSearchEngine() {
               "mt-4",
               "mb-2",
               "flex-grow",
-              "min-w-[600px]"
+              "min-w-[600px]",
             )}
           />
         </div>

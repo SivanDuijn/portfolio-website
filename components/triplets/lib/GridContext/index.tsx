@@ -1,24 +1,23 @@
-import { createContext, ReactElement, useReducer, Dispatch } from "react";
+import { createContext, ReactElement, useReducer, Dispatch, useMemo } from "react";
 import { GridActions, GridState, gridReducer } from "./reducer";
 
 const initGridSize = 5;
-export function getPlaneGrid(gridSize: number) {
+
+const empty2DList = (size: number) =>
+  Array(size)
+    .fill([])
+    .map(() => Array(size).fill(0));
+export function getEmptyShapePlanes(gridSize: number) {
   return {
-    leftPlaneGrid: Array(gridSize)
-      .fill([])
-      .map(() => Array(gridSize).fill(0)),
-    rightPlaneGrid: Array(gridSize)
-      .fill([])
-      .map(() => Array(gridSize).fill(0)),
-    bottomPlaneGrid: Array(gridSize)
-      .fill([])
-      .map(() => Array(gridSize).fill(0)),
+    xyShapePlane: empty2DList(gridSize),
+    yzShapePlane: empty2DList(gridSize),
+    xzShapePlane: empty2DList(gridSize),
   };
 }
 
 const initialState: GridState = {
   gridSize: initGridSize,
-  ...getPlaneGrid(initGridSize),
+  ...getEmptyShapePlanes(initGridSize),
 };
 
 export const GridContext = createContext<{
@@ -31,6 +30,9 @@ export const GridContext = createContext<{
 
 export const GridProvider = ({ children }: { children: ReactElement }) => {
   const [state, dispatch] = useReducer(gridReducer, initialState);
+  const contextValue = useMemo(() => {
+    return { state, dispatch };
+  }, [state, dispatch]);
 
-  return <GridContext.Provider value={{ state, dispatch }}>{children}</GridContext.Provider>;
+  return <GridContext.Provider value={contextValue}>{children}</GridContext.Provider>;
 };

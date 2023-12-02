@@ -1,9 +1,8 @@
 import * as THREE from "three";
-import planeGridsToGeometryGrid from "../lib/planeGridsToGeometryGrid";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import backendResultToGeometryGrid from "../lib/backendResultToGeometryGrid";
 
-export default class ThreeJSViewGL {
+/** Renders a triplet */
+export default class TripletThreeJSViewGL {
   private scene: THREE.Scene;
   private renderer: THREE.WebGLRenderer;
   private camera: THREE.PerspectiveCamera;
@@ -13,30 +12,66 @@ export default class ThreeJSViewGL {
 
   public canvas?: HTMLCanvasElement;
 
-  calculateGrid(left: number[][], right: number[][], bottom: number[][], gridSize: number) {
-    this.scene.remove(this.shape);
-    this.shape = planeGridsToGeometryGrid(left, right, bottom, gridSize);
-    this.scene.add(this.shape);
-  }
+  /** Build a triplet object from 3D grid triplet definition, and updates the rendered canvas. */
+  public updateTriplet(triplet: number[][][]) {
+    const gridSize = triplet.length;
 
-  calculateGridOnBackend(left: number[][], right: number[][], bottom: number[][]) {
-    fetch("http://174.138.106.40/create-triplet", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ xy: right, xz: bottom, yz: left }),
-    }).then((res) =>
-      res
-        .json()
-        .then((result) => {
-          this.scene.remove(this.shape);
-          this.shape = backendResultToGeometryGrid(result);
-          this.scene.add(this.shape);
-        })
-        .catch((reason) => console.log(reason)),
+    const material = new THREE.MeshBasicMaterial({ color: 0xbd9476 });
+    const cube = new THREE.BoxGeometry(2, 2, 2);
+
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x1c1c1c });
+
+    const edges = new THREE.EdgesGeometry(cube);
+    this.shape.clear();
+
+    triplet.forEach((slice, z) =>
+      slice.forEach((row, y) =>
+        row.forEach((cell, x) => {
+          if (cell == 0) return;
+
+          const shape = new THREE.Mesh(cube, material);
+          shape.castShadow = true;
+
+          const lines = new THREE.LineSegments(edges, lineMaterial);
+
+          const shapeGroup = new THREE.Group();
+          shapeGroup.add(shape);
+          shapeGroup.add(lines);
+
+          shapeGroup.position.x = x * 2 - gridSize + 1;
+          shapeGroup.position.y = y * 2 - gridSize + 1;
+          shapeGroup.position.z = z * 2 - gridSize + 1;
+
+          this.shape.add(shapeGroup);
+        }),
+      ),
     );
   }
+
+  // calculateGrid(left: number[][], right: number[][], bottom: number[][], gridSize: number) {
+  //   this.scene.remove(this.shape);
+  //   this.shape = planeGridsToGeometryGrid(left, right, bottom, gridSize);
+  //   this.scene.add(this.shape);
+  // }
+
+  // calculateGridOnBackend(left: number[][], right: number[][], bottom: number[][]) {
+  //   fetch("http://174.138.106.40/create-triplet", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ xy: right, xz: bottom, yz: left }),
+  //   }).then((res) =>
+  //     res
+  //       .json()
+  //       .then((result) => {
+  //         this.scene.remove(this.shape);
+  //         this.shape = backendResultToGeometryGrid(result);
+  //         this.scene.add(this.shape);
+  //       })
+  //       .catch((reason) => console.log(reason)),
+  //   );
+  // }
 
   constructor(canvas: HTMLCanvasElement | undefined, width = 600, height = 600) {
     this.canvas = canvas;

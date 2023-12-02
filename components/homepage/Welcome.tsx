@@ -1,8 +1,8 @@
 import clsx from "clsx";
+import { useMemo } from "react";
+import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 import P5CircuitText from "../p5CircuitText/p5CircuitText";
 import { JumblingText } from "../textJumbler/JumblingText";
-import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
-import { useMemo } from "react";
 import { UnderlineSVG } from "../UnderlineSVG";
 
 export function Welcome() {
