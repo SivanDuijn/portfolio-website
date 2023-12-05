@@ -1,11 +1,16 @@
 import clsx from "clsx";
 import Head from "next/head";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Toaster } from "react-hot-toast";
 import { GridProvider } from "@/components/triplets/lib/GridContext";
-import { useGridSize, useTriplet } from "@/components/triplets/lib/GridContext/hooks";
+import {
+  useGridSize,
+  useShapePlane,
+  useTriplet,
+} from "@/components/triplets/lib/GridContext/hooks";
 import { ShapePlaneEditor } from "@/components/triplets/ShapePlaneEditor";
 import { TripletCanvas } from "@/components/triplets/TripletCanvas/TripletCanvas";
+import characters from "../components/triplets/data/characters_all_detailed_more.json";
 
 export default function TripletDesignerWithProvider() {
   return (
@@ -16,8 +21,30 @@ export default function TripletDesignerWithProvider() {
 }
 
 export function TripletDesigner() {
-  const { changeGridSize } = useGridSize();
+  const { gridSize, changeGridSize } = useGridSize();
   const triplet = useTriplet();
+  const { setShapePlane: setShapePlaneXY } = useShapePlane("xy");
+  const { setShapePlane: setShapePlaneXZ } = useShapePlane("xz");
+  const { setShapePlane: setShapePlaneYZ } = useShapePlane("yz");
+
+  const letterInputChanged = useCallback(
+    (value: string) => {
+      const chars = value.toUpperCase().split("") as ("A" | "B")[];
+      const c1 = characters[chars[0]];
+      const c2 = characters[chars[1]];
+      const c3 = characters[chars[2]];
+
+      const thickness = 2;
+
+      if ((c1 || c2 || c3) && gridSize != c1[thickness].length)
+        changeGridSize(c1[thickness].length);
+
+      if (c1) setShapePlaneYZ({ grid: c1[thickness] });
+      if (c2) setShapePlaneXY({ grid: c2[thickness] });
+      if (c3) setShapePlaneXZ({ grid: c3[thickness] });
+    },
+    [gridSize, setShapePlaneXY, setShapePlaneXZ, setShapePlaneYZ],
+  );
 
   return useMemo(
     () => (
@@ -26,7 +53,7 @@ export function TripletDesigner() {
         <Head>
           <title>Trip-Let Designer</title>
         </Head>
-        <div className={clsx("flex")}>
+        <div className={clsx("flex", "justify-center", "items-end")}>
           <TripletCanvas
             className={clsx("border-2", "border-slate-200", "mx-2", "mt-2", "inline-block")}
             triplet={triplet}
@@ -34,37 +61,85 @@ export function TripletDesigner() {
           <div>
             <div className={clsx("grid", "grid-cols-3", "mx-2", "mt-2")}>
               <div className={clsx("flex", "flex-col", "items-center")}>
-                <p className={clsx("text-center", "font-bold")}>Left</p>
+                <p className={clsx("text-center", "font-bold")}>yz plane</p>
                 <ShapePlaneEditor className={clsx("w-52")} plane="yz" />
               </div>
               <div className={clsx("w-56")} />
               <div className={clsx("flex", "flex-col", "items-center")}>
-                <p className={clsx("text-center", "font-bold")}>Right</p>
+                <p className={clsx("text-center", "font-bold")}>xy plane</p>
                 <ShapePlaneEditor className={clsx("w-52")} plane="xy" />
               </div>
               <div />
               <div className={clsx("flex", "flex-col", "items-center")}>
-                <p className={clsx("text-center", "font-bold")}>Bottom</p>
+                <p className={clsx("text-center", "font-bold")}>xz plane</p>
                 <ShapePlaneEditor className={clsx("w-52")} plane="xz" />
               </div>
-              <div className={clsx("col-span-3", "border-2", "border-slate-200", "mt-4", "p-4")}>
-                <div className={clsx("max-w-[6rem]")}>
+              <div
+                className={clsx(
+                  "col-span-3",
+                  "flex",
+                  "border-2",
+                  "border-slate-200",
+                  "mt-4",
+                  "p-4",
+                )}
+              >
+                <div className={clsx("max-w-[5rem]")}>
                   <label
                     htmlFor="first_name"
-                    className="block text-md text-gray-900 dark:text-white font-bold"
+                    className={clsx("block", "text-md", "text-white", "font-bold", "mb-1")}
                   >
                     Grid size
                   </label>
                   <input
                     type="number"
                     id="first_name"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className={clsx(
+                      "bg-gray-700",
+                      "border",
+                      "border-gray-600",
+                      "text-gray-900",
+                      "text-sm",
+                      "rounded-sm",
+                      "block",
+                      "w-full",
+                      "px-2",
+                      "py-1",
+                      "text-white",
+                    )}
                     defaultValue={5}
+                    value={gridSize}
                     onChange={(e) => {
-                      const newSize = parseInt(e.target.value);
-                      if (!isNaN(newSize)) changeGridSize(newSize);
+                      let newSize = parseInt(e.target.value);
+                      if (isNaN(newSize) || newSize < 2) newSize = 2;
+                      if (gridSize != newSize) changeGridSize(newSize);
                     }}
-                    required
+                  />
+                </div>
+                <div className={clsx("max-w-[5rem]", "ml-6")}>
+                  <label
+                    htmlFor="letters"
+                    className={clsx("block", "text-md", "text-white", "font-bold", "mb-1")}
+                  >
+                    Letters
+                  </label>
+                  <input
+                    type="text"
+                    className={clsx(
+                      "bg-gray-700",
+                      "border",
+                      "border-gray-600",
+                      "text-gray-900",
+                      "text-sm",
+                      "rounded-sm",
+                      "block",
+                      "w-full",
+                      "px-2",
+                      "py-1",
+                      "text-white",
+                    )}
+                    maxLength={3}
+                    onChange={(e) => letterInputChanged(e.target.value)}
                   />
                 </div>
               </div>
@@ -73,6 +148,6 @@ export function TripletDesigner() {
         </div>
       </div>
     ),
-    [triplet, changeGridSize],
+    [triplet, changeGridSize, gridSize],
   );
 }

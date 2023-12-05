@@ -1,7 +1,12 @@
 /* eslint-disable no-console */
 import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { ChangeGridSizeAction, ChangePlaneGridAction, GridActionKind } from "./reducer";
+import {
+  ChangeGridSizeAction,
+  GridActionKind,
+  ChangeShapePlaneAction,
+  SetShapePlaneAction,
+} from "./reducer";
 import { GridContext } from ".";
 
 export function useGridSize() {
@@ -14,10 +19,12 @@ export function useGridSize() {
 
 export function useShapePlane(plane: "xy" | "xz" | "yz") {
   const { state, dispatch } = useContext(GridContext);
-  const changeShapePlane = (args: Omit<ChangePlaneGridAction["payload"], "plane">) =>
-    dispatch({ type: GridActionKind.ChangePlaneGrid, payload: { ...args, plane } });
+  const changeShapePlane = (args: Omit<ChangeShapePlaneAction["payload"], "plane">) =>
+    dispatch({ type: GridActionKind.ChangeShapePlane, payload: { ...args, plane } });
+  const setShapePlane = (args: Omit<SetShapePlaneAction["payload"], "plane">) =>
+    dispatch({ type: GridActionKind.SetShapePlane, payload: { ...args, plane } });
 
-  const resetShapePlane = () => dispatch({ type: GridActionKind.ResetPlaneGrid, payload: plane });
+  const resetShapePlane = () => dispatch({ type: GridActionKind.ResetShapePlane, payload: plane });
 
   return {
     shapePlane:
@@ -26,6 +33,7 @@ export function useShapePlane(plane: "xy" | "xz" | "yz") {
         : plane === "xz"
         ? state.xzShapePlane
         : state.yzShapePlane,
+    setShapePlane,
     changeShapePlane,
     resetShapePlane,
   };

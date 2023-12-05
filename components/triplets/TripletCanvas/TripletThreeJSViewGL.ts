@@ -28,6 +28,7 @@ export default class TripletThreeJSViewGL {
 
     geometry.setIndex(indices);
     geometry.setAttribute("position", new THREE.BufferAttribute(verticesFloat32, 3));
+    geometry.translate(-triplet.length / 2, -triplet.length / 2, -triplet.length / 2);
 
     this.shape.clear();
 
