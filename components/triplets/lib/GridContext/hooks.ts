@@ -38,7 +38,7 @@ export function useTriplet() {
   const [triplet, setTriplet] = useState<number[][][]>([]);
 
   useEffect(() => {
-    fetch("/api//create-triplet", {
+    fetch("/api/create-triplet", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
