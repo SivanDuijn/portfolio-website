@@ -1,6 +1,6 @@
-import { ProjectContainer } from "@/components/ProjectContainer";
 import clsx from "clsx";
 import Image from "next/image";
+import { ProjectContainer } from "@/components/ProjectContainer";
 
 export default function DandelionGlow() {
   return (
@@ -18,8 +18,7 @@ export default function DandelionGlow() {
         >
           Studio Drifts dandelight
         </a>
-        . The seeds are glued to an LED and a simple switch is used for
-        switching it on.
+        . The seeds are glued to an LED and a simple switch is used for switching it on.
       </p>
       <div
         className={clsx(
@@ -30,7 +29,7 @@ export default function DandelionGlow() {
           "lg:space-y-0",
           "lg:flex-row",
           "lg:justify-between",
-          "mt-12"
+          "mt-12",
         )}
       >
         <Image
@@ -39,12 +38,7 @@ export default function DandelionGlow() {
           width={450}
           height={450}
         />
-        <Image
-          src="/imgs/projects/dandelion-glow/whole.jpg"
-          alt="whole"
-          width={450}
-          height={450}
-        />
+        <Image src="/imgs/projects/dandelion-glow/whole.jpg" alt="whole" width={450} height={450} />
       </div>
       <div
         className={clsx(
@@ -55,7 +49,7 @@ export default function DandelionGlow() {
           "lg:space-y-0",
           "lg:flex-row",
           "lg:justify-between",
-          "mt-12"
+          "mt-12",
         )}
       >
         <Image

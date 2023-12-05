@@ -1,8 +1,8 @@
-import { ProjectContainer } from "@/components/ProjectContainer";
-import P5CircuitText from "@/components/p5CircuitText/p5CircuitText";
-import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 import clsx from "clsx";
 import { ChangeEvent, useCallback, useRef, useState } from "react";
+import P5CircuitText from "@/components/p5CircuitText/p5CircuitText";
+import { ProjectContainer } from "@/components/ProjectContainer";
+import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 
 export default function CircuitText() {
   const isSmallScreen = useIsSmallScreen();
@@ -19,11 +19,7 @@ export default function CircuitText() {
     <ProjectContainer index={6} title="Circuit Text">
       <div className={clsx("flex", "flex-col", "items-center")}>
         <div className={clsx("z-10")}>
-          <P5CircuitText
-            text={text}
-            fontSize={isSmallScreen ? 50 : 80}
-            debug={debug}
-          />
+          <P5CircuitText text={text} fontSize={isSmallScreen ? 50 : 80} debug={debug} />
         </div>
         <div className={clsx("flex", "flex-col", "space-y-1", "my-10")}>
           <div
@@ -36,7 +32,7 @@ export default function CircuitText() {
               "border-slate-700",
               "focus-within:border-primary",
               "focus-within:ring-primary",
-              "max-w-md"
+              "max-w-md",
             )}
           >
             <input
@@ -55,7 +51,7 @@ export default function CircuitText() {
                 "border-none",
                 "focus:ring-0",
                 "text-slate-50",
-                "placeholder:text-slate-400"
+                "placeholder:text-slate-400",
               )}
             />
           </div>
@@ -72,11 +68,10 @@ export default function CircuitText() {
         </label>
         {debug && (
           <p className={clsx("mt-4", "text-gray-400")}>
-            Now you can see that first points along the edges of the characters
-            are calculated. Then points that lie inside a character are removed.
-            We want to minimize the chance that lines will collide, so we remove
-            points that lie inside the characters. And, we shoot lines from each
-            point and check if they intersect at a certain distance with other
+            Now you can see that first points along the edges of the characters are calculated. Then
+            points that lie inside a character are removed. We want to minimize the chance that
+            lines will collide, so we remove points that lie inside the characters. And, we shoot
+            lines from each point and check if they intersect at a certain distance with other
             lines. What is left is shown as red lines.
           </p>
         )}

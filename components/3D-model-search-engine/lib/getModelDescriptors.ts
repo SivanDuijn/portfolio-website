@@ -3,7 +3,7 @@ import { ModelState } from "./contexts/reducer";
 
 export default function GetModelDescriptors(
   modelName?: string,
-  isProcessed?: boolean
+  isProcessed?: boolean,
 ): ModelState["modelDescriptors"] {
   if (!isProcessed || modelName == undefined) return;
 

@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { TiltOnlyBigScreen } from "../TiltOnlyBigScreen";
 import Image from "next/image";
 import Link from "next/link";
+import { TiltOnlyBigScreen } from "../TiltOnlyBigScreen";
 
 export type ProjectCardProps = {
   title: string;
@@ -24,7 +24,7 @@ export function ProjectCard(props: ProjectCardProps) {
               "left-28",
               "w-48",
               "md:w-56",
-              "overflow-visible"
+              "overflow-visible",
             )}
           >
             <Image
@@ -42,14 +42,7 @@ export function ProjectCard(props: ProjectCardProps) {
               transform: "translateZ(20px)",
             }}
           >
-            <h2
-              className={clsx(
-                "mb-4",
-                "max-w-[8rem]",
-                "text-2xl",
-                "font-extrabold"
-              )}
-            >
+            <h2 className={clsx("mb-4", "max-w-[8rem]", "text-2xl", "font-extrabold")}>
               {props.title}
             </h2>
             <div className={clsx("h-1", "w-48", "mb-4", "bg-white")}></div>
@@ -61,7 +54,7 @@ export function ProjectCard(props: ProjectCardProps) {
                 "text-gray-500",
                 "-translate-x-1",
                 "group-hover:translate-x-2",
-                "transition"
+                "transition",
               )}
             >
               &#8594;

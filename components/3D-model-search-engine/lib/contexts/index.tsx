@@ -1,7 +1,7 @@
 import { createContext, ReactElement, useReducer, Dispatch } from "react";
+import { RenderMaterial } from "../../model-viewer/viewGL";
 import GetTopK from "../getTopKClosest";
 import { Actions, modelReducer, ModelState } from "./reducer";
-import { RenderMaterial } from "../../model-viewer/viewGL";
 
 const initialModel = "125.off";
 const top_k = GetTopK(initialModel);
@@ -33,9 +33,5 @@ export const ModelContext = createContext<{
 export const ModelProvider = ({ children }: { children: ReactElement }) => {
   const [state, dispatch] = useReducer(modelReducer, initialState);
 
-  return (
-    <ModelContext.Provider value={{ state, dispatch }}>
-      {children}
-    </ModelContext.Provider>
-  );
+  return <ModelContext.Provider value={{ state, dispatch }}>{children}</ModelContext.Provider>;
 };

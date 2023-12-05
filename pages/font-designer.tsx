@@ -1,6 +1,3 @@
-import { MemoizedFontCharacterEditor } from "@/components/triplets/FontCharacterEditor";
-import { MemoizedFontCharacterViewer } from "@/components/triplets/FontCharacterViewer";
-import Button from "@/components/triplets/atoms/Button";
 import {
   ArrowDownOnSquareIcon,
   ArrowSmallLeftIcon,
@@ -10,6 +7,9 @@ import {
 import clsx from "clsx";
 import Head from "next/head";
 import { useCallback, useRef, useState } from "react";
+import Button from "@/components/triplets/atoms/Button";
+import { MemoizedFontCharacterEditor } from "@/components/triplets/FontCharacterEditor";
+import { MemoizedFontCharacterViewer } from "@/components/triplets/FontCharacterViewer";
 
 const gridSize = 14;
 

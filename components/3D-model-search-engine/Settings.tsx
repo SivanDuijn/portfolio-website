@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { RenderMaterial } from "./model-viewer/viewGL";
 import { useRenderSettings } from "./lib/contexts/hooks";
 import { ModelState } from "./lib/contexts/reducer";
 import { getRenderMaterial, getURLVariableBool } from "./lib/utils";
+import { RenderMaterial } from "./model-viewer/viewGL";
 
 type SettingsProps = {
   className?: string;
@@ -23,12 +23,10 @@ export default function Settings(props: SettingsProps) {
 
     const renderSettingsFromUrl: ModelState["renderSettings"] = { ...settings };
     if (material != undefined) renderSettingsFromUrl.material = material;
-    if (showWireframe != undefined)
-      renderSettingsFromUrl.showWireframe = showWireframe;
+    if (showWireframe != undefined) renderSettingsFromUrl.showWireframe = showWireframe;
     if (showVertextNormals != undefined)
       renderSettingsFromUrl.showVertexNormals = showVertextNormals;
-    if (autoRotateEnabled != undefined)
-      renderSettingsFromUrl.autoRotateEnabled = autoRotateEnabled;
+    if (autoRotateEnabled != undefined) renderSettingsFromUrl.autoRotateEnabled = autoRotateEnabled;
 
     changeRenderSettings(renderSettingsFromUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,9 +46,7 @@ export default function Settings(props: SettingsProps) {
             onChange={(e) =>
               changeRenderSettings({
                 ...settings,
-                material: parseInt(
-                  e.currentTarget.value
-                ) as unknown as RenderMaterial,
+                material: parseInt(e.currentTarget.value) as unknown as RenderMaterial,
               })
             }
           >
@@ -58,10 +54,7 @@ export default function Settings(props: SettingsProps) {
             <option value={RenderMaterial.Phong} label={"Phong"} />
             <option value={RenderMaterial.Normals} label={"Normals"} />
             <option value={RenderMaterial.PointCloud} label={"Point cloud"} />
-            <option
-              value={RenderMaterial.WireframeOnly}
-              label={"Wireframe only"}
-            />
+            <option value={RenderMaterial.WireframeOnly} label={"Wireframe only"} />
             <option value={RenderMaterial.Cartoon} label={"Cartoon"} />
           </select>
         </div>

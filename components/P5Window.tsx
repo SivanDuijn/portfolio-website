@@ -1,7 +1,7 @@
-import dynamic from "next/dynamic";
-import { useRef } from "react";
-import * as p5 from "p5";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
+import * as p5 from "p5";
+import { useRef } from "react";
 
 const Sketch = dynamic(import("react-p5"), {
   ssr: false,
@@ -10,8 +10,8 @@ const Sketch = dynamic(import("react-p5"), {
 });
 
 export type P5WindowProps = {
-  setup: (p: p5, canvasParentRef: Element) => {};
-  draw: (p: p5) => {};
+  setup: (p: p5, canvasParentRef: Element) => void;
+  draw: (p: p5) => void;
 };
 
 export default function P5Window(props: P5WindowProps) {

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import p5 from "p5"; // import p5 typing
+import React, { useEffect, useRef, useState } from "react";
 import Text from "./scripts/Text";
 
 const Sketch = dynamic(import("react-p5"), {
@@ -55,10 +55,7 @@ export default function P5CircuitText({
       const cText = circuitText.current;
 
       p.clear();
-      p.translate(
-        p.width / 2 - cText.bbox.w / 2,
-        p.height / 2 + cText.bbox.h / 2 - 10
-      );
+      p.translate(p.width / 2 - cText.bbox.w / 2, p.height / 2 + cText.bbox.h / 2 - 10);
 
       p.translate(0, -10);
       p.strokeCap(p.SQUARE);

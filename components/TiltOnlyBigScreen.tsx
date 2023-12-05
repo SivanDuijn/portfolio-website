@@ -1,7 +1,7 @@
-import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 import clsx from "clsx";
 import { ReactNode, useEffect, useState } from "react";
 import Tilt from "react-parallax-tilt";
+import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 
 export type TiltOnlyBigScreenProps = {
   className?: string;

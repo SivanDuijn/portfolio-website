@@ -1,8 +1,8 @@
-import dynamic from "next/dynamic";
-import { createFlock, showFlock, updateFlock, Flock } from "./flock";
-import { useRef } from "react";
-import * as p5 from "p5";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
+import * as p5 from "p5";
+import { useRef } from "react";
+import { createFlock, showFlock, updateFlock, Flock } from "./flock";
 
 const Sketch = dynamic(import("react-p5"), {
   ssr: false,
@@ -93,7 +93,7 @@ export function P5Flocking(props: P5FlockingProps) {
         aliMultiplier.current,
         cohMultiplier.current,
         seekMultiplier,
-        p.deltaTime * deltaTimeModifier
+        p.deltaTime * deltaTimeModifier,
       );
 
       showFlock(p, flock.current);
@@ -108,14 +108,7 @@ export function P5Flocking(props: P5FlockingProps) {
         </div>
       </span>
       <div
-        className={clsx(
-          "flex",
-          "flex-col",
-          "md:flex-row",
-          "md:space-x-8",
-          "mt-4",
-          "text-center"
-        )}
+        className={clsx("flex", "flex-col", "md:flex-row", "md:space-x-8", "mt-4", "text-center")}
       >
         <div>
           <p>Separation</p>

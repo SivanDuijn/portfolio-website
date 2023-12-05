@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import React, { useContext, useEffect, useRef } from "react";
-import ThreeJSViewGL from "./viewGL";
 import { ModelContext } from "../lib/contexts";
 import { ModelState, ActionKind } from "../lib/contexts/reducer";
 import GetModelDescriptors from "../lib/getModelDescriptors";
+import ThreeJSViewGL from "./viewGL";
 
 export const database = "PSBDatabase";
 
@@ -36,9 +36,7 @@ export const MemoizedViewGLCanvas = React.memo((props: Props) => {
     viewGL.current?.setMaterial(state.renderSettings.material);
     viewGL.current?.showWireframe(state.renderSettings.showWireframe);
     viewGL.current?.showVertexNormals(state.renderSettings.showVertexNormals);
-    viewGL.current?.setAutoRotateEnabled(
-      state.renderSettings.autoRotateEnabled
-    );
+    viewGL.current?.setAutoRotateEnabled(state.renderSettings.autoRotateEnabled);
     viewGL.current?.showUnitBox(state.renderSettings.showUnitBox);
     viewGL.current?.showBoundingBox(state.renderSettings.showBoundingBox);
   }, [state.renderSettings]);
@@ -53,11 +51,7 @@ export const MemoizedViewGLCanvas = React.memo((props: Props) => {
       });
       const ws = state.model.name.split(".");
       viewGL.current?.loadModelByUrl(
-        database +
-          "/models/" +
-          ws[0] +
-          `${state.model.isProcessed ? "_processed" : ""}.` +
-          ws[1]
+        database + "/models/" + ws[0] + `${state.model.isProcessed ? "_processed" : ""}.` + ws[1],
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,7 +69,7 @@ export const MemoizedViewGLCanvas = React.memo((props: Props) => {
             "left-0",
             "border-r-2",
             "border-t-2",
-            "border-slate-200"
+            "border-slate-200",
           )}
         />
       )}
@@ -90,10 +84,7 @@ export const MemoizedViewGLCanvas = React.memo((props: Props) => {
           if (e.touches.length != 1) return;
           const x = e.touches[0].clientX;
           const y = e.touches[0].clientY;
-          viewGL.current?.onMouseDrag(
-            x - prevXY.current.x,
-            y - prevXY.current.y
-          );
+          viewGL.current?.onMouseDrag(x - prevXY.current.x, y - prevXY.current.y);
           prevXY.current = { x, y };
         }}
         onTouchEnd={(e) => {
@@ -113,8 +104,7 @@ export const MemoizedViewGLCanvas = React.memo((props: Props) => {
           }
         }}
         onMouseMove={(e) => {
-          if (mouseIsDown.current)
-            viewGL.current?.onMouseDrag(e.movementX, e.movementY);
+          if (mouseIsDown.current) viewGL.current?.onMouseDrag(e.movementX, e.movementY);
         }}
       />
     </div>
@@ -129,11 +119,7 @@ export const MemoizedViewGLCanvasSmall = React.memo((props: Props) => {
   const { state } = useContext(ModelContext);
 
   useEffect(() => {
-    viewGL.current = new ThreeJSViewGL(
-      canvasRef.current || undefined,
-      250,
-      250
-    );
+    viewGL.current = new ThreeJSViewGL(canvasRef.current || undefined, 250, 250);
     if (props.onMounted) props.onMounted(viewGL.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -142,9 +128,7 @@ export const MemoizedViewGLCanvasSmall = React.memo((props: Props) => {
     viewGL.current?.setMaterial(state.renderSettings.material);
     viewGL.current?.showWireframe(state.renderSettings.showWireframe);
     viewGL.current?.showVertexNormals(state.renderSettings.showVertexNormals);
-    viewGL.current?.setAutoRotateEnabled(
-      state.renderSettings.autoRotateEnabled
-    );
+    viewGL.current?.setAutoRotateEnabled(state.renderSettings.autoRotateEnabled);
     viewGL.current?.showUnitBox(state.renderSettings.showUnitBox);
     viewGL.current?.showBoundingBox(state.renderSettings.showBoundingBox);
   }, [state.renderSettings]);
@@ -153,11 +137,7 @@ export const MemoizedViewGLCanvasSmall = React.memo((props: Props) => {
     if (state.model.secondModel) {
       const ws = state.model.secondModel.split(".");
       viewGL.current?.loadModelByUrl(
-        database +
-          "/models/" +
-          ws[0] +
-          `${state.model.isProcessed ? "_processed" : ""}.` +
-          ws[1]
+        database + "/models/" + ws[0] + `${state.model.isProcessed ? "_processed" : ""}.` + ws[1],
       );
     }
   }, [state.model.secondModel, state.model.isProcessed]);
@@ -177,10 +157,7 @@ export const MemoizedViewGLCanvasSmall = React.memo((props: Props) => {
           if (e.touches.length != 1) return;
           const x = e.touches[0].clientX;
           const y = e.touches[0].clientY;
-          viewGL.current?.onMouseDrag(
-            x - prevXY.current.x,
-            y - prevXY.current.y
-          );
+          viewGL.current?.onMouseDrag(x - prevXY.current.x, y - prevXY.current.y);
           prevXY.current = { x, y };
         }}
         onTouchEnd={(e) => {
@@ -200,8 +177,7 @@ export const MemoizedViewGLCanvasSmall = React.memo((props: Props) => {
           }
         }}
         onMouseMove={(e) => {
-          if (mouseIsDown.current)
-            viewGL.current?.onMouseDrag(e.movementX, e.movementY);
+          if (mouseIsDown.current) viewGL.current?.onMouseDrag(e.movementX, e.movementY);
         }}
       />
     </div>

@@ -3,7 +3,7 @@ import Character from "./Character";
 
 export default class Text {
   private chars: Character[] = [];
-  private angle: number = 80; // Default angle for removing colliding lines within a character.
+  private angle = 80; // Default angle for removing colliding lines within a character.
   public bbox = { x: 0, y: 0, w: 0, h: 0 };
 
   public p: p5;
@@ -12,13 +12,7 @@ export default class Text {
   public fontSize: number;
   public spacing: number;
 
-  constructor(
-    p: p5,
-    str: string,
-    font: p5.Font,
-    fontSize: number,
-    spacing = 20
-  ) {
+  constructor(p: p5, str: string, font: p5.Font, fontSize: number, spacing = 20) {
     this.p = p;
     this.str = str;
     this.font = font;
@@ -32,26 +26,17 @@ export default class Text {
   }
 
   generateChars() {
-    let letters = this.str.split("");
+    const letters = this.str.split("");
     this.chars = [];
 
     letters.forEach((e) => {
       let newChar;
 
       if (this.chars.length == 0)
-        newChar = new Character(
-          this.p,
-          this.font,
-          this.fontSize,
-          this.p.createVector(0, 0),
-          e
-        );
+        newChar = new Character(this.p, this.font, this.fontSize, this.p.createVector(0, 0), e);
       else {
-        let c = this.chars[this.chars.length - 1];
-        let pos = this.p.createVector(
-          c.pos.x + c.width + this.spacing,
-          c.pos.y
-        );
+        const c = this.chars[this.chars.length - 1];
+        const pos = this.p.createVector(c.pos.x + c.width + this.spacing, c.pos.y);
         newChar = new Character(this.p, this.font, this.fontSize, pos, e);
       }
 
@@ -79,8 +64,8 @@ export default class Text {
       return;
     }
 
-    let firstChar = this.chars[0];
-    let lastChar = this.chars[this.chars.length - 1];
+    const firstChar = this.chars[0];
+    const lastChar = this.chars[this.chars.length - 1];
     this.bbox = {
       x: firstChar.pos.x,
       y: firstChar.pos.y,
@@ -100,10 +85,7 @@ export default class Text {
     this.chars.forEach((c) => c.showCircuitLines(color));
   }
 
-  changeText(
-    str: string,
-    args?: { newFontSize?: number; newSpacing?: number }
-  ) {
+  changeText(str: string, args?: { newFontSize?: number; newSpacing?: number }) {
     if (str.length == 0) console.log("Text cannot be empty!");
 
     if (args?.newFontSize) {

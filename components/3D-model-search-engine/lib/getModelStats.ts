@@ -4,7 +4,7 @@ import { ModelState } from "./contexts/reducer";
 
 export default function GetModelStats(
   modelName: string,
-  mesh: THREE.Mesh
+  mesh: THREE.Mesh,
 ): ModelState["modelStats"] {
   const normStats = (modelNormStats as any)[modelName];
   modelName = modelName.replace("_processed", "");

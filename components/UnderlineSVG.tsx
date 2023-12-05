@@ -32,13 +32,7 @@ export function UnderlineSVG(props: UnderlineSVGProps) {
         overflow="visible"
         preserveAspectRatio="none"
       >
-        <rect
-          x={0}
-          y={0}
-          width={widthRatio}
-          height={strokeWidth}
-          fill={color}
-        />
+        <rect x={0} y={0} width={widthRatio} height={strokeWidth} fill={color} />
       </svg>
       <svg
         className={clsx("absolute", "bottom-0", "left-0")}
@@ -51,24 +45,14 @@ export function UnderlineSVG(props: UnderlineSVGProps) {
         stroke={color}
         strokeLinecap="round"
       >
-        <line
-          x1={0}
-          y1={strokeWidth / 2}
-          x2={extraLengthLeft}
-          y2={strokeWidth / 2}
-        />
+        <line x1={0} y1={strokeWidth / 2} x2={extraLengthLeft} y2={strokeWidth / 2} />
         <line
           x1={extraLengthLeft}
           y1={strokeWidth / 2}
           x2={cx + r / 2 + 2 + extraLengthLeft}
           y2={cy + strokeWidth / 2 + r / 2 + 2}
         />
-        <circle
-          cx={cx + extraLengthLeft}
-          cy={cy + strokeWidth / 2}
-          r={r}
-          fill="none"
-        />
+        <circle cx={cx + extraLengthLeft} cy={cy + strokeWidth / 2} r={r} fill="none" />
       </svg>
 
       <svg
@@ -82,19 +66,14 @@ export function UnderlineSVG(props: UnderlineSVGProps) {
         strokeWidth={strokeWidth}
         stroke={color}
       >
-        <line
-          x1={-1}
-          y1={strokeWidth / 2}
-          x2={extraLengthRight}
-          y2={strokeWidth / 2}
-        />
+        <line x1={-1} y1={strokeWidth / 2} x2={extraLengthRight} y2={strokeWidth / 2} />
         {props.hover && (
           <g
             className={clsx(
               "transition",
               "group-hover:translate-x-6",
               "opacity-0",
-              "group-hover:opacity-100"
+              "group-hover:opacity-100",
             )}
           >
             <line

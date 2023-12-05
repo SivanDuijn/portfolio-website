@@ -3,11 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useMemo, useEffect } from "react";
 import toast from "react-hot-toast";
 import filenames from "./data/files.json";
-import {
-  useModel,
-  useModelStats,
-  useModelDescriptors,
-} from "./lib/contexts/hooks";
+import { useModel, useModelStats, useModelDescriptors } from "./lib/contexts/hooks";
 import GetTopKClosest from "./lib/getTopKClosest";
 
 type ModelSelectorProps = {
@@ -33,17 +29,13 @@ export default function ModelSelector(props: ModelSelectorProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelNameFromUrl]);
 
-  const [subgroup, setSubgroup] = useState<string | undefined>(
-    stats?.className
-  );
+  const [subgroup, setSubgroup] = useState<string | undefined>(stats?.className);
 
   useEffect(() => setSubgroup(stats?.className), [stats?.className]);
 
   const subgroupfiles = useMemo(() => {
     if (subgroup) {
-      const files = (filenames as unknown as Record<string, string[]>)[
-        subgroup
-      ];
+      const files = (filenames as unknown as Record<string, string[]>)[subgroup];
       if (files) return files;
     }
     return [];
@@ -72,13 +64,10 @@ export default function ModelSelector(props: ModelSelectorProps) {
               stats: any;
               descriptors: any;
             }) => {
-              if (!top_k || !top_k[0].name)
-                toast.error("Didn't receive top_k correctly");
-              if (!processed_model)
-                toast.error("Didn't receive processed model correctly");
+              if (!top_k || !top_k[0].name) toast.error("Didn't receive top_k correctly");
+              if (!processed_model) toast.error("Didn't receive processed model correctly");
               if (!stats) toast.error("Didn't receive stats correctly");
-              if (!descriptors)
-                toast.error("Didn't receive descriptors correctly");
+              if (!descriptors) toast.error("Didn't receive descriptors correctly");
 
               setSubgroup(undefined);
               changeModel({
@@ -94,22 +83,20 @@ export default function ModelSelector(props: ModelSelectorProps) {
                 distBarycenterToOrigin: stats["position"],
               });
               changeModelDescriptors({ ...descriptors });
-            }
-          )
+            },
+          ),
       ),
       {
         loading: "Querying your model",
         success: "Success 🔥",
         error: "Something went wrong while processing your model!",
-      }
+      },
     );
   };
 
   return (
     <div className={props.className}>
-      <p className={clsx("border-b-2", "text-center", "font-bold")}>
-        Query Model
-      </p>
+      <p className={clsx("border-b-2", "text-center", "font-bold")}>Query Model</p>
       <div className={clsx("p-2")}>
         <div className="flex flex-col">
           <label htmlFor="model">Query model from file</label>
@@ -182,10 +169,8 @@ export default function ModelSelector(props: ModelSelectorProps) {
                 "text-white",
                 "text-center",
                 "text-sm",
-                model.name === file
-                  ? "bg-slate-500"
-                  : "bg-slate-700 hover:bg-slate-500",
-                "hover:cursor-pointer"
+                model.name === file ? "bg-slate-500" : "bg-slate-700 hover:bg-slate-500",
+                "hover:cursor-pointer",
               )}
               onClick={() => {
                 if (subgroup !== undefined && file !== undefined) {

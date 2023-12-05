@@ -46,7 +46,6 @@ export function ShapePlaneEditor(props: ShapePlaneEditorProps) {
                     });
                   }
                 }}
-                allowHalfCells
                 padding
               />
             )),

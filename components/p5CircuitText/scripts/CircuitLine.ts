@@ -1,7 +1,7 @@
 import p5 from "p5";
+import { getRandomInt } from "@/components/utils";
 import Character from "./Character";
 import { CLLineStart, CLLine, CLCircle, CircuitLineItem } from "./Line";
-import { getRandomInt } from "@/components/utils";
 
 export default class CircuitLine {
   public p: p5;
@@ -104,18 +104,18 @@ export default class CircuitLine {
   }
 
   pointOnItsWay(chars: Character[], angle: number): boolean {
-    let rad = this.p.radians(angle / 2);
-    let vRight = this.p.createVector(this.vec.x, this.vec.y).rotate(rad);
-    let vLeft = this.p.createVector(this.vec.x, this.vec.y).rotate(-rad);
+    const rad = this.p.radians(angle / 2);
+    const vRight = this.p.createVector(this.vec.x, this.vec.y).rotate(rad);
+    const vLeft = this.p.createVector(this.vec.x, this.vec.y).rotate(-rad);
 
     return chars.some((c) => {
       return c.cLines.some((cl) => {
         if (cl == this) return false;
 
-        let vToPnt = this.p.createVector(cl.pos.x - this.pos.x, cl.pos.y - this.pos.y);
+        const vToPnt = this.p.createVector(cl.pos.x - this.pos.x, cl.pos.y - this.pos.y);
 
-        let vRightCross = vToPnt.cross(vRight);
-        let vLeftCross = vToPnt.cross(vLeft);
+        const vRightCross = vToPnt.cross(vRight);
+        const vLeftCross = vToPnt.cross(vLeft);
 
         if (vRightCross.z > 0 && vLeftCross.z < 0) return true;
       });

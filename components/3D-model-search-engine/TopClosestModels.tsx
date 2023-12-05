@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import Image from "next/image";
-import { database } from "./model-viewer/ModelViewer";
 import { useModel } from "./lib/contexts/hooks";
+import { database } from "./model-viewer/ModelViewer";
 
 type Props = {
   className?: string;
@@ -11,16 +11,11 @@ export default function TopClosestModels(props: Props) {
   const { model, changeModel } = useModel();
   return (
     <div className={props.className}>
-      <p className={clsx("border-b-2", "text-center", "font-bold")}>
-        Top 10 closest models
-      </p>
+      <p className={clsx("border-b-2", "text-center", "font-bold")}>Top 10 closest models</p>
       <div className={clsx("flex", "justify-around", "my-2")}>
         {model.top_k &&
           model.top_k.map((cm) => (
-            <div
-              key={cm.name}
-              className={clsx("flex", "flex-col", "items-center", "w-32")}
-            >
+            <div key={cm.name} className={clsx("flex", "flex-col", "items-center", "w-32")}>
               <Image
                 src={
                   "/3D-model-search-engine/" +
@@ -46,7 +41,7 @@ export default function TopClosestModels(props: Props) {
                   model.secondModel === cm.name
                     ? "bg-slate-500"
                     : "bg-slate-700 hover:bg-slate-500",
-                  "hover:cursor-pointer"
+                  "hover:cursor-pointer",
                 )}
                 onClick={() => {
                   if (cm.name !== undefined)
@@ -65,10 +60,7 @@ export default function TopClosestModels(props: Props) {
                 {cm.name.split(".")[0]}
               </div>
               <p className="text-center">
-                d:{" "}
-                <span className={clsx("text-green-500")}>
-                  {cm.dist.toFixed(4)}
-                </span>
+                d: <span className={clsx("text-green-500")}>{cm.dist.toFixed(4)}</span>
               </p>
             </div>
           ))}

@@ -26,9 +26,7 @@ export default function ModelInformation(props: Props) {
 
   return (
     <div className={props.className}>
-      <p className={clsx("border-b-2", "text-center", "font-bold")}>
-        Model Information
-      </p>
+      <p className={clsx("border-b-2", "text-center", "font-bold")}>Model Information</p>
       <table className={clsx("p-2", "ml-2", "mt-1")}>
         <tbody>
           {rows.map((row) => (

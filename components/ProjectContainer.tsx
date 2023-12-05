@@ -1,9 +1,9 @@
 import clsx from "clsx";
-import Image from "next/image";
-import { UnderlineSVG } from "./UnderlineSVG";
-import { ReactNode } from "react";
-import Link from "next/link";
 import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import { ReactNode } from "react";
+import { UnderlineSVG } from "./UnderlineSVG";
 
 export type ProjectContainerProps = {
   title: string;
@@ -21,7 +21,7 @@ export function ProjectContainer(props: ProjectContainerProps) {
         "flex",
         "justify-center",
         "overflow-hidden",
-        "min-h-screen"
+        "min-h-screen",
       )}
     >
       <Head>
@@ -44,14 +44,10 @@ export function ProjectContainer(props: ProjectContainerProps) {
           "font-serif",
           "text-3xl",
           "text-gray-400",
-          "font-extrabold"
+          "font-extrabold",
         )}
       >
-        <span
-          className={clsx("group-hover:-translate-x-2", "transition", "pb-1")}
-        >
-          ←
-        </span>
+        <span className={clsx("group-hover:-translate-x-2", "transition", "pb-1")}>←</span>
       </Link>
       <div
         className={clsx(
@@ -61,7 +57,7 @@ export function ProjectContainer(props: ProjectContainerProps) {
           "sm:px-16",
           "py-20",
           "sm:py-24",
-          "overflow-x-hidden"
+          "overflow-x-hidden",
         )}
       >
         <div
@@ -72,7 +68,7 @@ export function ProjectContainer(props: ProjectContainerProps) {
             "items-center",
             // "lg:items-start",
             "lg:flex-row",
-            "pb-16"
+            "pb-16",
           )}
         >
           {props.thumbnailUrl && (
@@ -85,14 +81,7 @@ export function ProjectContainer(props: ProjectContainerProps) {
           )}
           <div>
             <div className={clsx("py-6", "pl-0", "lg:pl-16", "inline-block")}>
-              <h2
-                className={clsx(
-                  "text-2xl",
-                  "lg:text-5xl",
-                  "font-extrabold",
-                  "mb-4"
-                )}
-              >
+              <h2 className={clsx("text-2xl", "lg:text-5xl", "font-extrabold", "mb-4")}>
                 {props.title}
               </h2>
               <UnderlineSVG color="white" />

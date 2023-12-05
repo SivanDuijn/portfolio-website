@@ -21,28 +21,24 @@ export default function DescriptorHistograms(props: Props) {
             { title: "D4", color: "#288995", data: descriptors.D4 },
           ]
         : undefined,
-    [descriptors]
+    [descriptors],
   );
 
   return (
     <div className={props.className}>
-      <p className={clsx("border-b-2", "text-center", "font-bold")}>
-        Descriptor Histograms
-      </p>
+      <p className={clsx("border-b-2", "text-center", "font-bold")}>Descriptor Histograms</p>
       {histograms && <MemoizedHistograms histograms={histograms} />}
     </div>
   );
 }
 
 // eslint-disable-next-line react/display-name
-const MemoizedHistograms = React.memo(
-  ({ histograms }: { histograms: HistogramProps[] }) => {
-    return (
-      <div className={clsx("grid", "lg:grid-cols-5", "mr-6", "justify-center")}>
-        {histograms.map((histogram) => (
-          <Histogram key={histogram.title} {...histogram} />
-        ))}
-      </div>
-    );
-  }
-);
+const MemoizedHistograms = React.memo(({ histograms }: { histograms: HistogramProps[] }) => {
+  return (
+    <div className={clsx("grid", "lg:grid-cols-5", "mr-6", "justify-center")}>
+      {histograms.map((histogram) => (
+        <Histogram key={histogram.title} {...histogram} />
+      ))}
+    </div>
+  );
+});

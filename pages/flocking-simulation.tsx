@@ -1,7 +1,7 @@
-import { ProjectContainer } from "@/components/ProjectContainer";
-import { P5Flocking } from "@/components/p5Flocking/p5Flocking";
-import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 import clsx from "clsx";
+import { P5Flocking } from "@/components/p5Flocking/p5Flocking";
+import { ProjectContainer } from "@/components/ProjectContainer";
+import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 
 export default function FlockingSimulation() {
   const isSmallScreen = useIsSmallScreen();
@@ -21,10 +21,10 @@ export default function FlockingSimulation() {
         >
           Craig Reynolds
         </a>
-        . He uses three forces to simulate flocking behavior. The first is
-        Separation: steer to avoid crowding local flockmates . Alignment: steer
-        towards the average heading of local flockmates. And finally, Cohesion:
-        steer to move toward the average position of local flockmates.
+        . He uses three forces to simulate flocking behavior. The first is Separation: steer to
+        avoid crowding local flockmates . Alignment: steer towards the average heading of local
+        flockmates. And finally, Cohesion: steer to move toward the average position of local
+        flockmates.
       </p>
       <P5Flocking size={isSmallScreen ? 300 : 700} />
     </ProjectContainer>

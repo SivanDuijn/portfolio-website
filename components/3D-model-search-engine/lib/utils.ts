@@ -9,21 +9,14 @@ export function GetModelfiletype(file: string): "OFF" | "OBJ" | null {
   else return null;
 }
 
-export function CreateThreeLineBox(
-  width: number,
-  height: number,
-  depth: number,
-  color = 0xff0000
-) {
+export function CreateThreeLineBox(width: number, height: number, depth: number, color = 0xff0000) {
   const geometry = new THREE.BoxGeometry(width, height, depth);
   const edges = new THREE.EdgesGeometry(geometry);
   return new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color }));
 }
 
 // Gets the render material as enum from a string
-export function getRenderMaterial(
-  material?: string
-): RenderMaterial | undefined {
+export function getRenderMaterial(material?: string): RenderMaterial | undefined {
   switch (material) {
     case "flat":
       return RenderMaterial.Flat;
@@ -42,8 +35,6 @@ export function getRenderMaterial(
   }
 }
 
-export function getURLVariableBool(
-  v: string | string[] | undefined
-): boolean | undefined {
+export function getURLVariableBool(v: string | string[] | undefined): boolean | undefined {
   return v === undefined ? undefined : v === "1" ? true : false;
 }

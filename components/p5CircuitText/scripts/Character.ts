@@ -1,6 +1,6 @@
 import p5 from "p5";
-import CircuitLine from "./CircuitLine";
 import { getRandomInt } from "@/components/utils";
+import CircuitLine from "./CircuitLine";
 
 export default class Character {
   public readonly char: string;
@@ -61,7 +61,7 @@ export default class Character {
     this.activeCLs = this.activeCLs.filter((acl) => !this.cLines[acl].isFinished);
 
     if (this.cLines.length > 0 && this.activeCLs.length < this.linesPerChar) {
-      let rnd = getRandomInt(this.cLines.length);
+      const rnd = getRandomInt(this.cLines.length);
       this.activateCircuitLine(rnd);
     }
 
@@ -102,7 +102,7 @@ export default class Character {
 
   removeColliding(chars: Character[], angle: number) {
     for (let i = 0; i < this.cLines.length; i++) {
-      let cl = this.cLines[i];
+      const cl = this.cLines[i];
 
       if (cl.pointOnItsWay(chars, angle)) {
         this.cLines.splice(i, 1);

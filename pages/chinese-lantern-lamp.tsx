@@ -1,6 +1,6 @@
-import { ProjectContainer } from "@/components/ProjectContainer";
 import clsx from "clsx";
 import Image from "next/image";
+import { ProjectContainer } from "@/components/ProjectContainer";
 
 export default function ChineseLanterLamp() {
   return (
@@ -9,9 +9,7 @@ export default function ChineseLanterLamp() {
       title="Physalis Glow Light"
       thumbnailUrl="/imgs/projects/chinese-lantern/thumbnail.jpeg"
     >
-      <div
-        className={clsx("flex", "flex-col-reverse", "items-center", "md:block")}
-      >
+      <div className={clsx("flex", "flex-col-reverse", "items-center", "md:block")}>
         <Image
           className={clsx("float-right", "ml-0", "md:ml-8", "mb-4", "mt-2")}
           src="/imgs/projects/chinese-lantern/physalis-alkekengi.jpg"
@@ -20,21 +18,18 @@ export default function ChineseLanterLamp() {
           height={300}
         />
         <p className={clsx("text-justify")}>
-          A decorative mood light made from the seed shells of the chinese
-          lantern plant (Physalis alkekengi). It uses copper wire from a
-          microwave, orange LED&apos;s and a piece of birch wood for the trunk.
-          In this piece of birch wood an Arduino nano is hidden as the brains
-          for this lamp. A simple switch is provided to turn the lamp on and of.
-          There are two lighting modes, one were all lanterns are on, and one
-          where they slowly fade in and out.
+          A decorative mood light made from the seed shells of the chinese lantern plant (Physalis
+          alkekengi). It uses copper wire from a microwave, orange LED&apos;s and a piece of birch
+          wood for the trunk. In this piece of birch wood an Arduino nano is hidden as the brains
+          for this lamp. A simple switch is provided to turn the lamp on and of. There are two
+          lighting modes, one were all lanterns are on, and one where they slowly fade in and out.
           <br />
           <br />
-          On this Arduino nano an algorithm runs that lights the lantern shells
-          one by one. The idea is that when a lantern is ignited and while its
-          light intensity increases, its range expands as well. When another
-          lantern comes within this range, it is ignited. So they light each
-          other in a sense. This did not quite work out the way I hoped for, but
-          maybe with a lot more lights it will have a better effect.
+          On this Arduino nano an algorithm runs that lights the lantern shells one by one. The idea
+          is that when a lantern is ignited and while its light intensity increases, its range
+          expands as well. When another lantern comes within this range, it is ignited. So they
+          light each other in a sense. This did not quite work out the way I hoped for, but maybe
+          with a lot more lights it will have a better effect.
         </p>
       </div>
       <div className={clsx("flex", "justify-center", "mt-6", "md:mt-16")}>

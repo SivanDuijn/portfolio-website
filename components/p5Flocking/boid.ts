@@ -1,6 +1,6 @@
+import * as p5 from "p5";
 import { vecToP5Vec } from "./utils";
 import { Vector } from "./vector";
-import * as p5 from "p5";
 
 export type Boid = {
   pos: Vector;
@@ -13,7 +13,7 @@ export function updateBoid(
   force: Vector,
   maxSpeed: number,
   boxSize: number,
-  deltaTime = 1
+  deltaTime = 1,
 ) {
   b.vel.add(Vector.mul(force, deltaTime));
   b.vel.limitLength(maxSpeed);
@@ -56,7 +56,7 @@ export function calcFlockForce(
   maxForce: number,
   sepMultiplier: number,
   aliMultiplier: number,
-  cohMultiplier: number
+  cohMultiplier: number,
 ) {
   const bsInView = calcBoidsInView(b, allBoids, perceptionRadius);
   if (bsInView.length === 0) return new Vector(0, 0, 0);
@@ -75,13 +75,9 @@ export function calcFlockForce(
   return Vector.add(sep, ali).add(coh);
 }
 
-export function calcBoidsInView(
-  b: Boid,
-  allBoids: Boid[],
-  perceptionRadius: number
-) {
+export function calcBoidsInView(b: Boid, allBoids: Boid[], perceptionRadius: number) {
   // excluding ourself
-  let boidsInView = [];
+  const boidsInView = [];
   for (const otherB of allBoids) {
     if (
       b != otherB &&
@@ -93,19 +89,15 @@ export function calcBoidsInView(
   return boidsInView;
 }
 
-export function calcSeparation(
-  b: Boid,
-  bsInView: Boid[],
-  perceptionRadius: number
-) {
+export function calcSeparation(b: Boid, bsInView: Boid[], perceptionRadius: number) {
   if (bsInView.length == 0) return new Vector(0, 0, 0);
 
-  let s = new Vector(0, 0, 0);
+  const s = new Vector(0, 0, 0);
 
-  for (let bInView of bsInView) {
-    let pushForce = Vector.sub(b.pos, bInView.pos);
+  for (const bInView of bsInView) {
+    const pushForce = Vector.sub(b.pos, bInView.pos);
     // scale it so the nearer the bigger the force
-    let l = pushForce.length();
+    const l = pushForce.length();
     pushForce.setLength(1 - l / perceptionRadius);
     s.add(pushForce);
   }
@@ -117,9 +109,9 @@ export function calcSeparation(
 export function calcAlignment(b: Boid, bsInView: Boid[]) {
   if (bsInView.length == 0) return new Vector(0, 0, 0);
 
-  let a = b.vel.copy().normalize();
+  const a = b.vel.copy().normalize();
 
-  for (let bInView of bsInView)
+  for (const bInView of bsInView)
     if (bInView.vel.length() > 0) a.add(bInView.vel.copy().normalize());
 
   a.div(bsInView.length + 1);
@@ -129,9 +121,9 @@ export function calcAlignment(b: Boid, bsInView: Boid[]) {
 export function calcCohesion(b: Boid, bsInView: Boid[]) {
   if (bsInView.length == 0) return new Vector(0, 0, 0);
 
-  let c = b.pos.copy();
+  const c = b.pos.copy();
 
-  for (let bInView of bsInView) c.add(bInView.pos);
+  for (const bInView of bsInView) c.add(bInView.pos);
 
   c.div(bsInView.length + 1);
   return c;
@@ -141,7 +133,7 @@ export function steerTowardsDestination(
   b: Boid,
   destination: Vector,
   maxSpeed: number,
-  maxForce: number
+  maxForce: number,
 ) {
   if (b.pos == destination) return new Vector(0, 0, 0);
   const vec = destination.copy();
@@ -149,12 +141,7 @@ export function steerTowardsDestination(
   return steerForceFromVector(b, vec, maxSpeed, maxForce);
 }
 
-export function steerForceFromVector(
-  b: Boid,
-  desired: Vector,
-  maxSpeed: number,
-  maxForce: number
-) {
+export function steerForceFromVector(b: Boid, desired: Vector, maxSpeed: number, maxForce: number) {
   const vec = desired.copy();
   vec.setLength(maxSpeed);
   vec.sub(b.vel);

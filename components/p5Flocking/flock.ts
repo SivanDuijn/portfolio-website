@@ -1,14 +1,8 @@
+import * as p5 from "p5";
 import { getRandomInt } from "../utils";
-import {
-  Boid,
-  calcFlockForce,
-  showBoid,
-  steerTowardsDestination,
-  updateBoid,
-} from "./boid";
+import { Boid, calcFlockForce, showBoid, steerTowardsDestination, updateBoid } from "./boid";
 import { vecToP5Vec } from "./utils";
 import { Vector } from "./vector";
-import * as p5 from "p5";
 
 export type Flock = { boids: Boid[]; destination: Vector; boxSize: number };
 
@@ -21,7 +15,7 @@ export function updateFlock(
   aliMultiplier: number,
   cohMultiplier: number,
   seekMultiplier: number,
-  deltaTime = 1
+  deltaTime = 1,
 ) {
   for (const boid of flock.boids) {
     const flockForce = calcFlockForce(
@@ -32,16 +26,11 @@ export function updateFlock(
       maxForce,
       sepMultiplier,
       aliMultiplier,
-      cohMultiplier
+      cohMultiplier,
     );
 
     // Calculate steer towards destination force
-    const seek = steerTowardsDestination(
-      boid,
-      flock.destination,
-      maxSpeed,
-      maxForce
-    );
+    const seek = steerTowardsDestination(boid, flock.destination, maxSpeed, maxForce);
     seek.mul(seekMultiplier);
 
     const force = Vector.add(flockForce, seek);
@@ -71,7 +60,7 @@ export function createFlock(amount: number, boxSize: number): Flock {
     const pos = new Vector(
       Math.random() * boxSize,
       Math.random() * boxSize,
-      Math.random() * boxSize
+      Math.random() * boxSize,
     );
     const vel = new Vector(Math.random(), Math.random(), Math.random());
     const color = [getRandomInt(256), getRandomInt(256), getRandomInt(256)];
@@ -81,7 +70,7 @@ export function createFlock(amount: number, boxSize: number): Flock {
   const destination = new Vector(
     Math.random() * boxSize,
     Math.random() * boxSize,
-    Math.random() * boxSize
+    Math.random() * boxSize,
   );
 
   return { boids, destination, boxSize };
@@ -91,6 +80,6 @@ export function setRandomDestination(flock: Flock) {
   flock.destination = new Vector(
     Math.random() * flock.boxSize,
     Math.random() * flock.boxSize,
-    Math.random() * flock.boxSize
+    Math.random() * flock.boxSize,
   );
 }

@@ -1,13 +1,10 @@
 import clsx from "clsx";
-import { ProjectCard } from "./ProjectCard";
 import { UnderlineSVG } from "../UnderlineSVG";
+import { ProjectCard } from "./ProjectCard";
 
 export function ProjectsOverview() {
   return (
-    <div
-      id="projects"
-      className={clsx("bg-[#141414]", "flex", "flex-col", "items-center")}
-    >
+    <div id="projects" className={clsx("bg-[#141414]", "flex", "flex-col", "items-center")}>
       <div className={clsx("pl-0", "md:pl-16", "md:max-w-6xl", "md:w-full")}>
         <div
           className={clsx(
@@ -18,7 +15,7 @@ export function ProjectsOverview() {
             "text-4xl",
             "md:text-5xl",
             "mt-12",
-            "md:mt-16"
+            "md:mt-16",
           )}
         >
           <h1>PROJECTS</h1>
@@ -55,7 +52,7 @@ export function ProjectsOverview() {
             "mt-16",
             "md:mt-6",
             "mb-16",
-            "md:my-16"
+            "md:my-16",
           )}
         >
           <ProjectCard

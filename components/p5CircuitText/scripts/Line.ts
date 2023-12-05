@@ -1,5 +1,5 @@
-import { getRandomInt } from "@/components/utils";
 import p5 from "p5";
+import { getRandomInt } from "@/components/utils";
 
 /** Abstract class for a general circuit line with a update and show function. */
 export abstract class CircuitLineItem {
@@ -146,7 +146,7 @@ export class CLCircle extends CircuitLineItem {
     this.d = diameter;
 
     // determine middle point of circle
-    let r = this.d / 2;
+    const r = this.d / 2;
     this.startPos.x += this.vec.x * r;
     this.startPos.y += this.vec.y * r;
   }
