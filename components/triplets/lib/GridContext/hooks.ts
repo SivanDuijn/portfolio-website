@@ -38,7 +38,7 @@ export function useTriplet() {
   const [triplet, setTriplet] = useState<number[][][]>([]);
 
   useEffect(() => {
-    fetch("/api/create-triplet", {
+    fetch("https://174.138.106.40:15881/create-triplet", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export function useTriplet() {
           }
         })
         .catch((reason) => {
-          toast.error("Something went wrong with building the triplet: " + reason);
+          toast.error("Something went wrong with building the triplet..");
           console.log(reason);
         }),
     );
