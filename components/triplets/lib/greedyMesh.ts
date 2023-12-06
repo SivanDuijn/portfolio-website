@@ -1,10 +1,13 @@
 // Greedy meshing inspired by: https://github.com/mikolalysenko/mikolalysenko.github.com/blob/gh-pages/MinecraftMeshes/js/greedy.js
+
+import { Triplet } from "./buildTriplet";
+
 /** Greedy meshes a triplet (3D grid cell volume) */
-export function greedyMesh(volume: number[][][], dims: number[]) {
-  function f(i: number, j: number, k: number) {
-    // return volume[i + dims[0] * (j + dims[1] * k)];
-    return volume[i][j][k];
-  }
+export function greedyMesh(triplet: Triplet): { vertices: number[]; indices: number[] } {
+  const { volume, dims } = triplet;
+
+  const f = (i: number, j: number, k: number) => volume[i + dims[0] * (j + dims[1] * k)];
+
   //Sweep over 3-axes
   // const quads = [];
   const vertices: number[] = [];

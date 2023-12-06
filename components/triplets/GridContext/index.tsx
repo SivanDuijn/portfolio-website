@@ -1,23 +1,22 @@
 import { createContext, ReactElement, useReducer, Dispatch, useMemo } from "react";
-import { GridActions, GridState, gridReducer } from "./reducer";
+import { GridActions, GridState, ShapePlane, gridReducer } from "./reducer";
 
 const initGridSize = 5;
 
-const empty2DList = (size: number) =>
-  Array(size)
-    .fill([])
-    .map(() => Array(size).fill(0));
-export function getEmptyShapePlanes(gridSize: number) {
+export function getEmptyShapePlane(width: number, height: number): ShapePlane {
+  return { w: width, h: height, values: Array(width * height).fill(0) };
+}
+export function getEmptyShapePlanes(width: number, height: number) {
   return {
-    xyShapePlane: empty2DList(gridSize),
-    yzShapePlane: empty2DList(gridSize),
-    xzShapePlane: empty2DList(gridSize),
+    xyShapePlane: getEmptyShapePlane(width, height),
+    yzShapePlane: getEmptyShapePlane(width, height),
+    xzShapePlane: getEmptyShapePlane(width, height),
   };
 }
 
 const initialState: GridState = {
   gridSize: initGridSize,
-  ...getEmptyShapePlanes(initGridSize),
+  ...getEmptyShapePlanes(initGridSize, initGridSize),
 };
 
 export const GridContext = createContext<{

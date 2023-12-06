@@ -1,5 +1,9 @@
+import { saveAs } from "file-saver";
+import toast from "react-hot-toast";
 import * as THREE from "three";
+import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Triplet } from "../lib/buildTriplet";
 import { greedyMesh } from "../lib/greedyMesh";
 
 /** Renders a triplet */
@@ -10,17 +14,32 @@ export default class TripletThreeJSViewGL {
   private controls: OrbitControls;
 
   private shape: THREE.Group = new THREE.Group();
+  private tripletMesh: THREE.Mesh | undefined;
 
   public canvas?: HTMLCanvasElement;
 
-  /** Build a triplet object from 3D grid triplet definition, and updates the rendered canvas. */
-  public updateTriplet(triplet: number[][][]) {
-    const gridSize = triplet.length;
+  public exportTriplet(name?: string) {
+    if (!this.tripletMesh) {
+      toast.error("Nothing to export");
+      return;
+    }
 
+    const exporter = new STLExporter();
+    const result = exporter.parse(this.tripletMesh, { binary: true });
+    const blob = new Blob([result], { type: "application/octet-binary" });
+    saveAs(blob, name ? name : "triplet.stl");
+  }
+
+  public removeTriplet() {
+    this.shape.clear();
+  }
+
+  /** Build a triplet object from 3D grid triplet definition, and updates the rendered canvas. */
+  public updateTriplet(triplet: Triplet) {
     const material = new THREE.MeshBasicMaterial({ color: 0xbd9476 });
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x1c1c1c });
 
-    const { vertices, indices } = greedyMesh(triplet, [gridSize, gridSize, gridSize]);
+    const { vertices, indices } = greedyMesh(triplet);
 
     const geometry = new THREE.BufferGeometry();
 
@@ -28,12 +47,13 @@ export default class TripletThreeJSViewGL {
 
     geometry.setIndex(indices);
     geometry.setAttribute("position", new THREE.BufferAttribute(verticesFloat32, 3));
-    geometry.translate(-triplet.length / 2, -triplet.length / 2, -triplet.length / 2);
+    geometry.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
 
     this.shape.clear();
 
     const shapeGroup = new THREE.Group();
     const mesh = new THREE.Mesh(geometry, material);
+    this.tripletMesh = mesh;
     mesh.castShadow = true;
     shapeGroup.add(mesh);
     const edges = new THREE.EdgesGeometry(geometry);

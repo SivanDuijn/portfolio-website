@@ -1,7 +1,7 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useMemo, useRef } from "react";
-import { useGridSize, useShapePlane } from "./lib/GridContext/hooks";
+import { useGridSize, useShapePlane } from "./GridContext/hooks";
 import { MemoizedSVGPixelCell } from "./SVGPixelCell";
 
 export type ShapePlaneEditorProps = {
@@ -25,31 +25,28 @@ export function ShapePlaneEditor(props: ShapePlaneEditorProps) {
           role="img"
           className={clsx("hover:cursor-pointer")}
         >
-          {shapePlane.map((rows, i) =>
-            rows.map((value, j) => (
-              <MemoizedSVGPixelCell
-                key={i * gridSize + j}
-                cellSize={cellSize}
-                i={i}
-                j={j}
-                value={value}
-                onChange={(value) => changeShapePlane({ i, j, value })}
-                onMouseDown={(enabling) => {
-                  mouseIsDownEditing.current = enabling;
-                }}
-                onMouseEnter={(mouseIsDown) => {
-                  if (mouseIsDown) {
-                    changeShapePlane({
-                      i,
-                      j,
-                      value: mouseIsDownEditing.current ? 1 : 0,
-                    });
-                  }
-                }}
-                padding
-              />
-            )),
-          )}
+          {shapePlane.values.map((value, i) => (
+            <MemoizedSVGPixelCell
+              key={i * 100000 + value}
+              cellSize={cellSize}
+              i={i % shapePlane.w}
+              j={(i / shapePlane.w) >> 0}
+              value={value}
+              onChange={(value) => changeShapePlane({ i, value })}
+              onMouseDown={(enabling) => {
+                mouseIsDownEditing.current = enabling;
+              }}
+              onMouseEnter={(mouseIsDown) => {
+                if (mouseIsDown) {
+                  changeShapePlane({
+                    i,
+                    value: mouseIsDownEditing.current ? 1 : 0,
+                  });
+                }
+              }}
+              padding
+            />
+          ))}
         </svg>
         <div className={clsx("flex", "justify-center")}>
           <TrashIcon
@@ -59,6 +56,6 @@ export function ShapePlaneEditor(props: ShapePlaneEditorProps) {
         </div>
       </div>
     ),
-    [props.className, shapePlane, gridSize, cellSize],
+    [props.className, shapePlane, gridSize, cellSize, shapePlane.values],
   );
 }

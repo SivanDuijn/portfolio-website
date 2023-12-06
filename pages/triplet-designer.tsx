@@ -1,16 +1,32 @@
 import clsx from "clsx";
 import Head from "next/head";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { Toaster } from "react-hot-toast";
-import { GridProvider } from "@/components/triplets/lib/GridContext";
-import {
-  useGridSize,
-  useShapePlane,
-  useTriplet,
-} from "@/components/triplets/lib/GridContext/hooks";
+import Button from "@/components/triplets/atoms/Button";
+import { GridProvider } from "@/components/triplets/GridContext";
+import { useGridSize, useShapePlane, useTriplet } from "@/components/triplets/GridContext/hooks";
 import { ShapePlaneEditor } from "@/components/triplets/ShapePlaneEditor";
-import { TripletCanvas } from "@/components/triplets/TripletCanvas/TripletCanvas";
+import {
+  TripletCanvas,
+  TripletCanvasElement,
+} from "@/components/triplets/TripletCanvas/TripletCanvas";
 import characters from "../components/triplets/data/characters_all_detailed_more.json";
+
+// TODO: fix json character files, so the row and cols are right
+const characters1D: { [key: string]: number[][] } = {};
+Object.keys(characters).forEach((key) => {
+  const char: number[][] = [];
+  characters[key as "A"].forEach((c) => {
+    const charV = Array(14 * 14).fill(0);
+    c.forEach((row, i) =>
+      row.forEach((v, j) => {
+        charV[j * 14 + i] = v;
+      }),
+    );
+    char.push(charV);
+  });
+  characters1D[key] = char;
+});
 
 export default function TripletDesignerWithProvider() {
   return (
@@ -27,21 +43,22 @@ export function TripletDesigner() {
   const { setShapePlane: setShapePlaneXZ } = useShapePlane("xz");
   const { setShapePlane: setShapePlaneYZ } = useShapePlane("yz");
 
+  const tripletCanvasRef = useRef<TripletCanvasElement>(null);
+
   const letterInputChanged = useCallback(
     (value: string) => {
       const chars = value.toUpperCase().split("") as ("A" | "B")[];
-      const c1 = characters[chars[0]];
-      const c2 = characters[chars[1]];
-      const c3 = characters[chars[2]];
+      const c1 = characters1D[chars[0]];
+      const c2 = characters1D[chars[1]];
+      const c3 = characters1D[chars[2]];
 
       const thickness = 2;
 
-      if ((c1 || c2 || c3) && gridSize != c1[thickness].length)
-        changeGridSize(c1[thickness].length);
+      if ((c1 || c2 || c3) && gridSize != 14) changeGridSize(14);
 
-      if (c1) setShapePlaneYZ({ grid: c1[thickness] });
-      if (c2) setShapePlaneXY({ grid: c2[thickness] });
-      if (c3) setShapePlaneXZ({ grid: c3[thickness] });
+      if (c1) setShapePlaneYZ({ shapePlane: { values: c1[thickness], h: 14, w: 14 } });
+      if (c2) setShapePlaneXY({ shapePlane: { values: c2[thickness], h: 14, w: 14 } });
+      if (c3) setShapePlaneXZ({ shapePlane: { values: c3[thickness], h: 14, w: 14 } });
     },
     [gridSize, setShapePlaneXY, setShapePlaneXZ, setShapePlaneYZ],
   );
@@ -57,6 +74,7 @@ export function TripletDesigner() {
           <TripletCanvas
             className={clsx("border-2", "border-slate-200", "mx-2", "mt-2", "inline-block")}
             triplet={triplet}
+            ref={tripletCanvasRef}
           />
           <div>
             <div className={clsx("grid", "grid-cols-3", "mx-2", "mt-2")}>
@@ -107,7 +125,6 @@ export function TripletDesigner() {
                       "py-1",
                       "text-white",
                     )}
-                    defaultValue={5}
                     value={gridSize}
                     onChange={(e) => {
                       let newSize = parseInt(e.target.value);
@@ -141,6 +158,9 @@ export function TripletDesigner() {
                     maxLength={3}
                     onChange={(e) => letterInputChanged(e.target.value)}
                   />
+                </div>
+                <div className={clsx("ml-6", "mt-7")}>
+                  <Button label="Export" onClick={() => tripletCanvasRef.current?.export()} />
                 </div>
               </div>
             </div>
