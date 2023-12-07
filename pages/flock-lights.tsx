@@ -24,16 +24,15 @@ export default function FlockLights() {
         spheres.
         <br />
         <br />
-        The lamp itself is crafted using WS2812b individually addressable LEDs attached to ping pong
-        balls. A Raspberry Pi serves as the controller for these LEDs the{" "}
+        The lamp itself is made with WS2812b individually addressable LEDs attached to ping pong
+        balls. A Raspberry Pi serves as the controller for the{" "}
         <Link href={"/flocking-simulation"} className={clsx("underline", "hover:text-blue-300")}>
           flocking simulation
         </Link>
-        . The Raspberry Pi knows the coordinates of each ping pong ball, a task that required a bit
-        of effort to measure. This information allows it to calculate the distance between each
-        sphere and any nearby bird, thereby adjusting the intensity of the LEDs accordingly. The
-        spheres are suspended from a bicycle wheel with rope woven between the spokes, forming an
-        intriguing ceiling display.
+        . The Raspberry Pi knows the coordinates of each ping pong ball. This information allows it
+        to calculate the distance between a sphere and nearby birds, and adjusting the intensity of
+        the LEDs accordingly. The spheres are suspended from a bicycle wheel with rope woven between
+        the spokes, forming an intriguing ceiling display.
       </p>
       <div
         className={clsx(

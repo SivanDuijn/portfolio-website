@@ -108,8 +108,8 @@ export default class TripletThreeJSViewGL {
     // const sph = new THREE.SpotLightHelper(xySpotLight);
     // this.scene.add(sph);
 
-    const AmbientLight = new THREE.AmbientLight(0xffffff, 0.15); // soft white light
-    this.scene.add(AmbientLight);
+    // const AmbientLight = new THREE.AmbientLight(0xffffff, 0.15); // soft white light
+    // this.scene.add(AmbientLight);
 
     // PLANES
     const planeGeometry = new THREE.PlaneGeometry(80, 80);

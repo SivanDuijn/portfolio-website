@@ -72,7 +72,7 @@ export function TripletDesigner() {
         </Head>
         <div className={clsx("flex", "justify-center", "items-end")}>
           <TripletCanvas
-            className={clsx("border-2", "border-slate-200", "mx-2", "mt-2", "inline-block")}
+            className={clsx("mx-2", "mt-2", "inline-block")} // "border-2", "border-slate-200",
             triplet={triplet}
             ref={tripletCanvasRef}
           />
@@ -96,8 +96,8 @@ export function TripletDesigner() {
                 className={clsx(
                   "col-span-3",
                   "flex",
-                  "border-2",
-                  "border-slate-200",
+                  // "border-2",
+                  // "border-slate-200",
                   "mt-4",
                   "p-4",
                 )}
