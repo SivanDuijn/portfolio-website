@@ -18,7 +18,7 @@ export function ShapePlaneEditor(props: ShapePlaneEditorProps) {
 
   return useMemo(
     () => (
-      <div className={props.className}>
+      <div className={clsx("relative", props.className)}>
         <svg
           viewBox="0 0 100 100"
           preserveAspectRatio="xMidYMid slice"
@@ -48,7 +48,7 @@ export function ShapePlaneEditor(props: ShapePlaneEditorProps) {
             />
           ))}
         </svg>
-        <div className={clsx("flex", "justify-center")}>
+        <div className={clsx("absolute", "-top-6", "right-2")}>
           <TrashIcon
             className={clsx("w-5", "text-gray-500", "hover:text-red-600", "hover:cursor-pointer")}
             onClick={resetShapePlane}

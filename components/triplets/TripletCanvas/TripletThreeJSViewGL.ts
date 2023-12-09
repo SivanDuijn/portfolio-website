@@ -6,6 +6,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Triplet } from "../lib/buildTriplet";
 import { greedyMesh } from "../lib/greedyMesh";
 
+// const rotationalAxis = new THREE.Vector3(Math.sqrt(3), Math.sqrt(3), Math.sqrt(3));
+// const halfPI = (Math.PI * 2) / 9;
+
 /** Renders a triplet */
 export default class TripletThreeJSViewGL {
   private scene: THREE.Scene;
@@ -14,6 +17,9 @@ export default class TripletThreeJSViewGL {
   private controls: OrbitControls;
 
   private tripletMesh: THREE.Mesh | undefined;
+
+  // Rotation timer
+  private radiansRotated = 0;
 
   public canvas?: HTMLCanvasElement;
 
@@ -111,9 +117,15 @@ export default class TripletThreeJSViewGL {
     // const AmbientLight = new THREE.AmbientLight(0xffffff, 0.15); // soft white light
     // this.scene.add(AmbientLight);
 
+    // const light = new THREE.PointLight(0xffffff, 1, 20);
+    // light.position.set(-10, 5, -10);
+    // this.scene.add(light);
+    // const spotLightHelper = new THREE.PointLightHelper(light);
+    // this.scene.add(spotLightHelper);
+
     // PLANES
-    const planeGeometry = new THREE.PlaneGeometry(80, 80);
-    const planeMaterial = new THREE.MeshStandardMaterial();
+    const planeGeometry = new THREE.PlaneGeometry(800, 800);
+    const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xcfcfcf }); //0x9f9f9f });
     const xyPlane = new THREE.Mesh(planeGeometry, planeMaterial);
     xyPlane.position.z = -40;
     xyPlane.receiveShadow = true;
@@ -135,7 +147,7 @@ export default class TripletThreeJSViewGL {
     yzSpotLight.target = yzPlane;
 
     // AXIS
-    const axisGeometry = new THREE.CylinderGeometry(0.3, 0.3, 80, 32);
+    const axisGeometry = new THREE.CylinderGeometry(0.3, 0.3, 800, 32);
     const xAxisMaterial = new THREE.MeshBasicMaterial({ color: 0x00aa00 });
     const xAxisCylinder = new THREE.Mesh(axisGeometry, xAxisMaterial);
     xAxisCylinder.rotateX(Math.PI / 2);
@@ -163,6 +175,25 @@ export default class TripletThreeJSViewGL {
     this.renderer.render(this.scene, this.camera);
 
     this.controls.update();
+
+    // Attempt at object rotation
+    // if (this.tripletMesh && this.radiansRotated >= 0) {
+    //   // this.tripletMesh.rotateOnAxis(rotationalAxis, Math.PI * 0.0005);
+    //   this.radiansRotated += Math.PI * 0.0005;
+    //   this.tripletMesh.setRotationFromAxisAngle(rotationalAxis, this.radiansRotated);
+    //   // this.tripletMesh.rotation.x = this.radiansRotated;
+    //   // this.tripletMesh.rotation.y = this.radiansRotated;
+    //   // this.tripletMesh.rotation.z = this.radiansRotated;
+
+    //   if (this.radiansRotated > Math.PI / 4.5) {
+    //     if (this.radiansRotated > Math.PI * 2) this.tripletMesh.rotation.set(0, 0, 0);
+
+    //     this.radiansRotated = -1;
+    //     setTimeout(() => {
+    //       this.radiansRotated = 0;
+    //     }, 500);
+    //   }
+    // }
 
     requestAnimationFrame(this.update.bind(this));
   }

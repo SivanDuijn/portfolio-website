@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { buildTriplet } from "../lib/buildTriplet";
+import { Triplet, buildTriplet } from "../lib/buildTriplet";
 import {
   ChangeGridSizeAction,
   GridActionKind,
@@ -54,9 +54,10 @@ export function useTriplet() {
   const { shapePlane: xyShapePlane } = useShapePlane("xy");
   const { shapePlane: xzShapePlane } = useShapePlane("xz");
   const { shapePlane: yzShapePlane } = useShapePlane("yz");
-  const [triplet, setTriplet] = useState<{ volume: number[]; dims: [number, number, number] }>({
+  const [triplet, setTriplet] = useState<Triplet>({
     volume: [],
     dims: [0, 0, 0],
+    error: { xy: 0, xz: 0, yz: 0, sum: 0 },
   });
 
   useEffect(
