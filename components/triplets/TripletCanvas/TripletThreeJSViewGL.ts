@@ -20,6 +20,7 @@ export default class TripletThreeJSViewGL {
 
   // Rotation timer
   private radiansRotated = 0;
+  private radiansRotated2 = 0;
 
   public canvas?: HTMLCanvasElement;
 
@@ -66,6 +67,8 @@ export default class TripletThreeJSViewGL {
     // shapeGroup.add(lines);
 
     // this.shape.add(shapeGroup);
+    this.radiansRotated = 0;
+    this.radiansRotated2 = 0;
     this.scene.add(this.tripletMesh);
   }
 
@@ -166,27 +169,37 @@ export default class TripletThreeJSViewGL {
     zAxisCylinder.position.y = -40;
     this.scene.add(zAxisCylinder);
 
-    // this.scene.add(this.tripletMesh);
+    // const origin = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshStandardMaterial());
+    // origin.position.set(0, 0, 0);
+    // this.scene.add(origin);
 
     requestAnimationFrame(this.update.bind(this));
   }
 
   private update() {
+    requestAnimationFrame(this.update.bind(this));
     this.renderer.render(this.scene, this.camera);
 
     this.controls.update();
 
-    // Attempt at object rotation
+    // // Attempt at object rotation
     // if (this.tripletMesh && this.radiansRotated >= 0) {
-    //   // this.tripletMesh.rotateOnAxis(rotationalAxis, Math.PI * 0.0005);
-    //   this.radiansRotated += Math.PI * 0.0005;
-    //   this.tripletMesh.setRotationFromAxisAngle(rotationalAxis, this.radiansRotated);
-    //   // this.tripletMesh.rotation.x = this.radiansRotated;
-    //   // this.tripletMesh.rotation.y = this.radiansRotated;
-    //   // this.tripletMesh.rotation.z = this.radiansRotated;
+    //   this.tripletMesh.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), Math.PI * 0.005);
 
-    //   if (this.radiansRotated > Math.PI / 4.5) {
-    //     if (this.radiansRotated > Math.PI * 2) this.tripletMesh.rotation.set(0, 0, 0);
+    //   this.radiansRotated += Math.PI * 0.005;
+    //   this.radiansRotated2 += Math.PI * 0.005;
+
+    //   if (this.radiansRotated > (Math.PI * 2) / 3) {
+    //     if (this.radiansRotated2 > Math.PI * 2) {
+    //       this.tripletMesh.rotation.set(0, 0, 0);
+    //       this.radiansRotated2 = 0;
+    //     }
+
+    //     // console.log(
+    //     //   this.tripletMesh.rotation.x,
+    //     //   this.tripletMesh.rotation.y,
+    //     //   this.tripletMesh.rotation.z,
+    //     // );
 
     //     this.radiansRotated = -1;
     //     setTimeout(() => {
@@ -194,7 +207,5 @@ export default class TripletThreeJSViewGL {
     //     }, 500);
     //   }
     // }
-
-    requestAnimationFrame(this.update.bind(this));
   }
 }

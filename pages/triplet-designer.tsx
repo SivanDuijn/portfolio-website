@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import Head from "next/head";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Button from "@/components/triplets/atoms/Button";
 import { GridProvider } from "@/components/triplets/GridContext";
@@ -42,7 +42,7 @@ export function TripletDesigner() {
   const { setShapePlane: setShapePlaneXY } = useShapePlane("xy");
   const { setShapePlane: setShapePlaneXZ } = useShapePlane("xz");
   const { setShapePlane: setShapePlaneYZ } = useShapePlane("yz");
-  const [thickness, setThickness] = useState(2);
+  const [thickness, setThickness] = useState(1);
   const letterInputRef = useRef<HTMLInputElement>(null);
 
   const tripletCanvasRef = useRef<TripletCanvasElement>(null);
@@ -140,6 +140,7 @@ export function TripletDesigner() {
               className={inputStyle.input}
               maxLength={3}
               onChange={(e) => letterInputChanged(e.target.value)}
+              defaultValue={"shg"}
             />
           </div>
           <div className={clsx("flex", "mt-2")}>
@@ -163,12 +164,12 @@ export function TripletDesigner() {
           </div>
           <div className={clsx("grid", "grid-cols-2", "mt-6", "font-semibold")}>
             {Object.entries(triplet.error).map(([key, value]) => (
-              <>
+              <React.Fragment key={key}>
                 <p>Error {key}:</p>
                 <p className={clsx("font-mono", "font-thin", value > 0 && "text-red-500")}>
                   {value > 0 ? value.toFixed(4) : value}
                 </p>
-              </>
+              </React.Fragment>
             ))}
           </div>
           <div className={clsx("mt-6")}>

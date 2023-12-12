@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Triplet, buildTriplet } from "../lib/buildTriplet";
+import { Triplet } from "../lib/buildTriplet";
+import getBestTriplet from "../lib/getBestTriplet";
 import {
   ChangeGridSizeAction,
   GridActionKind,
@@ -61,7 +62,7 @@ export function useTriplet() {
   });
 
   useEffect(
-    () => setTriplet(buildTriplet(xyShapePlane, xzShapePlane, yzShapePlane)),
+    () => setTriplet(getBestTriplet(xyShapePlane, xzShapePlane, yzShapePlane)),
     [xyShapePlane.values, xzShapePlane.values, yzShapePlane.values],
   );
 
