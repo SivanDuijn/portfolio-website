@@ -77,9 +77,9 @@ export default class TripletThreeJSViewGL {
 
     const clippingPlane = [0.1, 1000];
     this.camera = new THREE.PerspectiveCamera(75, 1, ...clippingPlane);
-    this.camera.position.x = 37;
-    this.camera.position.y = 19;
-    this.camera.position.z = 41;
+    this.camera.position.x = 39;
+    this.camera.position.y = 15;
+    this.camera.position.z = 45;
     // this.camera.lookAt(new THREE.Vector3(100, 30, 0));
 
     this.renderer = new THREE.WebGLRenderer({
