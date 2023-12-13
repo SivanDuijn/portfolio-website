@@ -22,7 +22,6 @@ export default function getBestTriplet(xy: ShapePlane, xz: ShapePlane, yz: Shape
 
   let minError: Triplet["error"] = { xy: 0, xz: 0, yz: 0, sum: Number.MAX_VALUE };
   let bestTripletVolume: number[] = [];
-  //   const minNumPlanesRotated = Number.MAX_VALUE;
 
   const xyRotated: ShapePlane[] = [xy];
   const xzRotated: ShapePlane[] = [xz];
@@ -34,38 +33,21 @@ export default function getBestTriplet(xy: ShapePlane, xz: ShapePlane, yz: Shape
   }
 
   for (let xyRot = 0; xyRot < 4; xyRot++) {
-    // const xyDidRotate = xyRot > 0 ? 1 : 0;
     for (let xzRot = 0; xzRot < 4; xzRot++) {
-      //   const xzDidRotate = xzRot > 0 ? 1 : 0;
       for (let yzRot = 0; yzRot < 4; yzRot++) {
-        // const yzDidRotate = xzRot > 0 ? 1 : 0;
-        // const rotateSum = xyDidRotate + xzDidRotate + yzDidRotate;
-
         buildTriplet(xyRotated[xyRot], xzRotated[xzRot], yzRotated[yzRot], triplet);
         if (triplet.error.sum < minError.sum) {
           if (triplet.error.sum == 0) return triplet;
-          //   minNumPlanesRotated = rotateSum;
           minError = { ...triplet.error };
           bestTripletVolume = [...triplet.volume];
         }
-        // else if (triplet.error.sum == minError.sum && rotateSum < minNumPlanesRotated) {
-        //   minNumPlanesRotated = rotateSum;
-        //   minError = { ...triplet.error };
-        //   bestTripletVolume = [...triplet.volume];
-        // }
 
         buildTriplet(xzRotated[xzRot], xyRotated[xyRot], yzRotated[yzRot], triplet);
         if (triplet.error.sum < minError.sum) {
           if (triplet.error.sum == 0) return triplet;
-          //   minNumPlanesRotated = rotateSum;
           minError = { ...triplet.error };
           bestTripletVolume = [...triplet.volume];
         }
-        // else if (triplet.error.sum == minError.sum && rotateSum < minNumPlanesRotated) {
-        //   minNumPlanesRotated = rotateSum;
-        //   minError = { ...triplet.error };
-        //   bestTripletVolume = [...triplet.volume];
-        // }
       }
     }
   }
