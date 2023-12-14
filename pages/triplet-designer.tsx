@@ -6,7 +6,6 @@ import Button from "@/components/triplets/atoms/Button";
 import characters1D from "@/components/triplets/data/Characters1D";
 import { GridProvider } from "@/components/triplets/GridContext";
 import { useGridSize, useShapePlane, useTriplet } from "@/components/triplets/GridContext/hooks";
-import calcualteAllTriplets from "@/components/triplets/lib/research/calculateAllTriplets";
 import { ShapePlaneEditor } from "@/components/triplets/ShapePlaneEditor";
 import {
   TripletCanvas,
@@ -75,7 +74,7 @@ export function TripletDesigner() {
       <div className={clsx("flex", "justify-center", "mt-8")}>
         <Toaster />
         <Head>
-          <title>Trip-Let Designer</title>
+          <title>Triplet Designer</title>
         </Head>
         <TripletCanvas
           className={clsx("mx-4", "inline-block", "self-end")} // "border-2", "border-slate-200",

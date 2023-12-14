@@ -1,6 +1,6 @@
 import { Triplet } from "./buildTriplet";
 
-type ConnectednessOptions = "volume" | "edge" | "vertex";
+export type ConnectednessOptions = "volume" | "edge" | "vertex";
 
 /** Alters the triplet in such a way that only the largest component is left.
  * Removes other component that are smaller (or the same).
@@ -11,11 +11,14 @@ type ConnectednessOptions = "volume" | "edge" | "vertex";
 export function removeSmallerComponents(triplet: Triplet, connectedness: ConnectednessOptions) {
   const { components } = getTripletComponents(triplet, connectedness);
 
-  const largestComponentSize = Math.max(...components.map((c) => c.length));
+  const largestComponentIndex = components.reduce(
+    (prev, curr, i) => (curr.length > prev[0] ? [curr.length, i] : prev),
+    [0, 0],
+  )[1];
 
   // Remove all components that are not the largest from the triplet
-  components.forEach((indices) => {
-    if (indices.length == largestComponentSize) return;
+  components.forEach((indices, i) => {
+    if (i == largestComponentIndex) return;
     indices.forEach((index) => (triplet.volume[index] = 0));
   });
 }

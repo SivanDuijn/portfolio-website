@@ -1,6 +1,6 @@
 import { ShapePlane } from "../GridContext/reducer";
 import calculateTripletError from "./calculateTripletError";
-import { removeSmallerComponents } from "./componentLabelling";
+import { ConnectednessOptions, removeSmallerComponents } from "./componentLabelling";
 
 export type Triplet = {
   volume: number[];
@@ -14,6 +14,7 @@ export function buildTriplet(
   xz: ShapePlane,
   yz: ShapePlane,
   triplet?: Triplet,
+  connectedness: ConnectednessOptions = "volume",
 ): Triplet {
   let t: Triplet;
   // If triplet is defined, build triplet in place.
@@ -35,13 +36,15 @@ export function buildTriplet(
         const xz_v = xz.values[k * xz.w + i];
         const yz_v = yz.values[(dim - j - 1) * yz.w + dim - k - 1];
 
+        const index = i + dim * (j + dim * k);
+
         if ((xy_v > 0 || xy_empty) && (xz_v > 0 || xz_empty) && (yz_v > 0 || yz_empty))
-          t.volume[i + dim * (j + dim * k)] = 1;
-        else t.volume[i + dim * (j + dim * k)] = 0;
+          t.volume[index] = 1;
+        else t.volume[index] = 0;
       }
 
   // Remove smaller components
-  removeSmallerComponents(t, "volume");
+  removeSmallerComponents(t, connectedness);
   // Calculate error
   calculateTripletError(t, xy, xz, yz);
 

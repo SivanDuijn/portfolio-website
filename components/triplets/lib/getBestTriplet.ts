@@ -1,13 +1,19 @@
 import toast from "react-hot-toast";
 import { ShapePlane } from "../GridContext/reducer";
 import { Triplet, buildTriplet } from "./buildTriplet";
+import { ConnectednessOptions } from "./componentLabelling";
 import { rotateShapePlane90 } from "./rotateShapePlane90";
 
 /** Picks the best triplet out of all 90 deg rotated shape plane combinations.
  * That means, the triplet with the lowest error score.
  * And if possible the triplet where the least number of planes are rotated.
  */
-export default function getBestTriplet(xy: ShapePlane, xz: ShapePlane, yz: ShapePlane): Triplet {
+export default function getBestTriplet(
+  xy: ShapePlane,
+  xz: ShapePlane,
+  yz: ShapePlane,
+  connectedness: ConnectednessOptions = "volume",
+): Triplet {
   // For now, shapePlanes must be square and have the same dimensions!!
   if (!(xy.w == xy.h && xy.w == xz.w && xy.w == yz.w && xy.h == xz.h && xy.h == yz.h)) {
     toast.error("Input shape plane dimensions are not the same or not square");
@@ -32,17 +38,28 @@ export default function getBestTriplet(xy: ShapePlane, xz: ShapePlane, yz: Shape
     yzRotated.push(rotateShapePlane90(yzRotated[i]));
   }
 
+  // const buildAndKeepIfBetter = (sp1: ShapePlane, sp2: ShapePlane, sp3: ShapePlane) => {
+  //   buildTriplet(sp1, sp2, sp3, triplet, connectedness);
+  //   if (triplet.error.sum < minError.sum) {
+  //     if (triplet.error.sum == 0) return triplet;
+  //     minError = { ...triplet.error };
+  //     bestTripletVolume = [...triplet.volume];
+  //   }
+  // };
+
   for (let xyRot = 0; xyRot < 4; xyRot++) {
     for (let xzRot = 0; xzRot < 4; xzRot++) {
       for (let yzRot = 0; yzRot < 4; yzRot++) {
-        buildTriplet(xyRotated[xyRot], xzRotated[xzRot], yzRotated[yzRot], triplet);
+        // buildAndKeepIfBetter(xyRotated[xyRot], xzRotated[xzRot], yzRotated[yzRot]);
+        // buildAndKeepIfBetter(xzRotated[xzRot], xyRotated[xyRot], yzRotated[yzRot]);
+        buildTriplet(xyRotated[xyRot], xzRotated[xzRot], yzRotated[yzRot], triplet, connectedness);
         if (triplet.error.sum < minError.sum) {
           if (triplet.error.sum == 0) return triplet;
           minError = { ...triplet.error };
           bestTripletVolume = [...triplet.volume];
         }
 
-        buildTriplet(xzRotated[xzRot], xyRotated[xyRot], yzRotated[yzRot], triplet);
+        buildTriplet(xzRotated[xzRot], xyRotated[xyRot], yzRotated[yzRot], triplet, connectedness);
         if (triplet.error.sum < minError.sum) {
           if (triplet.error.sum == 0) return triplet;
           minError = { ...triplet.error };
