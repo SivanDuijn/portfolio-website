@@ -3,31 +3,15 @@ import Head from "next/head";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Button from "@/components/triplets/atoms/Button";
+import characters1D from "@/components/triplets/data/Characters1D";
 import { GridProvider } from "@/components/triplets/GridContext";
 import { useGridSize, useShapePlane, useTriplet } from "@/components/triplets/GridContext/hooks";
+import calcualteAllTriplets from "@/components/triplets/lib/research/calculateAllTriplets";
 import { ShapePlaneEditor } from "@/components/triplets/ShapePlaneEditor";
 import {
   TripletCanvas,
   TripletCanvasElement,
 } from "@/components/triplets/TripletCanvas/TripletCanvas";
-import characters from "../components/triplets/data/characters_all_detailed_more.json";
-
-// TODO: fix json character files, so the row and cols are right
-const characters1D: { [key: string]: number[][] } = {};
-Object.keys(characters).forEach((key) => {
-  const char: number[][] = [];
-  characters[key as "A"].forEach((c) => {
-    const charV = Array(14 * 14).fill(0);
-    c.forEach((row, i) =>
-      row.forEach((v, j) => {
-        charV[j * 14 + i] = v;
-      }),
-    );
-    char.push(charV);
-  });
-  characters1D[key] = char;
-});
-
 export default function TripletDesignerWithProvider() {
   return (
     <GridProvider>

@@ -1,6 +1,6 @@
 import { ShapePlane } from "../GridContext/reducer";
 import calculateTripletError from "./calculateTripletError";
-import removeSmallerComponents from "./removeSmallerComponents";
+import { removeSmallerComponents } from "./componentLabelling";
 
 export type Triplet = {
   volume: number[];

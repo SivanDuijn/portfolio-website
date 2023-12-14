@@ -29,7 +29,7 @@ export function Welcome() {
       {
         url: "#contact",
         title: "Get in Touch",
-        description: "Find out how to best contact me.",
+        description: "Find out how to reach me effectively.",
       },
     ],
     [],

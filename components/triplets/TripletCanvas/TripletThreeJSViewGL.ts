@@ -17,6 +17,7 @@ export default class TripletThreeJSViewGL {
   private controls: OrbitControls;
 
   private tripletMesh: THREE.Mesh | undefined;
+  private tripletGroup: THREE.Group = new THREE.Group();
 
   // Rotation timer
   private radiansRotated = 0;
@@ -39,12 +40,13 @@ export default class TripletThreeJSViewGL {
   public removeTriplet() {
     if (this.tripletMesh) this.scene.remove(this.tripletMesh);
     this.tripletMesh = undefined;
+
+    this.tripletGroup.clear();
   }
 
-  /** Build a triplet object from 3D grid triplet definition, and updates the rendered canvas. */
+  /** Build a mesh from 3D grid triplet definition, and updates the rendered canvas. */
   public updateTriplet(triplet: Triplet) {
-    const material = new THREE.MeshLambertMaterial({ color: 0xbd9476 }); //color: 0xbd9476 });
-    // const lineMaterial = new THREE.LineBasicMaterial({ color: 0x1c1c1c });
+    this.tripletGroup.clear();
 
     const { vertices, indices } = greedyMesh(triplet);
 
@@ -57,16 +59,22 @@ export default class TripletThreeJSViewGL {
     geometry.computeVertexNormals();
     geometry.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
 
+    const material = new THREE.MeshStandardMaterial({ color: 0xbd9476 }); //color: 0xbd9476 });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     if (this.tripletMesh) this.scene.remove(this.tripletMesh);
     this.tripletMesh = mesh;
+
+    // Verify quads
+    // const lineMaterial = new THREE.LineBasicMaterial({ color: 0x1c1c1c });
     // const edges = new THREE.EdgesGeometry(geometry);
     // const lines = new THREE.LineSegments(edges, lineMaterial);
-    // shapeGroup.add(lines);
+    // this.tripletGroup.add(lines);
 
-    // this.shape.add(shapeGroup);
+    // Verifying component labelling
+    // verifyComponentLabelling(triplet, this.tripletGroup);
+
     this.radiansRotated = 0;
     this.radiansRotated2 = 0;
     this.scene.add(this.tripletMesh);
@@ -117,8 +125,8 @@ export default class TripletThreeJSViewGL {
     // const sph = new THREE.SpotLightHelper(xySpotLight);
     // this.scene.add(sph);
 
-    // const AmbientLight = new THREE.AmbientLight(0xffffff, 0.15); // soft white light
-    // this.scene.add(AmbientLight);
+    const AmbientLight = new THREE.AmbientLight(0xffffff, 0.35); // soft white light
+    this.scene.add(AmbientLight);
 
     // const light = new THREE.PointLight(0xffffff, 1, 20);
     // light.position.set(-10, 5, -10);
@@ -172,6 +180,8 @@ export default class TripletThreeJSViewGL {
     // const origin = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshStandardMaterial());
     // origin.position.set(0, 0, 0);
     // this.scene.add(origin);
+
+    this.scene.add(this.tripletGroup);
 
     requestAnimationFrame(this.update.bind(this));
   }
