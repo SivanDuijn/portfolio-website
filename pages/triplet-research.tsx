@@ -1,24 +1,25 @@
 import clsx from "clsx";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
-import { ConnectednessOptions } from "@/components/triplets/lib/componentLabelling";
-import calculateSomeTriplets from "@/components/triplets/lib/research/calculateSomeTriplets";
+import { useCallback, useEffect, useRef, useState } from "react";
+import characters1D from "@/components/triplets/data/Characters1D";
+import { Triplet } from "@/components/triplets/lib/buildTriplet";
+import createTripletWebWorker from "@/components/triplets/lib/tripletWebWorker";
+import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/wasm_test";
+import alphabetCombinations from "../components/triplets/data/alphabetCombinations.json";
 
 export default function TripletResearch() {
-  const nTriplets = useRef(0);
-  const configurationIndex = useRef(0);
-
   const configurations: { thickness: 0 | 1 | 2; connectedness: ConnectednessOptions }[] = [
-    { thickness: 0, connectedness: "volume" },
-    { thickness: 0, connectedness: "edge" },
-    { thickness: 0, connectedness: "vertex" },
-    { thickness: 1, connectedness: "volume" },
-    { thickness: 1, connectedness: "edge" },
-    { thickness: 1, connectedness: "vertex" },
-    { thickness: 2, connectedness: "volume" },
-    { thickness: 2, connectedness: "edge" },
-    { thickness: 2, connectedness: "vertex" },
+    { thickness: 0, connectedness: 0 },
+    { thickness: 0, connectedness: 1 },
+    { thickness: 0, connectedness: 2 },
+    { thickness: 1, connectedness: 0 },
+    { thickness: 1, connectedness: 1 },
+    { thickness: 1, connectedness: 2 },
+    { thickness: 2, connectedness: 0 },
+    { thickness: 2, connectedness: 1 },
+    { thickness: 2, connectedness: 2 },
   ];
+  const configurationIndex = useRef(0);
 
   const [progress, setProgress] = useState<number[]>(Array(configurations.length).fill(0));
   const results = useRef<{ avgError: number; percCorrect: number }[]>(
@@ -26,57 +27,59 @@ export default function TripletResearch() {
       .fill([])
       .map(() => ({ avgError: 0, percCorrect: 0 })),
   );
+  const [nWorkersFinished, setNWorkersFinished] = useState(0);
+  const finishedTriplets = useRef<Triplet[][]>(
+    Array(configurations.length)
+      .fill([])
+      .map(() => []),
+  );
 
-  const calcSomeTriplets = () => {
-    const { thickness, connectedness } = configurations[configurationIndex.current];
-    const triplets = calculateSomeTriplets(thickness, connectedness, {
-      start: nTriplets.current,
-      end: nTriplets.current + 100,
-    });
+  const createWebWorkers = useCallback(() => {
+    for (let i = 0, j = 0; i < 6; i++) {
+      const end = j + 546; //819;
 
-    // 200, 300
-    // (200 / 300) * avgError + (100 / 300) * errorSum
+      const letters = alphabetCombinations.slice(j, end);
+      j = end;
 
-    // 200, 276
-    // (200 / 276) * avgError + (76 / 200) * errorSum
+      const { thickness, connectedness } = configurations[configurationIndex.current];
 
-    const prevTotal = nTriplets.current;
-    const newTotal = nTriplets.current + triplets.length;
-    const currAvgProportion = prevTotal / newTotal;
-    const extraAvgProportion = triplets.length / newTotal;
+      createTripletWebWorker(
+        letters.map((l) => [
+          { values: characters1D[l[0]][thickness], w: 14, h: 14 },
+          { values: characters1D[l[1]][thickness], w: 14, h: 14 },
+          { values: characters1D[l[2]][thickness], w: 14, h: 14 },
+        ]),
+        connectedness,
+        (amount) => {
+          setProgress((prev) => {
+            prev[configurationIndex.current] += amount;
+            return [...prev];
+          });
+        },
+        (triplets) => {
+          finishedTriplets.current[configurationIndex.current].push(...triplets);
+          setNWorkersFinished((prev) => prev + 1);
+        },
+      );
+    }
+  }, []);
 
-    results.current[configurationIndex.current].avgError =
-      currAvgProportion * results.current[configurationIndex.current].avgError +
-      extraAvgProportion *
-        (triplets.reduce((prev, curr) => prev + curr.error.sum, 0) / triplets.length);
-    results.current[configurationIndex.current].percCorrect =
-      currAvgProportion * results.current[configurationIndex.current].percCorrect +
-      extraAvgProportion *
-        (triplets.reduce((prev, curr) => prev + (curr.error.sum == 0 ? 1 : 0), 0) /
+  useEffect(() => {
+    if (nWorkersFinished == 6) {
+      const triplets = finishedTriplets.current[configurationIndex.current];
+      results.current[configurationIndex.current].avgError =
+        triplets.reduce((acc, triplet) => acc + triplet.error.sum, 0) / triplets.length;
+      results.current[configurationIndex.current].percCorrect =
+        (triplets.reduce((acc, triplet) => acc + (triplet.error.sum == 0 ? 1 : 0), 0) /
           triplets.length) *
         100;
 
-    nTriplets.current += 100;
-    if (nTriplets.current > 3276) {
-      nTriplets.current = 3276;
-      progress[configurationIndex.current] = 3276;
-      setProgress([...progress]);
-
-      configurationIndex.current++;
-      if (configurationIndex.current == configurations.length) return;
-
-      nTriplets.current = 0;
-    } else {
-      progress[configurationIndex.current] = nTriplets.current;
-      setProgress([...progress]);
-    }
-
-    setTimeout(() => {
-      calcSomeTriplets();
-    }, 1);
-  };
-
-  useEffect(() => calcSomeTriplets(), []);
+      if (configurationIndex.current < configurations.length - 1) {
+        configurationIndex.current++;
+        setNWorkersFinished(0);
+      } else setNWorkersFinished(1);
+    } else if (nWorkersFinished == 0) createWebWorkers();
+  }, [nWorkersFinished]);
 
   return (
     <div className={clsx("flex", "flex-col", "items-center")}>
@@ -88,7 +91,7 @@ export default function TripletResearch() {
         <div key={i} className={clsx("h-4", "w-80", "my-1.5", "border-2", "border-white")}>
           <div
             className={clsx("h-full", "bg-green-600")}
-            style={{ width: `${(p / 3276) * 100}%` }}
+            style={{ width: `${(p / 3276) * 100}%`, transition: "width .5s" }}
           ></div>
         </div>
       ))}

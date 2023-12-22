@@ -11,6 +11,7 @@ import {
   TripletCanvas,
   TripletCanvasElement,
 } from "@/components/triplets/TripletCanvas/TripletCanvas";
+
 export default function TripletDesignerWithProvider() {
   return (
     <GridProvider>
