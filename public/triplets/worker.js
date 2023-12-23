@@ -1,4 +1,4 @@
-import * as wasm from "./wasm_test.js";
+import * as wasm from "./triplet_wasm.js";
 
 self.onmessage = ({ data }) => {
   if (data.type == "LOG") {
