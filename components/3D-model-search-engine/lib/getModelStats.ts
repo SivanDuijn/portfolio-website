@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import modelClasses from "./../data/classes.json";
 import modelNormStats from "./../data/normalization_stats.json";
 import { ModelState } from "./contexts/reducer";

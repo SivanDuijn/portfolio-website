@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useState, useMemo, useEffect } from "react";

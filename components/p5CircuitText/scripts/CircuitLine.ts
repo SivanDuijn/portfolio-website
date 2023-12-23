@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { getRandomInt } from "@/components/utils";
 import Character from "./Character";
-import { CLLineStart, CLLine, CLCircle, CircuitLineItem } from "./Line";
+import { CLLine, CLCircle, CircuitLineItem } from "./Line";
 
 export default class CircuitLine {
   public p: p5;

@@ -65,6 +65,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "triplet-wasm"
+version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -123,11 +131,3 @@ name = "wasm-bindgen-shared"
 version = "0.2.89"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ab9b36309365056cd639da3134bf87fa8f3d86008abf99e612384a6eecd459f"
-
-[[package]]
-name = "wasm-test"
-version = "0.1.0"
-dependencies = [
- "js-sys",
- "wasm-bindgen",
-]

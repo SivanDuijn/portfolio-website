@@ -1,7 +1,6 @@
 import * as p5 from "p5";
 import { getRandomInt } from "../utils";
 import { Boid, calcFlockForce, showBoid, steerTowardsDestination, updateBoid } from "./boid";
-import { vecToP5Vec } from "./utils";
 import { Vector } from "./vector";
 
 export type Flock = { boids: Boid[]; destination: Vector; boxSize: number };

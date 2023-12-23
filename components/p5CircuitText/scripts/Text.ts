@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import p5 from "p5";
 import Character from "./Character";
 

@@ -3,7 +3,7 @@ import init, {
   ConnectednessOptions,
   ShapePlane,
   get_best_triplet,
-} from "@/modules/rust-triplet/pkg/wasm_test";
+} from "@/modules/rust-triplet/pkg/triplet_wasm";
 import { Triplet } from "../lib/buildTriplet";
 import {
   ChangeGridSizeAction,

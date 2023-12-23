@@ -10,6 +10,7 @@ export default function GetModelDescriptors(
   const ws = modelName.split(".");
   const name = ws[0] + "_processed." + ws[1];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const descriptors = (modelDescriptors as any)[name];
   return descriptors;
 }

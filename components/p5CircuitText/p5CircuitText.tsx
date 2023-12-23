@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dynamic from "next/dynamic";
 import p5 from "p5"; // import p5 typing
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Text from "./scripts/Text";
 
 const Sketch = dynamic(import("react-p5"), {
@@ -38,7 +39,6 @@ export default function P5CircuitText({
 
   //See annotations in JS for more information
   const setup = (p: p5, canvasParentRef: Element) => {
-    console.log("setup");
     const font = p.loadFont("/fonts/Aileron-Bold.otf", () => {
       const x = p.createCanvas(700, height).parent(canvasParentRef);
       (x as any).drawingContext.shadowBlur = 16;

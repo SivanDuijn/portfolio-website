@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import Head from "next/head";
 import Image from "next/image";
 import { ProjectContainer } from "@/components/ProjectContainer";
 

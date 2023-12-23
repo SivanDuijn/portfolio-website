@@ -1,11 +1,8 @@
-import { ProjectContainer } from "@/components/ProjectContainer";
-import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 import clsx from "clsx";
 import Link from "next/link";
+import { ProjectContainer } from "@/components/ProjectContainer";
 
 export default function ModelSearchEngineOverview() {
-  const isSmallScreen = useIsSmallScreen();
-
   return (
     <ProjectContainer
       index={4}

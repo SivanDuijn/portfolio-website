@@ -1,4 +1,4 @@
-import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/wasm_test";
+import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
 import { ShapePlane } from "../GridContext/reducer";
 import { Triplet } from "./buildTriplet";
 
@@ -17,7 +17,7 @@ export default function createTripletWebWorker(
       case "FETCH_WASM": {
         // The worker wants to fetch the bytes for the module and for that we can use the `fetch` API.
         // Then we convert the response into an `ArrayBuffer` and transfer the bytes back to the worker.
-        fetch("./triplets/wasm_test_bg.wasm")
+        fetch("./triplets/triplet_wasm_bg.wasm")
           .then((response) => response.arrayBuffer())
           .then((bytes) => {
             worker.postMessage(bytes, [bytes]);

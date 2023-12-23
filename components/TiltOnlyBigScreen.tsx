@@ -1,5 +1,4 @@
-import clsx from "clsx";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import Tilt from "react-parallax-tilt";
 import { useIsSmallScreen } from "@/lib/hooks/useIsSmalScreen";
 
