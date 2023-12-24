@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import Head from "next/head";
 import { useCallback, useEffect, useRef, useState } from "react";
-import characters1D from "@/components/triplets/data/Characters1D";
+import characters1D from "@/components/triplets/data/characters1D.json";
 import { Triplet } from "@/components/triplets/lib/buildTriplet";
 import createTripletWebWorker from "@/components/triplets/lib/tripletWebWorker";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
@@ -45,9 +45,9 @@ export default function TripletResearch() {
 
       createTripletWebWorker(
         letters.map((l) => [
-          { values: characters1D[l[0]][thickness], w: 14, h: 14 },
-          { values: characters1D[l[1]][thickness], w: 14, h: 14 },
-          { values: characters1D[l[2]][thickness], w: 14, h: 14 },
+          { values: characters1D[l[0] as "A"][thickness], w: 14, h: 14 },
+          { values: characters1D[l[1] as "A"][thickness], w: 14, h: 14 },
+          { values: characters1D[l[2] as "A"][thickness], w: 14, h: 14 },
         ]),
         connectedness,
         (amount) => {

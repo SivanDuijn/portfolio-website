@@ -1,6 +1,7 @@
 import characters from "./characters.json";
 
 // TODO: fix json character files, so the row and cols are right
+/** Takes a charactes json and fixes rotation and puts it in 1D array. */
 const characters1D: { [key: string]: number[][] } = {};
 Object.keys(characters).forEach((key) => {
   const char: number[][] = [];

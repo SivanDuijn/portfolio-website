@@ -3,7 +3,7 @@ import Head from "next/head";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import Button from "@/components/triplets/atoms/Button";
-import characters1D from "@/components/triplets/data/Characters1D";
+import characters1D from "@/components/triplets/data/characters1D.json";
 import { GridProvider } from "@/components/triplets/GridContext";
 import { useGridSize, useShapePlane, useTriplet } from "@/components/triplets/GridContext/hooks";
 import { ShapePlaneEditor } from "@/components/triplets/ShapePlaneEditor";
