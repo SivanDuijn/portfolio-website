@@ -48,18 +48,18 @@ export function About() {
           <div className={clsx("pl-0", "md:pl-16")}>
             <h2 className={clsx("text-lg", "font-semibold", "mb-1")}>About me</h2>
             <p className={clsx("text-sm", "md:text-base")}>
-              Hello! I&apos;m passionate about programming, woodwork, tinkering with electronics,
-              drumming, and diving into projects. Currently, I&apos;m completing my Master&apos;s
-              degree in Game and Media Technology at Utrecht University, after a cum laude
-              Bachelor&apos;s degree in Computer Science.
+              Hello! I&apos;m passionate about programming, woodworking, tinkering with electronics,
+              and drumming. Currently, I&apos;m completing my Master&apos;s degree in Game and Media
+              Technology at Utrecht University, after a cum laude Bachelor&apos;s degree in Computer
+              Science.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>Professional Path</h2>
             {/* <br /> */}
             <p className={clsx("text-sm", "md:text-base")}>
-              I&apos;ve experience at companies like Achmea and Riskquest, where I worked as a
-              developer within talented teams. My contributions spanned both frontend and backend
-              development, mastering various languages and tools, including Next.js, React.js, C++,
-              C#, Python, and Go.
+              I&apos;ve gained work experience at companies like Achmea and Riskquest, where I
+              worked as a developer within talented teams. My contributions spanned both frontend
+              and backend development. Mastering various languages and tools, including Next.js,
+              React.js, C++, C#, Python, and Go.
             </p>
           </div>
         </div>
@@ -98,8 +98,7 @@ export function About() {
             <p className={clsx("text-sm", "md:text-base")}>
               I find joy in woodworking, aikido, and drumming. In my free time, you&apos;ll have
               good chance finding me crafting wooden spoons or baking homemade bread. Playing the
-              drums and hiking are my sources for relaxation and inspiration. And of course, I enjoy
-              having a quality beer with friends.
+              drums and hiking are my sources for relaxation and inspiration.
             </p>
           </div>
           <div className={clsx("pt-4", "hidden", "md:block", "min-w-[10rem]")}>
