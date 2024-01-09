@@ -1,5 +1,5 @@
-import { ShapePlane } from "../GridContext/reducer";
 import { Triplet } from "./buildTriplet";
+import { ShapePlane } from "./tripletWebWorker";
 
 export default function calculateTripletError(
   triplet: Triplet,

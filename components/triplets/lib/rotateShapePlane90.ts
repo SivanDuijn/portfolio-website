@@ -1,4 +1,4 @@
-import { ShapePlane } from "../GridContext/reducer";
+import { ShapePlane } from "./tripletWebWorker";
 
 export function rotateShapePlane90(sp: ShapePlane): ShapePlane {
   const rotatedSP: ShapePlane = {

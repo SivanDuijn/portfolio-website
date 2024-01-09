@@ -1,5 +1,4 @@
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
-// import { ShapePlane } from "../GridContext/reducer";
 import { Triplet } from "./buildTriplet";
 
 export type ShapePlane = {
