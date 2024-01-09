@@ -4,29 +4,39 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Toaster } from "react-hot-toast";
 import Button from "@/components/triplets/atoms/Button";
 import characters1D from "@/components/triplets/data/characters1D.json";
-import { GridProvider } from "@/components/triplets/GridContext";
-import { useGridSize, useShapePlane, useTriplet } from "@/components/triplets/GridContext/hooks";
-import { ShapePlaneEditor } from "@/components/triplets/ShapePlaneEditor";
+import { Triplet } from "@/components/triplets/lib/buildTriplet";
+import { P5GridEditor, P5GridEditorElement } from "@/components/triplets/P5ShapePlaneEditor";
 import {
   TripletCanvas,
   TripletCanvasElement,
 } from "@/components/triplets/TripletCanvas/TripletCanvas";
+import init, {
+  ConnectednessOptions,
+  ShapePlane,
+  get_best_triplet,
+} from "@/modules/rust-triplet/pkg/triplet_wasm";
 
-export default function TripletDesignerWithProvider() {
-  return (
-    <GridProvider>
-      <TripletDesigner />
-    </GridProvider>
-  );
-}
+const errorKeyMap = {
+  xy: 1,
+  xz: 2,
+  yz: 3,
+  sum: "sum",
+};
 
-export function TripletDesigner() {
-  const { gridSize, changeGridSize } = useGridSize();
-  const triplet = useTriplet();
-  const { setShapePlane: setShapePlaneXY } = useShapePlane("xy");
-  const { setShapePlane: setShapePlaneXZ } = useShapePlane("xz");
-  const { setShapePlane: setShapePlaneYZ } = useShapePlane("yz");
+export default function TripletDesigner() {
+  const [gridSize, setGridSize] = useState(14);
+  const [tripletError, setTripletError] = useState<Triplet["error"]>({
+    xy: 0,
+    xz: 0,
+    yz: 0,
+    sum: 0,
+  });
   const [thickness, setThickness] = useState(1);
+
+  const shapePlaneRef1 = useRef<P5GridEditorElement>(null);
+  const shapePlaneRef2 = useRef<P5GridEditorElement>(null);
+  const shapePlaneRef3 = useRef<P5GridEditorElement>(null);
+
   const letterInputRef = useRef<HTMLInputElement>(null);
 
   const tripletCanvasRef = useRef<TripletCanvasElement>(null);
@@ -38,17 +48,63 @@ export function TripletDesigner() {
       const c2 = characters1D[chars[1]];
       const c3 = characters1D[chars[2]];
 
-      if ((c1 || c2 || c3) && gridSize != 14) changeGridSize(14);
+      if ((c1 || c2 || c3) && gridSize != 14) setGridSize(14);
 
-      if (c1) setShapePlaneXY({ shapePlane: { values: c1[thickness], h: 14, w: 14 } });
-      if (c2) setShapePlaneXZ({ shapePlane: { values: c2[thickness], h: 14, w: 14 } });
-      if (c3) setShapePlaneYZ({ shapePlane: { values: c3[thickness], h: 14, w: 14 } });
+      if (c1) shapePlaneRef1.current?.setGrid({ values: c1[thickness], h: 14, w: 14 });
+      if (c2) shapePlaneRef2.current?.setGrid({ values: c2[thickness], h: 14, w: 14 });
+      if (c3) shapePlaneRef3.current?.setGrid({ values: c3[thickness], h: 14, w: 14 });
     },
-    [gridSize, setShapePlaneXY, setShapePlaneXZ, setShapePlaneYZ, thickness],
+    [gridSize, thickness],
   );
   useEffect(() => {
     if (letterInputRef.current) letterInputChanged(letterInputRef.current.value);
   }, [thickness]);
+
+  const updateGridSize = useCallback((size: number) => {
+    shapePlaneRef1.current?.setGrid({
+      values: new Array(size * size).fill(0),
+      w: size,
+      h: size,
+    });
+    shapePlaneRef2.current?.setGrid({
+      values: new Array(size * size).fill(0),
+      w: size,
+      h: size,
+    });
+    shapePlaneRef3.current?.setGrid({
+      values: new Array(size * size).fill(0),
+      w: size,
+      h: size,
+    });
+    setGridSize(size);
+  }, []);
+
+  const onShapePlaneUpdated = useCallback(() => {
+    init().then(() => {
+      if (!shapePlaneRef1.current || !shapePlaneRef2.current || !shapePlaneRef3.current) return;
+      const sp1Grid = shapePlaneRef1.current.getGrid();
+      const sp1: ShapePlane = new ShapePlane(new Int32Array(sp1Grid.values), sp1Grid.w, sp1Grid.h);
+      const sp2Grid = shapePlaneRef2.current.getGrid();
+      const sp2: ShapePlane = new ShapePlane(new Int32Array(sp2Grid.values), sp2Grid.w, sp2Grid.h);
+      const sp3Grid = shapePlaneRef3.current.getGrid();
+      const sp3: ShapePlane = new ShapePlane(new Int32Array(sp3Grid.values), sp3Grid.w, sp3Grid.h);
+      const t = get_best_triplet(sp1, sp2, sp3, ConnectednessOptions.Volume);
+
+      const triplet: Triplet = {
+        volume: Array.from(t.get_volume()),
+        dims: [t.w, t.h, t.d],
+        error: {
+          xy: t.error_score.sp1,
+          xz: t.error_score.sp2,
+          yz: t.error_score.sp3,
+          sum: t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3,
+        },
+      };
+
+      tripletCanvasRef.current?.setTriplet(triplet);
+      setTripletError(triplet.error);
+    });
+  }, [setTripletError]);
 
   const inputStyle = useMemo(
     () => ({
@@ -78,22 +134,21 @@ export function TripletDesigner() {
           <title>Triplet Designer</title>
         </Head>
         <TripletCanvas
-          className={clsx("mx-4", "inline-block", "self-end")} // "border-2", "border-slate-200",
-          triplet={triplet}
+          className={clsx("mx-4", "inline-block", "mt-7")} // "border-2", "border-slate-200",
           ref={tripletCanvasRef}
         />
         <div className={clsx("grid", "grid-cols-1", "mx-4")}>
           <div className={clsx("flex", "flex-col", "items-center")}>
-            <p className={clsx("text-center", "font-bold", "mb-1")}>xy plane</p>
-            <ShapePlaneEditor className={clsx("w-44")} plane="xy" />
+            <p className={clsx("text-center", "font-bold", "mb-1")}>Shadow 1</p>
+            <P5GridEditor ref={shapePlaneRef1} width={176} onUpdate={onShapePlaneUpdated} />
           </div>
           <div className={clsx("flex", "flex-col", "items-center")}>
-            <p className={clsx("text-center", "font-bold", "mt-2", "mb-1")}>xz plane</p>
-            <ShapePlaneEditor className={clsx("w-44")} plane="xz" />
+            <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 2</p>
+            <P5GridEditor ref={shapePlaneRef2} width={176} onUpdate={onShapePlaneUpdated} />
           </div>
           <div className={clsx("flex", "flex-col", "items-center")}>
-            <p className={clsx("text-center", "font-bold", "mt-2", "mb-1")}>yz plane</p>
-            <ShapePlaneEditor className={clsx("w-44")} plane="yz" />
+            <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 3</p>
+            <P5GridEditor ref={shapePlaneRef3} width={176} onUpdate={onShapePlaneUpdated} />
           </div>
         </div>
 
@@ -110,7 +165,7 @@ export function TripletDesigner() {
               onChange={(e) => {
                 let newSize = parseInt(e.target.value);
                 if (isNaN(newSize) || newSize < 2) newSize = 2;
-                if (gridSize != newSize) changeGridSize(newSize);
+                if (gridSize != newSize) updateGridSize(newSize);
               }}
             />
           </div>
@@ -147,9 +202,9 @@ export function TripletDesigner() {
             ))}
           </div>
           <div className={clsx("grid", "grid-cols-2", "mt-6", "font-semibold")}>
-            {Object.entries(triplet.error).map(([key, value]) => (
+            {Object.entries(tripletError).map(([key, value]) => (
               <React.Fragment key={key}>
-                <p>Error {key}:</p>
+                <p>Error {errorKeyMap[key as "xy"]}:</p>
                 <p className={clsx("font-mono", "font-thin", value > 0 && "text-red-500")}>
                   {value > 0 ? value.toFixed(4) : value}
                 </p>
@@ -162,6 +217,6 @@ export function TripletDesigner() {
         </div>
       </div>
     ),
-    [triplet, changeGridSize, gridSize, thickness],
+    [tripletError, gridSize, thickness],
   );
 }

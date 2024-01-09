@@ -32,6 +32,38 @@ self.onmessage = ({ data }) => {
 
     self.postMessage({ type: "TRIPLETS_PROGRESS_UPDATE", amount: shapePlanes.length % 100 });
     self.postMessage({ type: "TRIPLETS_FINISHED", triplets });
+  } else if (data.type == "BUILD_TRIPLET") {
+    const { shapePlanes, connectedness } = data.data;
+
+    const sp1 = new wasm.ShapePlane(
+      new Int32Array(shapePlanes[0].values),
+      shapePlanes[0].w,
+      shapePlanes[0].h,
+    );
+    const sp2 = new wasm.ShapePlane(
+      new Int32Array(shapePlanes[1].values),
+      shapePlanes[1].w,
+      shapePlanes[1].h,
+    );
+    const sp3 = new wasm.ShapePlane(
+      new Int32Array(shapePlanes[2].values),
+      shapePlanes[2].w,
+      shapePlanes[2].h,
+    );
+    const t = wasm.get_best_triplet(sp1, sp2, sp3, connectedness);
+
+    const triplet = {
+      volume: Array.from(t.get_volume()),
+      dims: [t.w, t.h, t.d],
+      error: {
+        xy: t.error_score.sp1,
+        xz: t.error_score.sp2,
+        yz: t.error_score.sp3,
+        sum: t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3,
+      },
+    };
+
+    self.postMessage({ type: "TRIPLET_FINISHED", triplet });
   } else {
     /**
      * When we receive the bytes as an `ArrayBuffer` we can use that to

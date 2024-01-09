@@ -5,11 +5,12 @@ import TripletThreeJSViewGL from "./TripletThreeJSViewGL";
 
 type TripletCanvasProps = {
   className?: string;
-  triplet: Triplet;
+  // triplet: Triplet;
 };
 
 export interface TripletCanvasElement {
   export: (name?: string) => void;
+  setTriplet: (triplet: Triplet) => void;
 }
 
 // eslint-disable-next-line react/display-name
@@ -22,6 +23,10 @@ export const TripletCanvas = memo(
       ref,
       () => ({
         export: (name?: string) => viewGL.current?.exportTriplet(name),
+        setTriplet: (triplet: Triplet) =>
+          triplet.dims.some((d) => d == 0)
+            ? viewGL.current?.removeTriplet()
+            : viewGL.current?.updateTriplet(triplet),
       }),
       [],
     );
@@ -29,14 +34,6 @@ export const TripletCanvas = memo(
     useEffect(() => {
       viewGL.current = new TripletThreeJSViewGL(canvasRef.current || undefined);
     }, []);
-
-    useEffect(
-      () =>
-        props.triplet.dims.some((d) => d == 0)
-          ? viewGL.current?.removeTriplet()
-          : viewGL.current?.updateTriplet(props.triplet),
-      [props.triplet],
-    );
 
     return (
       <div className={clsx(props.className, "relative")}>

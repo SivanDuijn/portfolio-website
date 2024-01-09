@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useCallback, useEffect, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/characters1D.json";
 import { Triplet } from "@/components/triplets/lib/buildTriplet";
-import createTripletWebWorker from "@/components/triplets/lib/tripletWebWorker";
+import createResearchTripletWebWorker from "@/components/triplets/lib/tripletWebWorker";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
 import alphabetCombinations from "../components/triplets/data/alphabetCombinations.json";
 
@@ -43,7 +43,7 @@ export default function TripletResearch() {
 
       const { thickness, connectedness } = configurations[configurationIndex.current];
 
-      createTripletWebWorker(
+      createResearchTripletWebWorker(
         letters.map((l) => [
           { values: characters1D[l[0] as "A"][thickness], w: 14, h: 14 },
           { values: characters1D[l[1] as "A"][thickness], w: 14, h: 14 },

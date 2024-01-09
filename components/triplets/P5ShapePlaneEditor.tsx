@@ -28,6 +28,7 @@ export type P5GridEditorProps = {
 export interface P5GridEditorElement {
   setGrid: (grid: Grid) => void;
   erase: () => void;
+  getGrid: () => Grid;
 }
 
 const onColor = 200;
@@ -58,8 +59,9 @@ export const P5GridEditor = React.memo(
           cellSize.current = props.width / grid.current.w;
           redraw();
         },
+        getGrid: () => grid.current,
       }),
-      [],
+      [grid.current],
     );
 
     useEffect(() => {
@@ -193,7 +195,7 @@ export const P5GridEditor = React.memo(
         setSPValue(i, j, newCellValue);
         drawRect(i, j, cellValue ? hoverOffColor : hoverOnColor);
         mousePressedCellValue.current = newCellValue;
-        if (props.onUpdate) props.onUpdate(grid.current);
+        // if (props.onUpdate) props.onUpdate(grid.current);
         return false;
       };
       p.mouseReleased = () => {
