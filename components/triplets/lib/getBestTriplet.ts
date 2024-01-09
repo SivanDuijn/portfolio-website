@@ -1,8 +1,8 @@
 import toast from "react-hot-toast";
-import { ShapePlane } from "../GridContext/reducer";
 import { Triplet, buildTriplet } from "./buildTriplet";
 import { ConnectednessOptions } from "./componentLabelling";
 import { rotateShapePlane90 } from "./rotateShapePlane90";
+import { ShapePlane } from "./tripletWebWorker";
 
 /** Picks the best triplet out of all 90 deg rotated shape plane combinations.
  * That means, the triplet with the lowest error score.
