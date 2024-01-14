@@ -79,7 +79,7 @@ impl Triplet {
 
 #[wasm_bindgen]
 impl Triplet {
-    pub fn get_volume(&self) -> js_sys::Int32Array {
+    pub fn get_js_volume(&self) -> js_sys::Int32Array {
         js_sys::Int32Array::from(&self.volume[..])
     }
 }

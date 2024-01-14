@@ -20,7 +20,7 @@ export type P5GridEditorProps = {
   width: number;
   onUpdate?: (grid: Grid) => void;
   grid?: Grid;
-  showGrid?: boolean;
+  showGridLines?: boolean;
   noInteraction?: boolean;
   className?: string;
 };
@@ -32,7 +32,7 @@ export interface P5GridEditorElement {
 }
 
 const onColor = 200;
-const offColor = 100;
+const offColor = 50;
 const hoverOnColor = onColor + 30;
 const hoverOffColor = offColor + 30;
 
@@ -40,7 +40,7 @@ const hoverOffColor = offColor + 30;
 export const P5GridEditor = React.memo(
   React.forwardRef<P5GridEditorElement, P5GridEditorProps>((props, ref) => {
     const grid = useRef<Grid>(props.grid || { values: new Array(14 * 14).fill(0), w: 14, h: 14 });
-    const showGrid = useRef(props.showGrid);
+    const showGrid = useRef(props.showGridLines);
     const cellSize = useRef(props.width / grid.current.w);
 
     const mouseInCell = useRef<{ i: number; j: number } | undefined>(undefined);
@@ -65,9 +65,9 @@ export const P5GridEditor = React.memo(
     );
 
     useEffect(() => {
-      showGrid.current = props.showGrid;
+      showGrid.current = props.showGridLines;
       redraw();
-    }, [props.showGrid]);
+    }, [props.showGridLines]);
 
     const erase = useCallback(() => {
       grid.current.values.fill(0);
@@ -249,18 +249,20 @@ export const P5GridEditor = React.memo(
         >
           {sketchComponent}
         </div>
-        <div className={clsx("absolute", "-top-6", "right-1")}>
-          <TrashIcon
-            className={clsx(
-              "w-5",
-              "text-gray-500",
-              "hover:text-red-600",
-              "hover:cursor-pointer",
-              "active:text-red-700",
-            )}
-            onClick={erase}
-          />
-        </div>
+        {!props.noInteraction && (
+          <div className={clsx("absolute", "-top-6", "right-1")}>
+            <TrashIcon
+              className={clsx(
+                "w-5",
+                "text-gray-500",
+                "hover:text-red-600",
+                "hover:cursor-pointer",
+                "active:text-red-700",
+              )}
+              onClick={erase}
+            />
+          </div>
+        )}
       </div>
     );
   }),

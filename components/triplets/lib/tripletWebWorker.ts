@@ -1,11 +1,5 @@
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
-import { Triplet } from "./buildTriplet";
-
-export type ShapePlane = {
-  values: number[];
-  w: number;
-  h: number;
-};
+import { ShapePlane, Triplet } from "../models";
 
 export default function createResearchTripletWebWorker(
   shapePlanes: ShapePlane[][],

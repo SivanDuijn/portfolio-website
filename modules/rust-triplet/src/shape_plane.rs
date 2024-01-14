@@ -13,7 +13,10 @@ impl ShapePlane {
     pub fn new(values: Vec<i32>, w: usize, h: usize) -> Self {
         Self { values, w, h }
     }
-    
+
+    pub fn get_js_values(&self) -> js_sys::Int32Array {
+        js_sys::Int32Array::from(&self.values[..])
+    }
 }
 
 impl ShapePlane {
@@ -40,5 +43,9 @@ impl ShapePlane {
         let rotated180 = rotated90.rotate90();
         let rotated270 = rotated180.rotate90();
         return [self.clone(), rotated90, rotated180, rotated270];
+    }
+
+    pub fn set_value(&mut self, i: usize, j: usize, value: i32) {
+        self.values[j * self.w + i] = value;
     }
 }

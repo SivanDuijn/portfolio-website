@@ -1,12 +1,6 @@
+import { ShapePlane, Triplet } from "../models";
 import calculateTripletError from "./calculateTripletError";
 import { ConnectednessOptions, removeSmallerComponents } from "./componentLabelling";
-import { ShapePlane } from "./tripletWebWorker";
-
-export type Triplet = {
-  volume: number[];
-  dims: [number, number, number];
-  error: { xy: number; xz: number; yz: number; sum: number };
-};
 
 /** Generate a triplet, assumes square shape planes with same dimensions!! */
 export function buildTriplet(

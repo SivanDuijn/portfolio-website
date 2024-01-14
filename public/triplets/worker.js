@@ -15,7 +15,7 @@ self.onmessage = ({ data }) => {
       const t = wasm.get_best_triplet(sp1, sp2, sp3, connectedness);
 
       triplets.push({
-        volume: Array.from(t.get_volume()),
+        volume: Array.from(t.get_js_volume()),
         dims: [t.w, t.h, t.d],
         error: {
           xy: t.error_score.sp1,
@@ -53,7 +53,7 @@ self.onmessage = ({ data }) => {
     const t = wasm.get_best_triplet(sp1, sp2, sp3, connectedness);
 
     const triplet = {
-      volume: Array.from(t.get_volume()),
+      volume: Array.from(t.get_js_volume()),
       dims: [t.w, t.h, t.d],
       error: {
         xy: t.error_score.sp1,

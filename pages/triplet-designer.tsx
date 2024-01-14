@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Toaster } from "react-hot-toast";
 import Button from "@/components/triplets/atoms/Button";
 import characters1D from "@/components/triplets/data/characters1D.json";
-import { Triplet } from "@/components/triplets/lib/buildTriplet";
+import { Triplet } from "@/components/triplets/models";
 import { P5GridEditor, P5GridEditorElement } from "@/components/triplets/P5ShapePlaneEditor";
 import {
   TripletCanvas,
@@ -91,7 +91,7 @@ export default function TripletDesigner() {
       const t = get_best_triplet(sp1, sp2, sp3, ConnectednessOptions.Volume);
 
       const triplet: Triplet = {
-        volume: Array.from(t.get_volume()),
+        volume: Array.from(t.get_js_volume()),
         dims: [t.w, t.h, t.d],
         error: {
           xy: t.error_score.sp1,
