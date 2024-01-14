@@ -2,8 +2,8 @@ import clsx from "clsx";
 import Head from "next/head";
 import { useCallback, useEffect, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/characters1D.json";
-import { Triplet } from "@/components/triplets/lib/buildTriplet";
 import createResearchTripletWebWorker from "@/components/triplets/lib/tripletWebWorker";
+import { Triplet } from "@/components/triplets/models";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
 import alphabetCombinations from "../components/triplets/data/alphabetCombinations.json";
 

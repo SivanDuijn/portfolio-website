@@ -3,8 +3,8 @@ import toast from "react-hot-toast";
 import * as THREE from "three";
 import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Triplet } from "../lib/buildTriplet";
 import { greedyMesh } from "../lib/greedyMesh";
+import { Triplet } from "../models";
 
 // const rotationalAxis = new THREE.Vector3(Math.sqrt(3), Math.sqrt(3), Math.sqrt(3));
 // const halfPI = (Math.PI * 2) / 9;

@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { forwardRef, useEffect, useRef, memo, useImperativeHandle } from "react";
-import { Triplet } from "../lib/buildTriplet";
+import { Triplet } from "../models";
 import TripletThreeJSViewGL from "./TripletThreeJSViewGL";
 
 type TripletCanvasProps = {
