@@ -23,6 +23,10 @@ impl ShapePlane {
     pub fn values(&self) -> &Vec<i32> {
         &self.values
     }
+    
+    pub fn get_value(&self, i: usize, j: usize) -> i32 {
+        self.values[j*self.w + i]
+    }
 
     pub fn rotate90(&self) -> ShapePlane {
         let mut rotated_sp: ShapePlane = ShapePlane::new(vec![0; self.values.len()], self.h, self.w);
