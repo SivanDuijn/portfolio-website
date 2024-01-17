@@ -5,10 +5,25 @@ export type NumberInputProps = {
   value: number;
   min?: number;
   max?: number;
+  incrStep?: number;
+  decrStep?: number;
+  largeIncrStep?: number;
+  largeDecrStep?: number;
+  disableLargeStep?: boolean;
   onChange?: (value: number) => void;
 };
 
 export default function NumberInput(props: NumberInputProps) {
+  const { incrStep, decrStep, largeIncrStep, largeDecrStep } = useMemo(
+    () => ({
+      incrStep: props.incrStep ?? 1,
+      decrStep: props.decrStep ?? -1,
+      largeIncrStep: props.largeIncrStep ?? 5,
+      largeDecrStep: props.largeDecrStep ?? -5,
+    }),
+    [props.incrStep, props.decrStep, props.largeDecrStep, props.largeDecrStep],
+  );
+
   const classes = useMemo(
     () => ({
       b: clsx(
@@ -62,21 +77,25 @@ export default function NumberInput(props: NumberInputProps) {
           "bg-gray-800",
         )}
       >
-        {props.value}
+        {props.value % 1 != 0 ? props.value.toFixed(1) : props.value}
       </div>
       <div className={clsx("flex", "flex-col")}>
-        <div className={clsx(classes.b, "mb-0.5")} onClick={() => change(5)}>
-          <p className={classes.p}>&laquo;</p>
-        </div>
-        <div className={clsx(classes.b, "mb-1")} onClick={() => change(1)}>
+        {!props.disableLargeStep && (
+          <div className={clsx(classes.b, "mb-0.5")} onClick={() => change(largeIncrStep)}>
+            <p className={classes.p}>&laquo;</p>
+          </div>
+        )}
+        <div className={clsx(classes.b, "mb-1")} onClick={() => change(incrStep)}>
           <p className={classes.p}>&lsaquo;</p>
         </div>
-        <div className={clsx(classes.b, "mb-0.5")} onClick={() => change(-1)}>
+        <div className={clsx(classes.b)} onClick={() => change(decrStep)}>
           <p className={classes.p}>&rsaquo;</p>
         </div>
-        <div className={clsx(classes.b)} onClick={() => change(-5)}>
-          <p className={classes.p}>&raquo;</p>
-        </div>
+        {!props.disableLargeStep && (
+          <div className={clsx(classes.b, "mt-0.5")} onClick={() => change(largeDecrStep)}>
+            <p className={classes.p}>&raquo;</p>
+          </div>
+        )}
       </div>
     </div>
   );
