@@ -1,101 +1,111 @@
-import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
+import {
+  ConnectednessOptions,
+  ShapePlaneFillRandomness,
+} from "@/modules/rust-triplet/pkg/triplet_wasm";
 import { ShapePlane, Triplet } from "../models";
 
-export default function createResearchTripletWebWorker(
-  shapePlanes: ShapePlane[][],
-  connectedness: ConnectednessOptions,
-  onUpdate: (amount: number) => void,
-  onFinished: (triplets: Triplet[]) => void,
-) {
-  const worker = new Worker("./triplets/worker.js", { type: "module" });
+export class TripletWebWorker {
+  private worker: Worker | undefined = undefined;
+  public wasmLoaded = false;
 
-  worker.onmessage = ({ data }) => {
-    const { type } = data;
+  private onFinished: (triplet: Triplet) => void = () => true;
+  private onProgressUpdate: (amount: number) => void = () => true;
+  private onMultipleFinished: (triplets: Triplet[]) => void = () => true;
 
-    switch (type) {
-      case "FETCH_WASM": {
-        // The worker wants to fetch the bytes for the module and for that we can use the `fetch` API.
-        // Then we convert the response into an `ArrayBuffer` and transfer the bytes back to the worker.
-        fetch("./triplets/triplet_wasm_bg.wasm")
-          .then((response) => response.arrayBuffer())
-          .then((bytes) => {
-            worker.postMessage(bytes, [bytes]);
-          });
-        break;
-      }
-      case "LOG": {
-        // eslint-disable-next-line no-console
-        console.log(data.message);
-        break;
-      }
-      case "WASM_READY": {
-        worker.postMessage({
-          type: "BUILD_TRIPLETS",
-          data: {
-            shapePlanes,
-            connectedness,
-          },
-        });
-        break;
-      }
-      case "TRIPLETS_PROGRESS_UPDATE": {
-        onUpdate(data.amount);
-        break;
-      }
-      case "TRIPLETS_FINISHED": {
-        onFinished(data.triplets);
-        worker.terminate();
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-  };
+  public setOnFinished(onFinished: (triplet: Triplet) => void) {
+    this.onFinished = onFinished;
+  }
+  public setOnProgressUpdate(onProgressUpdate: (amount: number) => void) {
+    this.onProgressUpdate = onProgressUpdate;
+  }
+  public setOnMultipleFinished(onMultipleFinished: (triplets: Triplet[]) => void) {
+    this.onMultipleFinished = onMultipleFinished;
+  }
+
+  public buildTriplet(
+    sp1: ShapePlane,
+    sp2: ShapePlane,
+    sp3: ShapePlane,
+    connectedness: ConnectednessOptions,
+  ) {
+    if (!this.wasmLoaded) return;
+    this.worker?.postMessage({
+      type: "BUILD_TRIPLET",
+      data: {
+        shapePlanes: [sp1, sp2, sp3],
+        connectedness,
+      },
+    });
+  }
+
+  public buildMultipleTriplets(shapePlanes: ShapePlane[][], connectedness: ConnectednessOptions) {
+    if (!this.wasmLoaded) return;
+    this.worker?.postMessage({
+      type: "BUILD_TRIPLETS",
+      data: {
+        shapePlanes,
+        connectedness,
+      },
+    });
+  }
+
+  public buildRandomTriplets(
+    w: number,
+    h: number,
+    fill_percentage: number,
+    randomness: ShapePlaneFillRandomness,
+    amount: number,
+  ) {
+    if (!this.wasmLoaded) return;
+    this.worker?.postMessage({
+      type: "BUILD_RANDOM_TRIPLETS",
+      data: { w, h, fill_percentage, randomness, amount },
+    });
+  }
+
+  public destroy() {
+    this.worker?.terminate();
+  }
+
+  public init(): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.worker = new Worker("./triplets/worker.js", { type: "module" });
+      this.worker.onmessage = ({ data }) => {
+        const { type } = data;
+
+        switch (type) {
+          case "FETCH_WASM": {
+            // The worker wants to fetch the bytes for the module and for that we can use the `fetch` API.
+            // Then we convert the response into an `ArrayBuffer` and transfer the bytes back to the worker.
+            fetch("./triplets/triplet_wasm_bg.wasm")
+              .then((response) => response.arrayBuffer())
+              .then((bytes) => {
+                this.worker?.postMessage(bytes, [bytes]);
+              });
+            break;
+          }
+          case "TRIPLETS_PROGRESS_UPDATE": {
+            this.onProgressUpdate(data.amount);
+            break;
+          }
+          case "TRIPLET_FINISHED": {
+            this.onFinished(data.triplet);
+            break;
+          }
+          case "TRIPLETS_FINISHED": {
+            this.onMultipleFinished(data.triplets);
+            break;
+          }
+          case "WASM_READY": {
+            this.wasmLoaded = true;
+            resolve(true);
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      };
+    });
+  }
 }
-
-// tripletWorker.current.postMessage({
-//   type: "BUILD_TRIPLET",
-//   shapePlanes: [
-//     shapePlaneRef1.current?.grid,
-//     shapePlaneRef2.current?.grid,
-//     shapePlaneRef3.current?.grid,
-//   ],
-//   connectedness: 1,
-// });
-
-// const tripletWorker = useRef(createResearchTripletWebWorker());
-// useEffect(() => {
-//   tripletWorker.current.onmessage = ({ data }) => {
-//     const { type } = data;
-
-//     switch (type) {
-//       case "FETCH_WASM": {
-//         // The worker wants to fetch the bytes for the module and for that we can use the `fetch` API.
-//         // Then we convert the response into an `ArrayBuffer` and transfer the bytes back to the worker.
-//         fetch("./triplets/triplet_wasm_bg.wasm")
-//           .then((response) => response.arrayBuffer())
-//           .then((bytes) => {
-//             tripletWorker.current.postMessage(bytes, [bytes]);
-//           });
-//         break;
-//       }
-//       case "LOG": {
-//         // eslint-disable-next-line no-console
-//         console.log(data.message);
-//         break;
-//       }
-//       case "WASM_READY": {
-//         break;
-//       }
-//       case "TRIPLET_FINISHED": {
-//         tripletCanvasRef.current?.setTriplet(data.triplet);
-//         setTripletError(data.triplet.error);
-//         break;
-//       }
-//       default: {
-//         break;
-//       }
-//     }
-//   };
-// }, []);

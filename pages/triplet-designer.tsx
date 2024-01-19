@@ -2,9 +2,11 @@ import clsx from "clsx";
 import Head from "next/head";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "react-hot-toast";
+import NumberInput from "@/components/NumberInput";
 import Button from "@/components/triplets/atoms/Button";
 import characters1D from "@/components/triplets/data/characters1D.json";
-import { Triplet } from "@/components/triplets/models";
+import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
+import { Triplet, fromWasmShapePlane } from "@/components/triplets/models";
 import { P5GridEditor, P5GridEditorElement } from "@/components/triplets/P5ShapePlaneEditor";
 import {
   TripletCanvas,
@@ -12,8 +14,8 @@ import {
 } from "@/components/triplets/TripletCanvas/TripletCanvas";
 import init, {
   ConnectednessOptions,
-  ShapePlane,
-  get_best_triplet,
+  ShapePlaneFillRandomness,
+  get_random_shape_planes,
 } from "@/modules/rust-triplet/pkg/triplet_wasm";
 
 const errorKeyMap = {
@@ -25,6 +27,7 @@ const errorKeyMap = {
 
 export default function TripletDesigner() {
   const [gridSize, setGridSize] = useState(14);
+  const [fillPercentage, setFillPercentage] = useState(0.5);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
     xy: 0,
     xz: 0,
@@ -40,6 +43,8 @@ export default function TripletDesigner() {
   const letterInputRef = useRef<HTMLInputElement>(null);
 
   const tripletCanvasRef = useRef<TripletCanvasElement>(null);
+
+  const tripletWebWorker = useRef<TripletWebWorker>(new TripletWebWorker());
 
   const letterInputChanged = useCallback(
     (value: string) => {
@@ -79,32 +84,43 @@ export default function TripletDesigner() {
     setGridSize(size);
   }, []);
 
-  const onShapePlaneUpdated = useCallback(() => {
-    init().then(() => {
-      if (!shapePlaneRef1.current || !shapePlaneRef2.current || !shapePlaneRef3.current) return;
-      const sp1Grid = shapePlaneRef1.current.getGrid();
-      const sp1: ShapePlane = new ShapePlane(new Int32Array(sp1Grid.values), sp1Grid.w, sp1Grid.h);
-      const sp2Grid = shapePlaneRef2.current.getGrid();
-      const sp2: ShapePlane = new ShapePlane(new Int32Array(sp2Grid.values), sp2Grid.w, sp2Grid.h);
-      const sp3Grid = shapePlaneRef3.current.getGrid();
-      const sp3: ShapePlane = new ShapePlane(new Int32Array(sp3Grid.values), sp3Grid.w, sp3Grid.h);
-      const t = get_best_triplet(sp1, sp2, sp3, ConnectednessOptions.Volume);
-
-      const triplet: Triplet = {
-        volume: Array.from(t.get_js_volume()),
-        dims: [t.w, t.h, t.d],
-        error: {
-          xy: t.error_score.sp1,
-          xz: t.error_score.sp2,
-          yz: t.error_score.sp3,
-          sum: t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3,
-        },
-      };
-
+  useEffect(() => {
+    tripletWebWorker.current.init().then(() => onShapePlaneUpdated());
+    tripletWebWorker.current.setOnFinished((triplet) => {
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
     });
+
+    return () => {
+      tripletWebWorker.current.destroy();
+    };
+  }, []);
+
+  const onShapePlaneUpdated = useCallback(() => {
+    if (!shapePlaneRef1.current || !shapePlaneRef2.current || !shapePlaneRef3.current) return;
+
+    tripletWebWorker.current.buildTriplet(
+      shapePlaneRef1.current.getGrid(),
+      shapePlaneRef2.current.getGrid(),
+      shapePlaneRef3.current.getGrid(),
+      ConnectednessOptions.Volume,
+    );
   }, [setTripletError]);
+
+  const setRandomShapePlanes = useCallback(() => {
+    init().then(() => {
+      const sps = get_random_shape_planes(
+        gridSize,
+        gridSize,
+        fillPercentage,
+        ShapePlaneFillRandomness.NeighborWeighted,
+        3,
+      );
+      shapePlaneRef1.current?.setGrid(fromWasmShapePlane(sps[0]));
+      shapePlaneRef2.current?.setGrid(fromWasmShapePlane(sps[1]));
+      shapePlaneRef3.current?.setGrid(fromWasmShapePlane(sps[2]));
+    });
+  }, [fillPercentage, gridSize]);
 
   const inputStyle = useMemo(
     () => ({
@@ -153,21 +169,9 @@ export default function TripletDesigner() {
         </div>
 
         <div className={clsx("flex", "flex-col", "mx-4", "w-44")}>
-          <div className={clsx("max-w-[5rem]")}>
-            <label htmlFor="first_name" className={clsx(inputStyle.label)}>
-              Grid size
-            </label>
-            <input
-              type="number"
-              id="first_name"
-              className={inputStyle.input}
-              value={gridSize}
-              onChange={(e) => {
-                let newSize = parseInt(e.target.value);
-                if (isNaN(newSize) || newSize < 2) newSize = 2;
-                if (gridSize != newSize) updateGridSize(newSize);
-              }}
-            />
+          <div className={clsx("flex", "items-center")}>
+            <p className={clsx(inputStyle.label, "mr-1.5")}>Grid size</p>
+            <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
           </div>
           <div className={clsx("max-w-[5rem]", "mt-4")}>
             <label htmlFor="letters" className={inputStyle.label}>
@@ -212,11 +216,26 @@ export default function TripletDesigner() {
             ))}
           </div>
           <div className={clsx("mt-6")}>
+            <Button label="Random" onClick={setRandomShapePlanes} />
+            <div className={clsx("flex", "items-center", "mt-1")}>
+              <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
+              <NumberInput
+                value={fillPercentage}
+                min={0.1}
+                max={1}
+                incrStep={0.1}
+                decrStep={-0.1}
+                disableLargeStep
+                onChange={setFillPercentage}
+              />
+            </div>
+          </div>
+          <div className={clsx("mt-6")}>
             <Button label="Export" onClick={() => tripletCanvasRef.current?.export()} />
           </div>
         </div>
       </div>
     ),
-    [tripletError, gridSize, thickness],
+    [tripletError, gridSize, fillPercentage, thickness],
   );
 }

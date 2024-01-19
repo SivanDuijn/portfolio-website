@@ -13,7 +13,7 @@ import init, {
 export default function RandomShapePlanesViewer() {
   const wasmReady = useRef(false);
   const [gridSize, setGridSize] = useState(14);
-  const [fillPercentage, setFillPercentage] = useState(0.5);
+  const [fillPercentage, setFillPercentage] = useState(0.7);
   const editorRefs = useRef<(P5GridEditorElement | null)[]>([
     null,
     null,
@@ -72,7 +72,7 @@ export default function RandomShapePlanesViewer() {
         <div className={clsx("flex", "items-center")}>
           <p className={clsx("font-bold", "mr-2")}>Grid size</p>
           <NumberInput value={gridSize} min={2} max={100} onChange={(v) => setGridSize(v)} />
-          <p className={clsx("font-bold", "ml-8", "mr-2")}>Grid size</p>
+          <p className={clsx("font-bold", "ml-8", "mr-2")}>Fill %</p>
           <NumberInput
             value={fillPercentage}
             min={0.1}
@@ -80,7 +80,7 @@ export default function RandomShapePlanesViewer() {
             incrStep={0.1}
             decrStep={-0.1}
             disableLargeStep
-            onChange={(v) => setFillPercentage(v)}
+            onChange={setFillPercentage}
           />
         </div>
         <Button label="Refresh" className="mb-32" onClick={refresh} />

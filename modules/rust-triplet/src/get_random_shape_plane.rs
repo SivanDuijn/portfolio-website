@@ -2,7 +2,7 @@ use std::collections::{HashSet, HashMap};
 
 use rand::{Rng, rngs::ThreadRng};
 use wasm_bindgen::prelude::*;
-use crate::{shape_plane::ShapePlane, log};
+use crate::{shape_plane::ShapePlane, component_labelling::is_edge_connected, log};
 
 #[wasm_bindgen]
 #[derive(PartialEq)]
@@ -14,7 +14,7 @@ pub enum ShapePlaneFillRandomness {
 
 #[wasm_bindgen]
 pub fn get_random_shape_planes(w: usize, h: usize, fill_percentage: f32, randomness: ShapePlaneFillRandomness, amount: usize) -> Vec<ShapePlane> {
-    let target_n_enabled_cells = (fill_percentage.min(1.0) * (w * h) as f32).ceil() as i32;
+    let target_n_enabled_cells = (fill_percentage.min(1.0).max(0.0) * (w * h) as f32).ceil() as i32;
 
     let mut sps: Vec<ShapePlane> = Vec::new();
     let mut rng = rand::thread_rng();
@@ -24,7 +24,18 @@ pub fn get_random_shape_planes(w: usize, h: usize, fill_percentage: f32, randomn
         
         match randomness {
             ShapePlaneFillRandomness::Fully => {
-                randomly_add_cells(&mut sps[i], target_n_enabled_cells, &mut rng);
+                if fill_percentage >= 0.3 {
+                    let mut n = 0;
+                    loop {
+                        randomly_add_cells(&mut sps[i], target_n_enabled_cells, &mut rng);
+                        if is_edge_connected(&sps[i]) { break; }
+
+                        sps[i] = ShapePlane::new(vec![0; w*h], w, h);
+                        get_initial(&mut sps[i], &mut rng);
+                        n += 1;
+                        if n == 100000 { break; }
+                    }
+                }
             }
             ShapePlaneFillRandomness::OptimalEdgesConnect => {
                 connect_edge_cells_walk(edge_cells, &mut sps[i], &mut rng);
@@ -38,17 +49,17 @@ pub fn get_random_shape_planes(w: usize, h: usize, fill_percentage: f32, randomn
     }
 
     // Calculate min, max, and average fill percentage
-    let mut min: f32 = (w * h) as f32;
-    let mut max: f32 = 0.0;
-    let mut average:f32 = 0.0;
-    for sp in &sps {
-        let n_enabled = sp.values().iter().filter(|&v| *v > 0).count() as f32;
-        min = n_enabled.min(min);
-        max = n_enabled.max(max);
-        average += n_enabled;
-    }
+    // let mut min: f32 = (w * h) as f32;
+    // let mut max: f32 = 0.0;
+    // let mut average:f32 = 0.0;
+    // for sp in &sps {
+    //     let n_enabled = sp.values().iter().filter(|&v| *v > 0).count() as f32;
+    //     min = n_enabled.min(min);
+    //     max = n_enabled.max(max);
+    //     average += n_enabled;
+    // }
 
-    log(&format!("amount: {}, min: {}, max: {}, average: {}", amount, min / (w*h) as f32, max / (w*h) as f32, average / (w*h*amount) as f32));
+    // log(&format!("amount: {}, min: {}, max: {}, average: {}", amount, min / (w*h) as f32, max / (w*h) as f32, average / (w*h*amount) as f32));
 
     return sps;
 }
@@ -304,3 +315,4 @@ fn randomly_add_cells(sp: &mut ShapePlane, target_n_enabled_cells: i32, rng: &mu
         }
     }
 }
+

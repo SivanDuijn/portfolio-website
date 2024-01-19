@@ -59,7 +59,10 @@ export default function NumberInput(props: NumberInputProps) {
     (v: number) =>
       props.onChange &&
       props.onChange(
-        Math.max(props.min ?? Number.MAX_SAFE_INTEGER, Math.min(props.max ?? 0, props.value + v)),
+        Math.max(
+          props.min ?? Number.MIN_SAFE_INTEGER,
+          Math.min(props.max ?? Number.MAX_SAFE_INTEGER, props.value + v),
+        ),
       ),
     [props.value],
   );

@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import Head from "next/head";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/characters1D.json";
-import createResearchTripletWebWorker from "@/components/triplets/lib/tripletWebWorker";
+import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
 import { Triplet } from "@/components/triplets/models";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
 import alphabetCombinations from "../components/triplets/data/alphabetCombinations.json";
 
-export default function TripletResearch() {
+export default function TripletResearchFonts() {
   const configurations: { thickness: 0 | 1 | 2; connectedness: ConnectednessOptions }[] = [
     { thickness: 0, connectedness: 0 },
     { thickness: 0, connectedness: 1 },
@@ -20,6 +20,14 @@ export default function TripletResearch() {
     { thickness: 2, connectedness: 2 },
   ];
   const configurationIndex = useRef(0);
+
+  // ASSUMES SQUARE INPUT GRIDS
+  const gridSize = useMemo(() => Math.sqrt(characters1D["A"][0].length), []);
+
+  // Use 6 web workers
+  const tripletWebWorkers = useRef<TripletWebWorker[]>(
+    new Array(6).fill(0).map(() => new TripletWebWorker()),
+  );
 
   const [progress, setProgress] = useState<number[]>(Array(configurations.length).fill(0));
   const results = useRef<{ avgError: number; percCorrect: number }[]>(
@@ -34,34 +42,53 @@ export default function TripletResearch() {
       .map(() => []),
   );
 
-  const createWebWorkers = useCallback(() => {
-    for (let i = 0, j = 0; i < 6; i++) {
-      const end = j + 546; //819;
+  const [fillPercentages, setFillPercentages] = useState<number[]>();
+  useEffect(() => {
+    const percentages = Object.values(characters1D)
+      .reduce(
+        (prev, curr) => curr.map((sp, i) => sp.filter((v) => v > 0).length + prev[i]),
+        [0, 0, 0],
+      )
+      .map((p) => p / (Object.keys(characters1D).length * characters1D["A"][0].length));
+    setFillPercentages(percentages);
 
-      const letters = alphabetCombinations.slice(j, end);
-      j = end;
+    // Initialize webworkers
+    tripletWebWorkers.current.forEach((worker) => {
+      worker.setOnProgressUpdate((amount) =>
+        setProgress((prev) => {
+          prev[configurationIndex.current] += amount;
+          return [...prev];
+        }),
+      );
+      worker.setOnMultipleFinished((triplets) => {
+        finishedTriplets.current[configurationIndex.current].push(...triplets);
+        setNWorkersFinished((prev) => prev + 1);
+      });
+    });
+
+    Promise.all(tripletWebWorkers.current.map((worker) => worker.init())).then(() =>
+      buildTriplets(),
+    );
+  }, []);
+
+  const buildTriplets = useCallback(() => {
+    // Total alphabet combinations equals 3276
+    tripletWebWorkers.current.forEach((worker, i) => {
+      const start = i * 546;
+      const end = (i + 1) * 546; // 3276 / 6 = 546, since we use 6 workers
+      const letters = alphabetCombinations.slice(start, end);
 
       const { thickness, connectedness } = configurations[configurationIndex.current];
 
-      createResearchTripletWebWorker(
+      worker.buildMultipleTriplets(
         letters.map((l) => [
-          { values: characters1D[l[0] as "A"][thickness], w: 14, h: 14 },
-          { values: characters1D[l[1] as "A"][thickness], w: 14, h: 14 },
-          { values: characters1D[l[2] as "A"][thickness], w: 14, h: 14 },
+          { values: characters1D[l[0] as "A"][thickness], w: gridSize, h: gridSize },
+          { values: characters1D[l[1] as "A"][thickness], w: gridSize, h: gridSize },
+          { values: characters1D[l[2] as "A"][thickness], w: gridSize, h: gridSize },
         ]),
         connectedness,
-        (amount) => {
-          setProgress((prev) => {
-            prev[configurationIndex.current] += amount;
-            return [...prev];
-          });
-        },
-        (triplets) => {
-          finishedTriplets.current[configurationIndex.current].push(...triplets);
-          setNWorkersFinished((prev) => prev + 1);
-        },
       );
-    }
+    });
   }, []);
 
   useEffect(() => {
@@ -77,16 +104,20 @@ export default function TripletResearch() {
       if (configurationIndex.current < configurations.length - 1) {
         configurationIndex.current++;
         setNWorkersFinished(0);
-      } else setNWorkersFinished(1);
-    } else if (nWorkersFinished == 0) createWebWorkers();
+        buildTriplets();
+      } else {
+        setNWorkersFinished(1); // To terminate the loop
+        tripletWebWorkers.current.forEach((worker) => worker.destroy());
+      }
+    }
   }, [nWorkersFinished]);
 
   return (
     <div className={clsx("flex", "flex-col", "items-center")}>
       <Head>
-        <title>Triplet research page</title>
+        <title>Triplet Font Research</title>
       </Head>
-      <h1 className={clsx("font-bold", "text-xl", "mt-16", "mb-8")}>Triplet research page</h1>
+      <h1 className={clsx("font-bold", "text-xl", "mt-16", "mb-8")}>Triplet Font Research</h1>
       {progress.map((p, i) => (
         <div key={i} className={clsx("h-4", "w-80", "my-1.5", "border-2", "border-white")}>
           <div
@@ -136,6 +167,25 @@ export default function TripletResearch() {
           <p className={clsx("font-mono")}>{results.current[8].percCorrect.toFixed(2)}</p>
         </div>
       )}
+      <div className={clsx("mt-12", "grid", "grid-cols-2")}>
+        <p className={clsx("font-bold", "col-span-2", "text-center")}>Input info</p>
+        <p>Grid size:</p>
+        <p className={clsx("font-mono", "text-center")}>
+          {gridSize}x{gridSize}
+        </p>
+        <p>Thin fill %:</p>
+        <p className={clsx("font-mono", "text-center")}>
+          {fillPercentages ? fillPercentages[0].toFixed(3) : "loading..."}
+        </p>
+        <p>Medium fill %:</p>
+        <p className={clsx("font-mono", "text-center")}>
+          {fillPercentages ? fillPercentages[1].toFixed(3) : "loading..."}
+        </p>
+        <p>Thick fill %:</p>
+        <p className={clsx("font-mono", "text-center")}>
+          {fillPercentages ? fillPercentages[2].toFixed(3) : "loading..."}
+        </p>
+      </div>
     </div>
   );
 }

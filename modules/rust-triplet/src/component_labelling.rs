@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::{triplet::Triplet, get_best_triplet::ConnectednessOptions};
+use crate::{triplet::Triplet, get_best_triplet::ConnectednessOptions, shape_plane::ShapePlane};
 
 /// Alters the triplet in such a way that only the largest component is left.
 /// Removes all other components that are smaller (or the same size, only one will be left)
@@ -123,4 +123,51 @@ pub fn dfs_queue(
             }
         }   
     }
+}
+
+pub fn is_edge_connected(sp: &ShapePlane) -> bool {
+    fn dfs_queue_edges(sp: &ShapePlane, labels: &mut Vec<i32>, i: usize, j: usize, current_label: i32) {
+        let mut queue: VecDeque<(usize, usize)> = VecDeque::new();
+        queue.push_back((i,j));
+        
+        while let Some((i,j)) = queue.pop_front() {
+            let index = j * sp.w + i;
+
+            if  i < sp.w && // Out of bounds checks
+                j < sp.h &&
+                sp.values()[index] > 0 &&
+                labels[index] == 0 
+            {
+                labels[index] = current_label;
+
+                queue.push_back((i+1, j));
+                queue.push_back((i-1, j));
+                queue.push_back((i, j+1));
+                queue.push_back((i, j-1));
+            }   
+        }
+    }
+
+    let mut labels: Vec<i32> = vec![0;sp.values().len()];
+    let mut current_label = 1;
+
+    for i in 0..sp.w {
+        for j in 0..sp.h {
+            let index = j * sp.w + i;
+
+            // If a voxel is on and not labeled yet, do depth first search for neighboring voxels and label them as well
+            if sp.values()[index] > 0 && labels[index] == 0 {
+                // If the label is 2 and and an enabled cell is found, it means that there are multiple components
+                if current_label == 2 {
+                    return false;
+                }
+
+                dfs_queue_edges(sp, &mut labels, i, j, current_label);
+                
+                current_label += 1;
+            }
+        }
+    }
+
+    return true;
 }
