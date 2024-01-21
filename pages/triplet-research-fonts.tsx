@@ -3,7 +3,6 @@ import Head from "next/head";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/characters1D.json";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
-import { Triplet } from "@/components/triplets/models";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
 import alphabetCombinations from "../components/triplets/data/alphabetCombinations.json";
 
@@ -36,11 +35,10 @@ export default function TripletResearchFonts() {
       .map(() => ({ avgError: 0, percCorrect: 0 })),
   );
   const [nWorkersFinished, setNWorkersFinished] = useState(0);
-  const finishedTriplets = useRef<Triplet[][]>(
-    Array(configurations.length)
-      .fill([])
-      .map(() => []),
-  );
+  const accumulatedError = useRef<{ avgError: number; percCorrect: number }>({
+    avgError: 0,
+    percCorrect: 0,
+  });
 
   const [fillPercentages, setFillPercentages] = useState<number[]>();
   useEffect(() => {
@@ -61,7 +59,15 @@ export default function TripletResearchFonts() {
         }),
       );
       worker.setOnMultipleFinished((triplets) => {
-        finishedTriplets.current[configurationIndex.current].push(...triplets);
+        accumulatedError.current.avgError += triplets.reduce(
+          (acc, triplet) => acc + triplet.error.sum,
+          0,
+        );
+        accumulatedError.current.percCorrect += triplets.reduce(
+          (acc, triplet) => acc + (triplet.error.sum == 0 ? 1 : 0),
+          0,
+        );
+        // finishedTriplets.current[configurationIndex.current].push(...triplets);
         setNWorkersFinished((prev) => prev + 1);
       });
     });
@@ -93,15 +99,14 @@ export default function TripletResearchFonts() {
 
   useEffect(() => {
     if (nWorkersFinished == 6) {
-      const triplets = finishedTriplets.current[configurationIndex.current];
       results.current[configurationIndex.current].avgError =
-        triplets.reduce((acc, triplet) => acc + triplet.error.sum, 0) / triplets.length;
+        accumulatedError.current.avgError / 3276;
       results.current[configurationIndex.current].percCorrect =
-        (triplets.reduce((acc, triplet) => acc + (triplet.error.sum == 0 ? 1 : 0), 0) /
-          triplets.length) *
-        100;
+        (accumulatedError.current.percCorrect / 3276) * 100;
 
       if (configurationIndex.current < configurations.length - 1) {
+        accumulatedError.current.avgError = 0;
+        accumulatedError.current.percCorrect = 0;
         configurationIndex.current++;
         setNWorkersFinished(0);
         buildTriplets();
@@ -117,7 +122,7 @@ export default function TripletResearchFonts() {
       <Head>
         <title>Triplet Font Research</title>
       </Head>
-      <h1 className={clsx("font-bold", "text-xl", "mt-16", "mb-8")}>Triplet Font Research</h1>
+      <h1 className={clsx("font-bold", "text-xl", "mt-12", "mb-8")}>Triplet Font Research</h1>
       {progress.map((p, i) => (
         <div key={i} className={clsx("h-4", "w-80", "my-1.5", "border-2", "border-white")}>
           <div

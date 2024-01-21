@@ -1,12 +1,10 @@
 import clsx from "clsx";
 import Head from "next/head";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import NumberInput from "@/components/NumberInput";
+import Button from "@/components/triplets/atoms/Button";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
-import { Triplet } from "@/components/triplets/models";
-import { ShapePlaneFillRandomness } from "@/modules/rust-triplet/pkg/triplet_wasm";
 
-const randomness = ShapePlaneFillRandomness.NeighborWeighted;
-const gridSize = 14;
 const nWorkers = 4;
 const nTripletsPerWorker = 1000;
 const nTriplets = nWorkers * nTripletsPerWorker; // 6 * 750 = 4500 triplets generated in total per configuration
@@ -35,18 +33,20 @@ export default function TripletResearchRandom() {
     new Array(nWorkers).fill(0).map(() => new TripletWebWorker()),
   );
 
+  const [gridSize, setGridSize] = useState(14);
+  const [randomness, setRandomness] = useState(2);
+
   const [progress, setProgress] = useState<number[]>(Array(configurations.length).fill(0));
   const results = useRef<{ avgError: number; percCorrect: number }[]>(
     Array(configurations.length)
       .fill([])
       .map(() => ({ avgError: 0, percCorrect: 0 })),
   );
-  const [nWorkersFinished, setNWorkersFinished] = useState(0);
-  const finishedTriplets = useRef<Triplet[][]>(
-    Array(configurations.length)
-      .fill([])
-      .map(() => []),
-  );
+  const [nWorkersFinished, setNWorkersFinished] = useState(-2);
+  const accumulatedError = useRef<{ avgError: number; percCorrect: number }>({
+    avgError: 0,
+    percCorrect: 0,
+  });
 
   useEffect(() => {
     // Initialize webworkers
@@ -58,14 +58,25 @@ export default function TripletResearchRandom() {
         }),
       );
       worker.setOnMultipleFinished((triplets) => {
-        finishedTriplets.current[configurationIndex.current].push(...triplets);
+        accumulatedError.current.avgError += triplets.reduce(
+          (acc, triplet) => acc + triplet.error.sum,
+          0,
+        );
+        accumulatedError.current.percCorrect += triplets.reduce(
+          (acc, triplet) => acc + (triplet.error.sum == 0 ? 1 : 0),
+          0,
+        );
         setNWorkersFinished((prev) => prev + 1);
       });
     });
 
     Promise.all(tripletWebWorkers.current.map((worker) => worker.init())).then(() =>
-      buildTriplets(),
+      setNWorkersFinished(-1),
     );
+
+    return () => {
+      tripletWebWorkers.current.forEach((worker) => worker.destroy());
+    };
   }, []);
 
   const buildTriplets = useCallback(() => {
@@ -80,25 +91,37 @@ export default function TripletResearchRandom() {
         nTripletsPerWorker,
       );
     });
-  }, []);
+  }, [gridSize, randomness]);
+
+  const start = useCallback(() => {
+    // First reset progress
+    configurationIndex.current = 0;
+    accumulatedError.current.avgError = 0;
+    accumulatedError.current.percCorrect = 0;
+    setProgress(Array(configurations.length).fill(0));
+    results.current = Array(configurations.length)
+      .fill([])
+      .map(() => ({ avgError: 0, percCorrect: 0 }));
+
+    setNWorkersFinished(0);
+    setTimeout(buildTriplets, 400);
+  }, [buildTriplets]);
 
   useEffect(() => {
     if (nWorkersFinished == nWorkers) {
-      const triplets = finishedTriplets.current[configurationIndex.current];
       results.current[configurationIndex.current].avgError =
-        triplets.reduce((acc, triplet) => acc + triplet.error.sum, 0) / triplets.length;
+        accumulatedError.current.avgError / nTriplets;
       results.current[configurationIndex.current].percCorrect =
-        (triplets.reduce((acc, triplet) => acc + (triplet.error.sum == 0 ? 1 : 0), 0) /
-          triplets.length) *
-        100;
+        (accumulatedError.current.percCorrect / nTriplets) * 100;
 
       if (configurationIndex.current < configurations.length - 1) {
+        accumulatedError.current.avgError = 0;
+        accumulatedError.current.percCorrect = 0;
         configurationIndex.current++;
         setNWorkersFinished(0);
         buildTriplets();
       } else {
-        setNWorkersFinished(1); // To terminate the loop
-        tripletWebWorkers.current.forEach((worker) => worker.destroy());
+        setNWorkersFinished(-1); // To terminate the loop
       }
     }
   }, [nWorkersFinished]);
@@ -108,9 +131,43 @@ export default function TripletResearchRandom() {
       <Head>
         <title>Triplet Random Research</title>
       </Head>
-      <h1 className={clsx("font-bold", "text-xl", "mt-16", "mb-8")}>
+      <h1 className={clsx("font-bold", "text-xl", "mt-12", "mb-8")}>
         Triplet Random Shapeplanes Research
       </h1>
+      <div className={clsx("flex", "items-center")}>
+        <p className={clsx("font-bold", "mr-2")}>Grid size</p>
+        <NumberInput value={gridSize} min={2} max={100} onChange={(v) => setGridSize(v)} />
+        <div className={clsx("ml-12", "mb-5")}>
+          <p className={clsx("text-center", "mb-0.5", "font-bold")}>Random generation</p>
+          <div className={clsx("flex")}>
+            {["Fully", "EdgeConnected", "Weighted"].map((thicknessName, i) => (
+              <div
+                key={thicknessName}
+                className={clsx(
+                  "px-2",
+                  "py-1",
+                  "text-sm",
+                  "font-bold",
+                  i == 0 && "rounded-l",
+                  i == 2 && "rounded-r",
+                  i == randomness ? "bg-gray-800" : "bg-gray-700",
+                  "hover:cursor-pointer",
+                  "hover:bg-gray-800",
+                )}
+                onClick={() => setRandomness(i)}
+              >
+                {thicknessName}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <Button
+        className={clsx("mt-8", "mb-4")}
+        label="Start"
+        disabled={nWorkersFinished != -1}
+        onClick={start}
+      />
       <div className={clsx("flex")}>
         <div className={clsx("mt-[24px]", "mr-4")}>
           {progress.map((p, i) => (
@@ -125,8 +182,8 @@ export default function TripletResearchRandom() {
 
         {results.current && (
           <div className={clsx("grid", "grid-cols-3", "text-center")}>
-            <div></div>
-            <p className={clsx("font-semibold", "mb-1")}>Error</p>
+            <p className={clsx("font-semibold", "mb-1")}>Fill %</p>
+            <p className={clsx("font-semibold")}>Error</p>
             <p className={clsx("font-semibold")}>% correct</p>
 
             {configurations.map((config, i) => (
@@ -149,6 +206,10 @@ export default function TripletResearchRandom() {
         </p>
         <p># Triplets:</p>
         <p className={clsx("font-mono", "text-center")}>{nTriplets}</p>
+        <p>Random generation:</p>
+        <p className={clsx("font-mono", "text-center")}>
+          {["Fully", "EdgeConnected", "Weighted"][randomness]}
+        </p>
       </div>
     </div>
   );
