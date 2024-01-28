@@ -1,0 +1,14 @@
+{
+  "name": "triplet_wasm",
+  "version": "0.1.0",
+  "files": [
+    "triplet_wasm_lib_bg.wasm",
+    "triplet_wasm_lib.js",
+    "triplet_wasm_lib.d.ts"
+  ],
+  "module": "triplet_wasm_lib.js",
+  "types": "triplet_wasm_lib.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
