@@ -96,9 +96,9 @@ export function About() {
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>Free Time</h2>
             {/* <br /> */}
             <p className={clsx("text-sm", "md:text-base")}>
-              I find joy in woodworking, aikido, and drumming. In my free time, you&apos;ll have
-              good chance finding me crafting wooden spoons or baking homemade bread. Playing the
-              drums and hiking are my sources for relaxation and inspiration.
+              I find joy in woodworking, aikido, and drumming. In my free time, you will have good
+              chance finding me crafting wooden spoons or baking bread. Playing the drums and hiking
+              are my sources for relaxation and inspiration.
             </p>
           </div>
           <div className={clsx("pt-4", "hidden", "md:block", "min-w-[10rem]")}>
