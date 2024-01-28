@@ -1,12 +1,18 @@
 [package]
-name = "triplet-wasm"
+name = "triplet_wasm"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
+name = "triplet_wasm_lib"
+path = "src/lib.rs"
 crate-type = ["cdylib"]
+
+[[bin]]
+name = "triplet_wasm_bin"
+path = "src/bin.rs"
 
 [dependencies]
 wasm-bindgen = "0.2"

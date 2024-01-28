@@ -97,18 +97,6 @@ export function get_random_shape_planes(w, h, fill_percentage, randomness, amoun
     }
 }
 
-/**
-* @param {number} w
-* @param {number} h
-* @param {number} fill_percentage
-* @param {ShapePlaneFillRandomness} randomness
-* @returns {ShapePlane}
-*/
-export function get_random_shape_plane(w, h, fill_percentage, randomness) {
-    const ret = wasm.get_random_shape_plane(w, h, fill_percentage, randomness);
-    return ShapePlane.__wrap(ret);
-}
-
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
@@ -159,10 +147,10 @@ function handleError(f, args) {
 }
 /**
 */
-export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
+export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
 /**
 */
-export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
+export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
 /**
 */
 export class ShapePlane {
@@ -589,7 +577,7 @@ async function __wbg_init(input) {
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {
-        input = new URL('triplet_wasm_bg.wasm', import.meta.url);
+        input = new URL('triplet_wasm_lib_bg.wasm', import.meta.url);
     }
     const imports = __wbg_get_imports();
 

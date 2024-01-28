@@ -90,36 +90,49 @@ pub fn dfs_queue(
             component_indices.push(index);
 
             queue.push_back((i+1, j, k));
-            queue.push_back((i-1, j, k));
+            if i > 0 { queue.push_back((i-1, j, k)); }
             queue.push_back((i, j+1, k));
-            queue.push_back((i, j-1, k));
+            if j > 0 { queue.push_back((i, j-1, k)); }
             queue.push_back((i, j, k+1));
-            queue.push_back((i, j, k-1));
+            if k > 0 { queue.push_back((i, j, k-1)); }
 
             if *connectedness == ConnectednessOptions::Edge || *connectedness == ConnectednessOptions::Vertex {
                 queue.push_back((i+1, j+1, k));
                 queue.push_back((i+1, j, k+1));
                 queue.push_back((i, j+1, k+1));
-                queue.push_back((i-1, j-1, k));
-                queue.push_back((i-1, j, k-1));
-                queue.push_back((i, j-1, k-1));
-                queue.push_back((i+1, j-1, k));
-                queue.push_back((i-1, j+1, k));
-                queue.push_back((i+1, j, k-1));
-                queue.push_back((i-1, j, k+1));
-                queue.push_back((i, j+1, k-1));
-                queue.push_back((i, j-1, k+1));
+                if i > 0 {
+                    queue.push_back((i-1, j+1, k));
+                    queue.push_back((i-1, j, k+1));
+                    if j > 0 { queue.push_back((i-1, j-1, k)); }
+                    if k > 0 { queue.push_back((i-1, j, k-1)); }
+                }
+                if j > 0 {
+                    queue.push_back((i+1, j-1, k));
+                    queue.push_back((i, j-1, k+1));
+
+                    if k > 0 { queue.push_back((i, j-1, k-1)); }
+                }
+                if k > 0 {
+                    queue.push_back((i+1, j, k-1));
+                    queue.push_back((i, j+1, k-1));
+                }
             }
 
             if *connectedness == ConnectednessOptions::Vertex {
                 queue.push_back((i+1,j+1,k+1));
-                queue.push_back((i+1,j-1,k+1));
-                queue.push_back((i+1,j+1,k-1));
-                queue.push_back((i+1,j-1,k-1));
-                queue.push_back((i-1,j+1,k+1));
-                queue.push_back((i-1,j-1,k+1));
-                queue.push_back((i-1,j+1,k-1));
-                queue.push_back((i-1,j-1,k-1));
+                if i > 0 {
+                    queue.push_back((i-1,j+1,k+1));
+                    if j > 0 { 
+                        queue.push_back((i-1,j-1,k+1));
+                        if k > 0 { queue.push_back((i-1,j-1,k-1)); }
+                    }
+                    if k > 0 { queue.push_back((i-1,j+1,k-1)); }
+                }
+                if j > 0 {
+                    queue.push_back((i+1,j-1,k+1));
+                    if k > 0 { queue.push_back((i+1,j-1,k-1)); }
+                }
+                if k > 0 { queue.push_back((i+1,j+1,k-1)); }
             }
         }   
     }
@@ -141,9 +154,9 @@ pub fn is_edge_connected(sp: &ShapePlane) -> bool {
                 labels[index] = current_label;
 
                 queue.push_back((i+1, j));
-                queue.push_back((i-1, j));
+                if i > 0 { queue.push_back((i-1, j)); }
                 queue.push_back((i, j+1));
-                queue.push_back((i, j-1));
+                if j > 0 { queue.push_back((i, j-1)); }
             }   
         }
     }

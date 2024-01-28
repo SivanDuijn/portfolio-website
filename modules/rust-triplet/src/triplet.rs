@@ -65,7 +65,7 @@ impl Triplet {
                     if v > 0 {
                         sp1_shadow_plane[(self.w - j - 1) * self.w + i] = 1;
                         sp2_shadow_plane[k * self.h + i] = 1;
-                        sp3_shadow_plane[(self.w - j - 1) * self.w + (self.h - k - 1)] = 1;
+                        sp3_shadow_plane[(self.w - j - 1) * self.w + self.h - k - 1] = 1;
                     }
                 }
             }

@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/characters1D.json";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
-import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm";
+import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 import alphabetCombinations from "../components/triplets/data/alphabetCombinations.json";
 
 export default function TripletResearchFonts() {

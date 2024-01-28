@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import clsx from "clsx";
 import Head from "next/head";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
@@ -122,6 +123,13 @@ export default function TripletResearchRandom() {
         buildTriplets();
       } else {
         setNWorkersFinished(-1); // To terminate the loop
+        // Print results to console for copy-pasting
+        let out = "";
+        results.current.forEach((r) => (out += r.avgError + "\n"));
+        console.log(out);
+        out = "";
+        results.current.forEach((r) => (out += r.percCorrect + "\n"));
+        console.log(out);
       }
     }
   }, [nWorkersFinished]);

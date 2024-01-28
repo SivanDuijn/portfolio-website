@@ -2,7 +2,7 @@ use std::collections::{HashSet, HashMap};
 
 use rand::{Rng, rngs::ThreadRng};
 use wasm_bindgen::prelude::*;
-use crate::{shape_plane::ShapePlane, component_labelling::is_edge_connected, log};
+use crate::{shape_plane::ShapePlane, component_labelling::is_edge_connected};
 
 #[wasm_bindgen]
 #[derive(PartialEq)]
@@ -64,7 +64,7 @@ pub fn get_random_shape_planes(w: usize, h: usize, fill_percentage: f32, randomn
     return sps;
 }
 
-#[wasm_bindgen]
+// #[wasm_bindgen]
 pub fn get_random_shape_plane(w: usize, h: usize, fill_percentage: f32, randomness: ShapePlaneFillRandomness) -> ShapePlane {
     let target_n_enabled_cells = (fill_percentage.min(1.0) * (w * h) as f32).floor() as i32;
 
@@ -208,7 +208,7 @@ fn connect_edge_cells_walk(edge_cells: [[usize; 2]; 4], sp: &mut ShapePlane, rng
 /// Randomly add cells that are neighbors of enabled cells
 /// The weight for a neighbor to be chosen depends on the number of adjacent enabled cells
 fn randomly_add_cells_neighbor_weighted(sp: &mut ShapePlane, target_n_enabled_cells: i32, rng: &mut ThreadRng) {
-    let weight_modifier = 3;
+    let weight_modifier = 2;
 
     fn get_number_of_enabled_neighbors(sp: &mut ShapePlane, i: usize, j: usize) -> i32 {
         let mut n = 0;
@@ -222,7 +222,6 @@ fn randomly_add_cells_neighbor_weighted(sp: &mut ShapePlane, target_n_enabled_ce
     // Determine all neighbors of currently enabled cells
     let mut neighbors_map: HashMap<(usize, usize), i32> = HashMap::new();
 
-    // let mut neighbors_set: HashSet<(usize, usize)> = HashSet::new();
     let mut n_enabled_cells = 0;
     for i in 0..sp.w {
         for j in 0..sp.h {
@@ -267,8 +266,12 @@ fn randomly_add_cells_neighbor_weighted(sp: &mut ShapePlane, target_n_enabled_ce
         neighbors_map.remove(&(i, j));
         n_enabled_cells+=1;
         
+        let mut n_indices = Vec::from([(i+1, j),(i, j+1)]);
+        if i > 0 { n_indices.push((i-1, j)); }
+        if j > 0 { n_indices.push((i, j-1)); }
+
         // Add the neighbors of the newly enabled cell
-        for (n_i, n_j) in [(i+1, j),(i-1, j),(i, j+1), (i, j-1)] {
+        for (n_i, n_j) in n_indices {
             // Stay within range and not already enabled
             if n_i < sp.w && n_j < sp.h && 
                sp.get_value(n_i, n_j) == 0 { 
@@ -308,7 +311,11 @@ fn randomly_add_cells(sp: &mut ShapePlane, target_n_enabled_cells: i32, rng: &mu
         sp.set_value(i, j, 1);
         n_enabled_cells+=1;
 
-        for (n_i, n_j) in [(i+1, j),(i-1, j),(i, j+1), (i, j-1)] {
+        let mut n_indices = Vec::from([(i+1, j),(i, j+1)]);
+        if i > 0 { n_indices.push((i-1, j)); }
+        if j > 0 { n_indices.push((i, j-1)); }
+
+        for (n_i, n_j) in n_indices {
             if n_i >= sp.w || n_j >= sp.h || sp.get_value(n_i, n_j) > 0 || neighbors_set.contains(&(n_i, n_j)) { continue;  }
             neighbors_set.insert((n_i, n_j)); 
             neighbors_vec.push((n_i, n_j));

@@ -8,7 +8,7 @@ import { P5GridEditor, P5GridEditorElement } from "@/components/triplets/P5Shape
 import init, {
   ShapePlaneFillRandomness,
   get_random_shape_planes,
-} from "@/modules/rust-triplet/pkg/triplet_wasm";
+} from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
 export default function RandomShapePlanesViewer() {
   const wasmReady = useRef(false);

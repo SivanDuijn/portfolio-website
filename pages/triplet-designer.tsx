@@ -16,7 +16,7 @@ import init, {
   ConnectednessOptions,
   ShapePlaneFillRandomness,
   get_random_shape_planes,
-} from "@/modules/rust-triplet/pkg/triplet_wasm";
+} from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
 const errorKeyMap = {
   xy: 1,

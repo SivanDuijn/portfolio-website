@@ -1,4 +1,4 @@
-import { ShapePlane as WasmShapePlane } from "@/modules/rust-triplet/pkg/triplet_wasm";
+import { ShapePlane as WasmShapePlane } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
 export type ShapePlane = {
   values: number[];

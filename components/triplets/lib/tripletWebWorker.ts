@@ -1,7 +1,7 @@
 import {
   ConnectednessOptions,
   ShapePlaneFillRandomness,
-} from "@/modules/rust-triplet/pkg/triplet_wasm";
+} from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 import { ShapePlane, Triplet } from "../models";
 
 export class TripletWebWorker {
@@ -77,7 +77,7 @@ export class TripletWebWorker {
           case "FETCH_WASM": {
             // The worker wants to fetch the bytes for the module and for that we can use the `fetch` API.
             // Then we convert the response into an `ArrayBuffer` and transfer the bytes back to the worker.
-            fetch("./triplets/triplet_wasm_bg.wasm")
+            fetch("./triplets/triplet_wasm_lib_bg.wasm")
               .then((response) => response.arrayBuffer())
               .then((bytes) => {
                 this.worker?.postMessage(bytes, [bytes]);

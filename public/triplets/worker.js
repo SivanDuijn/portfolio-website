@@ -1,4 +1,4 @@
-import * as wasm from "./triplet_wasm.js";
+import * as wasm from "./triplet_wasm_lib.js";
 
 function toWasmSP(shapePlane) {
   return new wasm.ShapePlane(new Int32Array(shapePlane.values), shapePlane.w, shapePlane.h);
