@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 use crate::{shape_plane::ShapePlane, component_labelling::is_edge_connected};
 
 #[wasm_bindgen]
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum ShapePlaneFillRandomness {
     Fully,
     OptimalEdgesConnect,

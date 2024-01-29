@@ -8,7 +8,7 @@ edition = "2021"
 [lib]
 name = "triplet_wasm_lib"
 path = "src/lib.rs"
-crate-type = ["cdylib"]
+# crate-type = ["cdylib"]
 
 [[bin]]
 name = "triplet_wasm_bin"

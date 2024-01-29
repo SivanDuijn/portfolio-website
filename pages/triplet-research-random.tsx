@@ -124,10 +124,10 @@ export default function TripletResearchRandom() {
       } else {
         setNWorkersFinished(-1); // To terminate the loop
         // Print results to console for copy-pasting
-        let out = "";
+        let out = "\n";
         results.current.forEach((r) => (out += r.avgError + "\n"));
         console.log(out);
-        out = "";
+        out = "\n";
         results.current.forEach((r) => (out += r.percCorrect + "\n"));
         console.log(out);
       }
