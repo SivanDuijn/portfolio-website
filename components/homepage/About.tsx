@@ -38,7 +38,7 @@ export function About() {
         >
           <div className={clsx("pt-2", "max-w-[12rem]", "mb-8", "min-w-[10rem]")}>
             <Image
-              src={"/imgs/me-slovakia.jpg"}
+              src={"/imgs/me-bw.jpg"}
               alt="A profile picture showing my face"
               width={500}
               height={0}

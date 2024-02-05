@@ -56,7 +56,7 @@ export function Welcome() {
         className={clsx("absolute", "backgroundColorShadowSkyBlue", "backgroundColorShadowBlue")}
       ></div>
 
-      <div className={clsx("z-10")}>
+      <div className={clsx("z-10", isSmallScreen ? "mt-6" : "mt-16")}>
         <P5CircuitText text={"Welcome"} fontSize={isSmallScreen ? 50 : 80} />
       </div>
 
@@ -72,7 +72,14 @@ export function Welcome() {
           "(◕ᴥ◕ʋ)",
         ]}
         repeat
-        className={clsx("mb-16", "font-mono", "text-xl", "sm:text-3xl", "font-extrabold", "z-10")}
+        className={clsx(
+          isSmallScreen ? "mb-16" : "mb-40",
+          "font-mono",
+          "text-xl",
+          "sm:text-3xl",
+          "font-extrabold",
+          "z-10",
+        )}
       />
 
       <div
