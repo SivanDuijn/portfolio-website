@@ -58,6 +58,11 @@ pub fn get_best_triplet(
                     &mut triplet);
                 error_sum = triplet.error_score.sum();
                 if error_sum < min_error {
+                    // Swap error scores because input planes are swapped as well
+                    let temp_err = triplet.error_score.sp1;
+                    triplet.error_score.sp1 = triplet.error_score.sp2;
+                    triplet.error_score.sp2 = temp_err;
+
                     if error_sum == 0.0 {
                         return Ok(triplet);
                     }

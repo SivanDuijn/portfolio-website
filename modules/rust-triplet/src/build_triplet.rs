@@ -9,9 +9,8 @@ pub fn build_triplet(
 ) {
     let sp1_empty: bool = sp1.values().iter().all(|&v| v == 0);
     let sp2_empty: bool = sp2.values().iter().all(|&v| v == 0);
-    let sp3_empty: bool = sp3.values().iter().all(|&v| v == 0);
+    let sp3_empty: bool = sp3.values().iter().all(|&v| v == 0); 
 
-    // TODO: fine for now, should probably return empty triplet
     if sp1_empty && sp2_empty && sp3_empty {
         return;
     }

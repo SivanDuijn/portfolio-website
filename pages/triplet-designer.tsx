@@ -169,7 +169,7 @@ export default function TripletDesigner() {
         </div>
 
         <div className={clsx("flex", "flex-col", "mx-4", "w-44")}>
-          <div className={clsx("flex", "items-center")}>
+          <div className={clsx("flex", "items-center", "mt-1.5")}>
             <p className={clsx(inputStyle.label, "mr-1.5")}>Grid size</p>
             <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
           </div>
