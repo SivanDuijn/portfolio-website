@@ -1,27 +1,27 @@
-import clsx from "clsx";
 import { memo, useMemo } from "react";
-import { MemoizedSVGPixelCell } from "./SVGPixelCell";
+import { P5GridEditor } from "./P5ShapePlaneEditor";
 
 export type FontCharacterEditorProps = {
   placeholder: string;
-  character: number[][];
+  character: number[];
+  w: number;
+  h: number;
   className?: string;
   lightTheme?: boolean;
 };
 
 export const MemoizedFontCharacterViewer = memo(FontCharacterViewer);
 function FontCharacterViewer(props: FontCharacterEditorProps) {
-  const gridSize = props.character.length;
-  const cellSize = 100 / gridSize;
-
-  const allEmpty = useMemo(
-    () => !props.character.some((row) => row.some((c) => c > 0)),
-    [props.character],
-  );
+  const allEmpty = useMemo(() => !props.character.some((v) => v > 0), [props.character]);
 
   return (
     <div className={props.className}>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" role="img">
+      <P5GridEditor
+        width={96}
+        grid={{ w: props.w, h: props.h, values: props.character }}
+        noInteraction
+      />
+      {/* <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" role="img">
         {props.character.map((rows, i) =>
           rows.map((value, j) => (
             <MemoizedSVGPixelCell
@@ -39,7 +39,7 @@ function FontCharacterViewer(props: FontCharacterEditorProps) {
             {props.placeholder}
           </text>
         )}
-      </svg>
+      </svg> */}
     </div>
   );
 }

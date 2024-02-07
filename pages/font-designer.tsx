@@ -10,6 +10,7 @@ import { useCallback, useRef, useState } from "react";
 import Button from "@/components/triplets/atoms/Button";
 import { MemoizedFontCharacterEditor } from "@/components/triplets/FontCharacterEditor";
 import { MemoizedFontCharacterViewer } from "@/components/triplets/FontCharacterViewer";
+import { P5GridEditor } from "@/components/triplets/P5ShapePlaneEditor";
 
 const gridSize = 14;
 
@@ -113,13 +114,14 @@ export default function FontDesigner() {
               />
             </div>
           </div>
-          <MemoizedFontCharacterEditor
+          {/* <MemoizedFontCharacterEditor
             gridSize={gridSize}
             characterName={selectedCharacter}
             character={characters[selectedCharacter][selectedVersion]}
             onUpdate={onCharacterUpdate}
             lightTheme={isLightTheme}
-          />
+          /> */}
+          <P5GridEditor width={240} grid={{ w: gridSize, h: gridSize, values: emptyCharacter() }} />
         </div>
         <div className={clsx("mt-8", "flex")}>
           {characters[selectedCharacter].map((c, i) => (
@@ -173,6 +175,8 @@ export default function FontDesigner() {
                   placeholder={selectedCharacter}
                   className={clsx("w-24", "m-1", "cursor-pointer")}
                   character={c}
+                  w={gridSize}
+                  h={gridSize}
                   lightTheme={isLightTheme}
                 />
               </div>
@@ -186,6 +190,8 @@ export default function FontDesigner() {
                 placeholder={cn}
                 className={clsx("w-24", "m-2", "cursor-pointer")}
                 character={c[selectedVersion]}
+                w={gridSize}
+                h={gridSize}
                 lightTheme={isLightTheme}
               />
             </div>
@@ -196,8 +202,7 @@ export default function FontDesigner() {
   );
 }
 
-const emptyCharacter = (): number[][] =>
-  Array.from({ length: gridSize }, () => Array.from({ length: gridSize }, () => 0));
+const emptyCharacter = (): number[] => Array.from({ length: gridSize * gridSize }, () => 0);
 
 const allCharacters = [
   "A",
