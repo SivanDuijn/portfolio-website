@@ -144,7 +144,13 @@ export default function TripletResearchRandom() {
       </h1>
       <div className={clsx("flex", "items-center")}>
         <p className={clsx("font-bold", "mr-2")}>Grid size</p>
-        <NumberInput value={gridSize} min={2} max={100} onChange={(v) => setGridSize(v)} />
+        <NumberInput
+          darkTheme
+          value={gridSize}
+          min={2}
+          max={100}
+          onChange={(v) => setGridSize(v)}
+        />
         <div className={clsx("ml-12", "mb-5")}>
           <p className={clsx("text-center", "mb-0.5", "font-bold")}>Random generation</p>
           <div className={clsx("flex")}>
@@ -171,6 +177,7 @@ export default function TripletResearchRandom() {
         </div>
       </div>
       <Button
+        darkTheme
         className={clsx("mt-8", "mb-4")}
         label="Start"
         disabled={nWorkersFinished != -1}

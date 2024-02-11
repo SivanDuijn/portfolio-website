@@ -171,7 +171,7 @@ export default function TripletDesigner() {
         <div className={clsx("flex", "flex-col", "mx-4", "w-44")}>
           <div className={clsx("flex", "items-center", "mt-1.5")}>
             <p className={clsx(inputStyle.label, "mr-1.5")}>Grid size</p>
-            <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
+            <NumberInput darkTheme value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
           </div>
           <div className={clsx("max-w-[5rem]", "mt-4")}>
             <label htmlFor="letters" className={inputStyle.label}>
@@ -216,7 +216,7 @@ export default function TripletDesigner() {
             ))}
           </div>
           <div className={clsx("mt-6")}>
-            <Button label="Random" onClick={setRandomShapePlanes} />
+            <Button darkTheme label="Random" onClick={setRandomShapePlanes} />
             <div className={clsx("flex", "items-center", "mt-1")}>
               <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
               <NumberInput
@@ -231,7 +231,7 @@ export default function TripletDesigner() {
             </div>
           </div>
           <div className={clsx("mt-6")}>
-            <Button label="Export" onClick={() => tripletCanvasRef.current?.export()} />
+            <Button darkTheme label="Export" onClick={() => tripletCanvasRef.current?.export()} />
           </div>
         </div>
       </div>

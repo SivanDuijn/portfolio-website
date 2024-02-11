@@ -10,10 +10,21 @@ import init, {
   get_random_shape_planes,
 } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
+const labelClassname = clsx(
+  "absolute",
+  "origin-top-left",
+  "-rotate-90",
+  "bottom-7",
+  "-left-4",
+  "font-mono",
+  "font-bold",
+);
+
 export default function RandomShapePlanesViewer() {
   const wasmReady = useRef(false);
   const [gridSize, setGridSize] = useState(14);
   const [fillPercentage, setFillPercentage] = useState(0.7);
+  const [darkTheme, setDarkTheme] = useState(false);
   const editorRefs = useRef<(P5GridEditorElement | null)[]>([
     null,
     null,
@@ -63,15 +74,36 @@ export default function RandomShapePlanesViewer() {
   }, [gridSize, fillPercentage]);
 
   return (
-    <div className={clsx("min-h-[100svh]")}>
+    <div className={clsx("min-h-[100svh]", !darkTheme && "bg-white text-black")}>
       <Head>
         <title>Random Shapeplanes</title>
         {/* <meta name="theme-color" content="#ffffff" /> */}
       </Head>
-      <div className={clsx("flex", "flex-col", "items-center", "space-y-8", "pt-4")}>
+      <div className={clsx("flex", "flex-col", "items-center", "space-y-6", "pt-4", "relative")}>
+        <p
+          className={clsx(
+            "absolute",
+            "left-40",
+            "top-10",
+            "text-xs",
+            "text-gray-400",
+            darkTheme ? "hover:text-gray-100" : "hover:text-gray-800",
+            "font-mono",
+            "cursor-pointer",
+          )}
+          onClick={() => setDarkTheme((v) => !v)}
+        >
+          theme
+        </p>
         <div className={clsx("flex", "items-center")}>
           <p className={clsx("font-bold", "mr-2")}>Grid size</p>
-          <NumberInput value={gridSize} min={2} max={100} onChange={(v) => setGridSize(v)} />
+          <NumberInput
+            darkTheme={darkTheme}
+            value={gridSize}
+            min={2}
+            max={100}
+            onChange={(v) => setGridSize(v)}
+          />
           <p className={clsx("font-bold", "ml-8", "mr-2")}>Fill %</p>
           <NumberInput
             value={fillPercentage}
@@ -81,20 +113,30 @@ export default function RandomShapePlanesViewer() {
             decrStep={-0.1}
             disableLargeStep
             onChange={setFillPercentage}
+            darkTheme={darkTheme}
           />
         </div>
-        <Button label="Refresh" className="mb-32" onClick={refresh} />
+        <Button darkTheme={darkTheme} label="Refresh" onClick={refresh} />
         <div className={clsx("grid", "grid-cols-5")}>
-          {editorRefs.current.map((r, i) => (
-            <P5GridEditor
-              key={i}
-              ref={(el) => {
-                editorRefs.current[i] = el;
-              }}
-              className={clsx("m-6")}
-              width={175}
-              noInteraction
-            />
+          {editorRefs.current.map((_, i) => (
+            <div key={i} className="relative">
+              {i == 0 && <p className={labelClassname}>Fully random</p>}
+              {i == 5 && <p className={clsx(labelClassname)}>Connect edges</p>}
+              {i == 10 && (
+                <p style={{ bottom: 0 }} className={clsx(labelClassname)}>
+                  Neighbour weighted
+                </p>
+              )}
+              <P5GridEditor
+                ref={(el) => {
+                  editorRefs.current[i] = el;
+                }}
+                className={clsx("m-4", "border-2", "border-gray-300", "h-[178.5px]")}
+                width={175}
+                noInteraction
+                darkTheme={darkTheme}
+              />
+            </div>
           ))}
         </div>
       </div>

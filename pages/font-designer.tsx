@@ -101,14 +101,14 @@ export default function FontDesigner() {
                 label="Import"
                 icon={ArrowDownOnSquareIcon}
                 onClick={importButtonClicked}
-                lightTheme={isLightTheme}
+                darkTheme={!isLightTheme}
                 className="mt-4"
               />
               <Button
                 label="Export"
                 icon={ArrowUpOnSquareIcon}
                 onClick={exportCharacters}
-                lightTheme={isLightTheme}
+                darkTheme={!isLightTheme}
                 className="mt-4"
               />
             </div>

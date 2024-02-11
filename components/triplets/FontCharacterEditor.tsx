@@ -140,7 +140,7 @@ export function FontCharacterEditor(props: FontCharacterEditorProps) {
             setCharacter([...character]);
             props.onUpdate();
           }}
-          lightTheme={props.lightTheme}
+          darkTheme={!props.lightTheme}
         />
         <Button
           label="Erode"
@@ -150,7 +150,7 @@ export function FontCharacterEditor(props: FontCharacterEditorProps) {
             setCharacter([...character]);
             props.onUpdate();
           }}
-          lightTheme={props.lightTheme}
+          darkTheme={!props.lightTheme}
         />
         <input
           type="checkbox"

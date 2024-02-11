@@ -10,6 +10,7 @@ export type NumberInputProps = {
   largeIncrStep?: number;
   largeDecrStep?: number;
   disableLargeStep?: boolean;
+  darkTheme?: boolean;
   onChange?: (value: number) => void;
 };
 
@@ -35,11 +36,11 @@ export default function NumberInput(props: NumberInputProps) {
         "rounded",
         "font-mono",
         "relative",
-        "bg-gray-900",
-        "border-gray-500",
-        "text-gray-500",
-        "hover:text-gray-200",
-        "hover:border-gray-400",
+        props.darkTheme ? "bg-gray-900" : "bg-gray-100",
+        props.darkTheme ? "border-gray-500" : "border-gray-400",
+        props.darkTheme ? "text-gray-500" : "text-gray-600",
+        props.darkTheme ? "hover:text-gray-200" : "hover:text-black",
+        props.darkTheme ? "hover:border-gray-400" : "hover:border-gray-500",
       ),
       p: clsx(
         "rotate-90",
@@ -52,7 +53,7 @@ export default function NumberInput(props: NumberInputProps) {
         "-translate-y-1/2",
       ),
     }),
-    [],
+    [props.darkTheme],
   );
 
   const change = useCallback(
@@ -72,12 +73,14 @@ export default function NumberInput(props: NumberInputProps) {
       <div
         className={clsx(
           "min-w-[2rem]",
+          "px-1",
           "text-center",
           "mr-1",
           "border",
           "border-gray-500",
           "rounded",
-          "bg-gray-800",
+          "font-mono",
+          props.darkTheme ? "bg-gray-800" : "bg-gray-100",
         )}
       >
         {props.value % 1 != 0 ? props.value.toFixed(1) : props.value}
