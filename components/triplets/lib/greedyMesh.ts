@@ -3,15 +3,19 @@
 import { Triplet } from "../models";
 
 /** Greedy meshes a triplet (3D grid cell volume) */
-export function greedyMesh(triplet: Triplet): { vertices: number[]; indices: number[] } {
+export function greedyMesh(triplet: Triplet): {
+  vertices: number[];
+  indices: number[];
+  lines: number[];
+} {
   const { volume, dims } = triplet;
 
   const f = (i: number, j: number, k: number) => volume[i + dims[0] * (j + dims[1] * k)];
 
   //Sweep over 3-axes
-  // const quads = [];
   const vertices: number[] = [];
   const indices: number[] = [];
+  const lines: number[] = [];
   let nVerts = 0;
   for (let d = 0; d < 3; ++d) {
     let i, j, k, l, w, h;
@@ -36,8 +40,50 @@ export function greedyMesh(triplet: Triplet): { vertices: number[]; indices: num
             else mask[n++] = 2;
           } else mask[n++] = 0;
         }
+
       //Increment x[d]
       ++x[d];
+
+      // Generate outline lines
+      n = -dims[v];
+      for (j = -1; j < dims[v]; ++j)
+        for (i = 0; i < dims[u]; ) {
+          const cell = j >= 0 ? mask[n] : 0;
+          const below = j + 1 < dims[v] ? mask[n + dims[u]] : 0;
+
+          if (cell != below && (cell == 0 || below == 0)) {
+            // calc width
+            for (
+              w = 1;
+              i + w < dims[u] && mask[n + w] == cell && mask[n + w + dims[u]] == below;
+              w++ // eslint-disable-next-line no-empty
+            ) {}
+
+            x[u] = i;
+            x[v] = j + 1;
+            const du = [0, 0, 0];
+            du[u] = w;
+            const m = 0.005;
+            lines.push(
+              ...[
+                x[0] + m,
+                x[1] + m,
+                x[2] + m,
+                x[0] + du[0] + m,
+                x[1] + du[1] + m,
+                x[2] + du[2] + m,
+              ],
+            );
+
+            i += w;
+            n += w;
+            continue;
+          }
+
+          i++;
+          n++;
+        }
+
       //Generate mesh for mask using lexicographic ordering
       n = 0;
       for (j = 0; j < dims[v]; ++j)
@@ -105,5 +151,5 @@ export function greedyMesh(triplet: Triplet): { vertices: number[]; indices: num
         }
     }
   }
-  return { vertices, indices };
+  return { vertices, indices, lines };
 }

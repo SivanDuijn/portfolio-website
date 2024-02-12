@@ -125,7 +125,7 @@ export default function TripletDesigner() {
   const inputStyle = useMemo(
     () => ({
       input: clsx(
-        "bg-gray-900",
+        "bg-gray-100",
         "border",
         "border-gray-600",
         "text-gray-900",
@@ -135,16 +135,24 @@ export default function TripletDesigner() {
         "w-full",
         "px-2",
         "py-1",
-        "text-white",
       ),
-      label: clsx("block", "text-md", "text-white", "font-bold", "mb-1"),
+      label: clsx("block", "text-md", "font-bold", "mb-1"),
     }),
     [],
   );
 
   return useMemo(
     () => (
-      <div className={clsx("flex", "justify-center", "mt-8")}>
+      <div
+        className={clsx(
+          "flex",
+          "justify-center",
+          "pt-16",
+          "min-h-[100svh]",
+          "bg-white",
+          "text-black",
+        )}
+      >
         <Toaster />
         <Head>
           <title>Triplet Designer</title>
@@ -153,25 +161,42 @@ export default function TripletDesigner() {
           className={clsx("mx-4", "inline-block", "mt-7")} // "border-2", "border-slate-200",
           ref={tripletCanvasRef}
         />
-        <div className={clsx("grid", "grid-cols-1", "mx-4")}>
-          <div className={clsx("flex", "flex-col", "items-center")}>
-            <p className={clsx("text-center", "font-bold", "mb-1")}>Shadow 1</p>
-            <P5GridEditor ref={shapePlaneRef1} width={176} onUpdate={onShapePlaneUpdated} />
-          </div>
-          <div className={clsx("flex", "flex-col", "items-center")}>
-            <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 2</p>
-            <P5GridEditor ref={shapePlaneRef2} width={176} onUpdate={onShapePlaneUpdated} />
-          </div>
-          <div className={clsx("flex", "flex-col", "items-center")}>
-            <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 3</p>
-            <P5GridEditor ref={shapePlaneRef3} width={176} onUpdate={onShapePlaneUpdated} />
+        <div>
+          <div className={clsx("grid", "grid-cols-1", "mx-4")}>
+            <div className={clsx("flex", "flex-col", "items-center")}>
+              <p className={clsx("text-center", "font-bold", "mb-1")}>Shadow 1</p>
+              <P5GridEditor
+                className="border"
+                ref={shapePlaneRef1}
+                width={176}
+                onUpdate={onShapePlaneUpdated}
+              />
+            </div>
+            <div className={clsx("flex", "flex-col", "items-center")}>
+              <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 2</p>
+              <P5GridEditor
+                className="border"
+                ref={shapePlaneRef2}
+                width={176}
+                onUpdate={onShapePlaneUpdated}
+              />
+            </div>
+            <div className={clsx("flex", "flex-col", "items-center")}>
+              <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 3</p>
+              <P5GridEditor
+                className="border"
+                ref={shapePlaneRef3}
+                width={176}
+                onUpdate={onShapePlaneUpdated}
+              />
+            </div>
           </div>
         </div>
 
         <div className={clsx("flex", "flex-col", "mx-4", "w-44")}>
           <div className={clsx("flex", "items-center", "mt-1.5")}>
             <p className={clsx(inputStyle.label, "mr-1.5")}>Grid size</p>
-            <NumberInput darkTheme value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
+            <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
           </div>
           <div className={clsx("max-w-[5rem]", "mt-4")}>
             <label htmlFor="letters" className={inputStyle.label}>
@@ -193,11 +218,14 @@ export default function TripletDesigner() {
                 className={clsx(
                   "px-1",
                   "text-xs",
-                  i == 0 && "rounded-l",
-                  i == 2 && "rounded-r",
-                  i == thickness ? "bg-gray-700" : "bg-gray-600",
+                  "border",
+                  "border-x-0",
+                  i == 0 && "rounded-l border-l-[1px]",
+                  i == 2 && "rounded-r border-r-[1px]",
+                  i == thickness ? "bg-gray-300" : "bg-gray-100",
                   "hover:cursor-pointer",
-                  "hover:bg-gray-700",
+                  "hover:bg-gray-300",
+                  "border-gray-400",
                 )}
                 onClick={() => setThickness(i)}
               >
@@ -216,7 +244,7 @@ export default function TripletDesigner() {
             ))}
           </div>
           <div className={clsx("mt-6")}>
-            <Button darkTheme label="Random" onClick={setRandomShapePlanes} />
+            <Button label="Random" onClick={setRandomShapePlanes} />
             <div className={clsx("flex", "items-center", "mt-1")}>
               <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
               <NumberInput
@@ -231,7 +259,7 @@ export default function TripletDesigner() {
             </div>
           </div>
           <div className={clsx("mt-6")}>
-            <Button darkTheme label="Export" onClick={() => tripletCanvasRef.current?.export()} />
+            <Button label="Export" onClick={() => tripletCanvasRef.current?.export()} />
           </div>
         </div>
       </div>

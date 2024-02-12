@@ -32,6 +32,7 @@ export const TripletCanvas = memo(
     );
 
     useEffect(() => {
+      // const height = window.innerHeight * 0.8;
       viewGL.current = new TripletThreeJSViewGL(canvasRef.current || undefined);
     }, []);
 
