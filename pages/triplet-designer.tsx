@@ -132,11 +132,13 @@ export default function TripletDesigner() {
         "text-sm",
         "rounded-sm",
         "block",
+        "font-mono",
+        "max-w-[3rem]",
         "w-full",
         "px-2",
         "py-1",
       ),
-      label: clsx("block", "text-md", "font-bold", "mb-1"),
+      label: clsx("block", "text-md", "font-bold", "mr-1.5"),
     }),
     [],
   );
@@ -194,12 +196,12 @@ export default function TripletDesigner() {
         </div>
 
         <div className={clsx("flex", "flex-col", "mx-4", "w-44")}>
-          <div className={clsx("flex", "items-center", "mt-1.5")}>
-            <p className={clsx(inputStyle.label, "mr-1.5")}>Grid size</p>
+          <div className={clsx("flex", "items-center", "mt-8")}>
+            <p className={inputStyle.label}>Grid size</p>
             <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
           </div>
-          <div className={clsx("max-w-[5rem]", "mt-4")}>
-            <label htmlFor="letters" className={inputStyle.label}>
+          <div className={clsx("flex", "items-center", "mt-8")}>
+            <label htmlFor="letters" className={clsx(inputStyle.label, "mr-3")}>
               Letters
             </label>
             <input
@@ -211,20 +213,22 @@ export default function TripletDesigner() {
               defaultValue={"shg"}
             />
           </div>
-          <div className={clsx("flex", "mt-2")}>
+          <div className={clsx("flex", "mt-1")}>
             {["thin", "normal", "bold"].map((thicknessName, i) => (
               <div
                 key={thicknessName}
                 className={clsx(
                   "px-1",
+                  "pt-[1px]",
                   "text-xs",
                   "border",
                   "border-x-0",
+                  "font-semibold",
                   i == 0 && "rounded-l border-l-[1px]",
                   i == 2 && "rounded-r border-r-[1px]",
-                  i == thickness ? "bg-gray-300" : "bg-gray-100",
+                  i == thickness ? "bg-[#fa6e75]" : "bg-[#f6a1a5]",
                   "hover:cursor-pointer",
-                  "hover:bg-gray-300",
+                  "hover:bg-[#fa6e75]",
                   "border-gray-400",
                 )}
                 onClick={() => setThickness(i)}
@@ -233,19 +237,10 @@ export default function TripletDesigner() {
               </div>
             ))}
           </div>
-          <div className={clsx("grid", "grid-cols-2", "mt-6", "font-semibold")}>
-            {Object.entries(tripletError).map(([key, value]) => (
-              <React.Fragment key={key}>
-                <p>Error {errorKeyMap[key as "xy"]}:</p>
-                <p className={clsx("font-mono", "font-thin", value > 0 && "text-red-500")}>
-                  {value > 0 ? value.toFixed(4) : value}
-                </p>
-              </React.Fragment>
-            ))}
-          </div>
-          <div className={clsx("mt-6")}>
-            <Button label="Random" onClick={setRandomShapePlanes} />
-            <div className={clsx("flex", "items-center", "mt-1")}>
+
+          <div className={clsx("mt-8")}>
+            <Button label="Random" className="ml-[29px]" onClick={setRandomShapePlanes} />
+            <div className={clsx("flex", "items-center", "mt-0.5")}>
               <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
               <NumberInput
                 value={fillPercentage}
@@ -258,9 +253,22 @@ export default function TripletDesigner() {
               />
             </div>
           </div>
-          <div className={clsx("mt-6")}>
-            <Button label="Export" onClick={() => tripletCanvasRef.current?.export()} />
+
+          <div className={clsx("grid", "grid-cols-2", "mt-10", "font-semibold")}>
+            {Object.entries(tripletError).map(([key, value]) => (
+              <React.Fragment key={key}>
+                <p>Error {errorKeyMap[key as "xy"]}:</p>
+                <p className={clsx("font-mono", value > 0 ? "text-red-500" : "font-thin")}>
+                  {value > 0 ? value.toFixed(4) : value}
+                </p>
+              </React.Fragment>
+            ))}
           </div>
+          <Button
+            label="Export"
+            className={clsx("ml-[29px]", "mt-8")}
+            onClick={() => tripletCanvasRef.current?.export()}
+          />
         </div>
       </div>
     ),
