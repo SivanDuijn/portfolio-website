@@ -33,6 +33,9 @@ export default function TripletDesigner() {
     xz: 0,
     yz: 0,
     sum: 0,
+    xyWrongCells: [],
+    xzWrongCells: [],
+    yzWrongCells: [],
   });
   const [thickness, setThickness] = useState(1);
 
@@ -58,6 +61,7 @@ export default function TripletDesigner() {
       if (c1) shapePlaneRef1.current?.setGrid({ values: c1[thickness], h: 14, w: 14 });
       if (c2) shapePlaneRef2.current?.setGrid({ values: c2[thickness], h: 14, w: 14 });
       if (c3) shapePlaneRef3.current?.setGrid({ values: c3[thickness], h: 14, w: 14 });
+      onShapePlaneUpdated();
     },
     [gridSize, thickness],
   );
@@ -81,12 +85,22 @@ export default function TripletDesigner() {
       w: size,
       h: size,
     });
+    onShapePlaneUpdated();
     setGridSize(size);
   }, []);
 
   useEffect(() => {
     tripletWebWorker.current.init().then(() => onShapePlaneUpdated());
     tripletWebWorker.current.setOnFinished((triplet) => {
+      if (shapePlaneRef1.current) {
+        shapePlaneRef1.current.setErrorCells(triplet.error.xyWrongCells);
+      }
+      if (shapePlaneRef2.current) {
+        shapePlaneRef2.current.setErrorCells(triplet.error.xzWrongCells);
+      }
+      if (shapePlaneRef3.current) {
+        shapePlaneRef3.current.setErrorCells(triplet.error.yzWrongCells);
+      }
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
     });
@@ -119,6 +133,7 @@ export default function TripletDesigner() {
       shapePlaneRef1.current?.setGrid(fromWasmShapePlane(sps[0]));
       shapePlaneRef2.current?.setGrid(fromWasmShapePlane(sps[1]));
       shapePlaneRef3.current?.setGrid(fromWasmShapePlane(sps[2]));
+      onShapePlaneUpdated();
     });
   }, [fillPercentage, gridSize]);
 
@@ -255,11 +270,18 @@ export default function TripletDesigner() {
           </div>
 
           <div className={clsx("grid", "grid-cols-2", "mt-10", "font-semibold")}>
-            {Object.entries(tripletError).map(([key, value]) => (
+            {["xy", "xz", "yz", "sum"].map((key) => (
               <React.Fragment key={key}>
                 <p>Error {errorKeyMap[key as "xy"]}:</p>
-                <p className={clsx("font-mono", value > 0 ? "text-red-500" : "font-thin")}>
-                  {value > 0 ? value.toFixed(4) : value}
+                <p
+                  className={clsx(
+                    "font-mono",
+                    tripletError[key as "xy"] > 0 ? "text-red-500" : "font-thin",
+                  )}
+                >
+                  {tripletError[key as "xy"] > 0
+                    ? tripletError[key as "xy"].toFixed(4)
+                    : tripletError[key as "xy"]}
                 </p>
               </React.Fragment>
             ))}

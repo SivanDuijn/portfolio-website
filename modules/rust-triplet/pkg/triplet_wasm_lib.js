@@ -147,10 +147,10 @@ function handleError(f, args) {
 }
 /**
 */
-export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
+export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
 /**
 */
-export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
+export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
 /**
 */
 export class ShapePlane {
@@ -283,96 +283,19 @@ export class Triplet {
         wasm.__wbg_set_triplet_d(this.__wbg_ptr, arg0);
     }
     /**
-    * @returns {TripletErrorScore}
-    */
-    get error_score() {
-        const ret = wasm.__wbg_get_triplet_error_score(this.__wbg_ptr);
-        return TripletErrorScore.__wrap(ret);
-    }
-    /**
-    * @param {TripletErrorScore} arg0
-    */
-    set error_score(arg0) {
-        _assertClass(arg0, TripletErrorScore);
-        var ptr0 = arg0.__destroy_into_raw();
-        wasm.__wbg_set_triplet_error_score(this.__wbg_ptr, ptr0);
-    }
-    /**
     * @returns {Int32Array}
     */
     get_js_volume() {
         const ret = wasm.triplet_get_js_volume(this.__wbg_ptr);
         return takeObject(ret);
     }
-}
-/**
-*/
-export class TripletErrorScore {
-
-    static __wrap(ptr) {
-        ptr = ptr >>> 0;
-        const obj = Object.create(TripletErrorScore.prototype);
-        obj.__wbg_ptr = ptr;
-
-        return obj;
-    }
-
-    __destroy_into_raw() {
-        const ptr = this.__wbg_ptr;
-        this.__wbg_ptr = 0;
-
-        return ptr;
-    }
-
-    free() {
-        const ptr = this.__destroy_into_raw();
-        wasm.__wbg_tripleterrorscore_free(ptr);
-    }
     /**
-    * @returns {number}
+    * @param {number} i
+    * @returns {Int32Array}
     */
-    get sp1() {
-        const ret = wasm.__wbg_get_tripleterrorscore_sp1(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set sp1(arg0) {
-        wasm.__wbg_set_tripleterrorscore_sp1(this.__wbg_ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get sp2() {
-        const ret = wasm.__wbg_get_tripleterrorscore_sp2(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set sp2(arg0) {
-        wasm.__wbg_set_tripleterrorscore_sp2(this.__wbg_ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    get sp3() {
-        const ret = wasm.__wbg_get_tripleterrorscore_sp3(this.__wbg_ptr);
-        return ret;
-    }
-    /**
-    * @param {number} arg0
-    */
-    set sp3(arg0) {
-        wasm.__wbg_set_tripleterrorscore_sp3(this.__wbg_ptr, arg0);
-    }
-    /**
-    * @returns {number}
-    */
-    sum() {
-        const ret = wasm.tripleterrorscore_sum(this.__wbg_ptr);
-        return ret;
+    get_js_error(i) {
+        const ret = wasm.triplet_get_js_error(this.__wbg_ptr, i);
+        return takeObject(ret);
     }
 }
 

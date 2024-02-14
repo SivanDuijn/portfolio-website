@@ -20,6 +20,7 @@ export type P5GridEditorProps = {
   width: number;
   onUpdate?: (grid: Grid) => void;
   grid?: Grid;
+  errorCells?: number[];
   showGridLines?: boolean;
   noInteraction?: boolean;
   darkTheme?: boolean;
@@ -28,6 +29,7 @@ export type P5GridEditorProps = {
 
 export interface P5GridEditorElement {
   setGrid: (grid: Grid) => void;
+  setErrorCells: (errorCells: number[]) => void;
   erase: () => void;
   getGrid: () => Grid;
 }
@@ -37,23 +39,35 @@ export interface P5GridEditorElement {
 // const hoverOnColor = onColor + 30;
 // const hoverOffColor = offColor + 30;
 const lightTheme = {
-  onColor: 120,
-  offColor: 255,
-  hoverOnColor: 140,
-  hoverOffColor: 225,
+  onColor: [120],
+  offColor: [255],
+  errorColor: [246, 161, 165],
+  hoverErrorColor: [140, 20, 20],
+  hoverOnColor: [140],
+  hoverOffColor: [225],
 };
 
+// const lightTheme = {
+//   onColor: 120,
+//   offColor: 255,
+//   hoverOnColor: 140,
+//   hoverOffColor: 225,
+// };
+
 const darkTheme = {
-  onColor: 200,
-  offColor: 50,
-  hoverOnColor: 230,
-  hoverOffColor: 80,
+  onColor: [200],
+  offColor: [50],
+  errorColor: [120, 0, 0],
+  hoverErrorColor: [140, 20, 20],
+  hoverOnColor: [230],
+  hoverOffColor: [80],
 };
 
 // eslint-disable-next-line react/display-name
 export const P5GridEditor = React.memo(
   React.forwardRef<P5GridEditorElement, P5GridEditorProps>((props, ref) => {
     const grid = useRef<Grid>(props.grid || { values: new Array(14 * 14).fill(0), w: 14, h: 14 });
+    const errorCells = useRef<number[]>(props.errorCells || []);
     const showGrid = useRef(props.showGridLines);
     const cellSize = useRef(props.width / grid.current.w);
 
@@ -75,9 +89,13 @@ export const P5GridEditor = React.memo(
         erase,
         setGrid: (newShapePlane) => {
           grid.current = newShapePlane;
-          if (props.onUpdate) props.onUpdate(grid.current);
+          // if (props.onUpdate) props.onUpdate(grid.current);
 
           cellSize.current = props.width / grid.current.w;
+          redraw();
+        },
+        setErrorCells: (newErrorCells) => {
+          errorCells.current = newErrorCells;
           redraw();
         },
         getGrid: () => grid.current,
@@ -100,8 +118,13 @@ export const P5GridEditor = React.memo(
       if (!p5Ref.current) return;
       const p = p5Ref.current;
       for (let i = 0; i < grid.current.w; i++)
-        for (let j = 0; j < grid.current.h; j++)
-          drawRect(i, j, getSPValue(i, j) ? color.current.onColor : color.current.offColor);
+        for (let j = 0; j < grid.current.h; j++) {
+          if (errorCells.current.includes(i + j * grid.current.w))
+            drawRect(i, j, color.current.errorColor);
+          else {
+            drawRect(i, j, getSPValue(i, j) ? color.current.onColor : color.current.offColor);
+          }
+        }
       p.redraw();
     }, []);
 
@@ -113,7 +136,7 @@ export const P5GridEditor = React.memo(
       grid.current.values[i + j * grid.current.w] = value;
     }, []);
 
-    const drawRect = useCallback((i: number, j: number, color: number) => {
+    const drawRect = useCallback((i: number, j: number, color: number[]) => {
       if (!p5Ref.current) return;
       const p = p5Ref.current;
       p.push();
@@ -123,24 +146,24 @@ export const P5GridEditor = React.memo(
       let x = i * cellSize.current;
       let y = j * cellSize.current;
       const halfCellSize = cellSize.current / 2;
-      const above = p.get(x + halfCellSize, y - halfCellSize)[0];
-      const below = p.get(x + halfCellSize, y + halfCellSize * 3)[0];
-      const left = p.get(x - halfCellSize, y + halfCellSize)[0];
-      const right = p.get(x + halfCellSize * 3, y + halfCellSize)[0];
+      const above = p.get(x + halfCellSize, y - halfCellSize);
+      const below = p.get(x + halfCellSize, y + halfCellSize * 3);
+      const left = p.get(x - halfCellSize, y + halfCellSize);
+      const right = p.get(x + halfCellSize * 3, y + halfCellSize);
 
       const offset = 0.5;
       let width = cellSize.current;
       let height = cellSize.current;
-      if (above == color) {
+      if (above.every((v, i) => v == color[i])) {
         y -= offset;
         height += offset;
       }
-      if (below == color) height += offset;
-      if (left == color) {
+      if (below.every((v, i) => v == color[i])) height += offset;
+      if (left.every((v, i) => v == color[i])) {
         x -= offset;
         width += offset;
       }
-      if (right == color) width += offset;
+      if (right.every((v, i) => v == color[i])) width += offset;
 
       p.rect(x, y, width, height);
 
@@ -156,12 +179,11 @@ export const P5GridEditor = React.memo(
         if (p.mouseX < 0 || p.mouseX > props.width || p.mouseY < 0 || p.mouseY > props.width) {
           if (mouseInCell.current) {
             // Remove the current hovered cell
+            const val = getSPValue(mouseInCell.current.i, mouseInCell.current.j);
             drawRect(
               mouseInCell.current.i,
               mouseInCell.current.j,
-              getSPValue(mouseInCell.current.i, mouseInCell.current.j)
-                ? color.current.onColor
-                : color.current.offColor,
+              val > 0 ? color.current.onColor : color.current.offColor,
             );
             p.redraw();
             mouseInCell.current = undefined;
@@ -176,29 +198,22 @@ export const P5GridEditor = React.memo(
           if (mouseInCell.current.i != i || mouseInCell.current.j != j) {
             // Mouse hovered in new cell
             // First put previous hovered back in original color
+            const mouseInCellVal = getSPValue(mouseInCell.current.i, mouseInCell.current.j);
             drawRect(
               mouseInCell.current.i,
               mouseInCell.current.j,
-              getSPValue(mouseInCell.current.i, mouseInCell.current.j)
-                ? color.current.onColor
-                : color.current.offColor,
+              mouseInCellVal ? color.current.onColor : color.current.offColor,
             );
             mouseInCell.current = { i, j };
-            drawRect(
-              i,
-              j,
-              getSPValue(i, j) ? color.current.hoverOnColor : color.current.hoverOffColor,
-            );
+            const val = getSPValue(i, j);
+            drawRect(i, j, val ? color.current.hoverOnColor : color.current.hoverOffColor);
             p.redraw();
           }
         } else {
           // Mouse hovered in cell
           mouseInCell.current = { i, j };
-          drawRect(
-            i,
-            j,
-            getSPValue(i, j) ? color.current.hoverOnColor : color.current.hoverOffColor,
-          );
+          const val = getSPValue(i, j);
+          drawRect(i, j, val ? color.current.hoverOnColor : color.current.hoverOffColor);
           p.redraw();
         }
       };
@@ -244,18 +259,22 @@ export const P5GridEditor = React.memo(
       };
 
       p.background(color.current.offColor);
-      p.fill(color.current.onColor);
       p.noStroke();
-      for (let i = 0; i < grid.current.w; i++)
-        for (let j = 0; j < grid.current.h; j++) {
-          if (getSPValue(i, j))
-            p.rect(
-              i * cellSize.current,
-              j * cellSize.current,
-              cellSize.current + 0.5,
-              cellSize.current + 0.5,
-            );
-        }
+      redraw();
+      // for (let i = 0; i < grid.current.w; i++)
+      //   for (let j = 0; j < grid.current.h; j++) {
+      //     const v = getSPValue(i, j);
+      //     if (v == 500) {
+      //       p.fill(color.current.errorColor);
+      //     } else p.fill(color.current.onColor);
+      //     if (v)
+      //       p.rect(
+      //         i * cellSize.current,
+      //         j * cellSize.current,
+      //         cellSize.current + 0.5,
+      //         cellSize.current + 0.5,
+      //       );
+      //   }
     }, []);
     const draw = useCallback((p: p5) => {
       if (showGrid.current) {

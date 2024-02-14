@@ -7,9 +7,9 @@ pub fn build_triplet(
     connectedness: &ConnectednessOptions, 
     triplet: &mut Triplet
 ) {
-    let sp1_empty: bool = sp1.values().iter().all(|&v| v == 0);
-    let sp2_empty: bool = sp2.values().iter().all(|&v| v == 0);
-    let sp3_empty: bool = sp3.values().iter().all(|&v| v == 0); 
+    let sp1_empty: bool = sp1.values().iter().all(|&v| v <= 0);
+    let sp2_empty: bool = sp2.values().iter().all(|&v| v <= 0);
+    let sp3_empty: bool = sp3.values().iter().all(|&v| v <= 0); 
 
     if sp1_empty && sp2_empty && sp3_empty {
         return;

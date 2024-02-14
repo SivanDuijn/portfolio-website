@@ -91,9 +91,9 @@ fn run_all_percentages(randomness: ShapePlaneFillRandomness, gridsize: i32) -> (
         
             match r {
                 Ok(t) => {
-                    let error = t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3;
-                    avg_err += error;
-                    if error == 0.0 { avg_corr += 100.0; }
+                    let error = t.get_error_sum();
+                    if error == 0 { avg_corr += 100.0; }
+                    avg_err += error as f32 / (t.w*t.w) as f32; // ONLY WORKS FOR SQUARE SHAPE PLANES
                 },
                 Err(e) => println!("{}", e),
             }

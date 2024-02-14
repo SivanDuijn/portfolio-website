@@ -4,6 +4,25 @@ function toWasmSP(shapePlane) {
   return new wasm.ShapePlane(new Int32Array(shapePlane.values), shapePlane.w, shapePlane.h);
 }
 
+function toJSTriplet(t) {
+  const sp1Error = t.get_js_error(0);
+  const sp2Error = t.get_js_error(1);
+  const sp3Error = t.get_js_error(2);
+  return {
+    volume: Array.from(t.get_js_volume()),
+    dims: [t.w, t.h, t.d],
+    error: {
+      xyWrongCells: sp1Error,
+      xzWrongCells: sp2Error,
+      yzWrongCells: sp3Error,
+      xy: sp1Error.length / (t.w * t.w),
+      xz: sp2Error.length / (t.w * t.w),
+      yz: sp3Error.length / (t.w * t.w),
+      sum: (sp1Error.length + sp2Error.length + sp3Error.length) / (t.w * t.w),
+    },
+  };
+}
+
 self.onmessage = ({ data }) => {
   if (data.type == "BUILD_TRIPLETS") {
     const { shapePlanes, connectedness } = data.data;
@@ -15,17 +34,9 @@ self.onmessage = ({ data }) => {
       const sp2 = toWasmSP(sp[1]);
       const sp3 = toWasmSP(sp[2]);
       const t = wasm.get_best_triplet(sp1, sp2, sp3, connectedness);
+      t.get_js_error(0).length;
 
-      triplets.push({
-        volume: Array.from(t.get_js_volume()),
-        dims: [t.w, t.h, t.d],
-        error: {
-          xy: t.error_score.sp1,
-          xz: t.error_score.sp2,
-          yz: t.error_score.sp3,
-          sum: t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3,
-        },
-      });
+      triplets.push(toJSTriplet(t));
 
       if (i > 0 && i % 100 == 0) {
         self.postMessage({ type: "TRIPLETS_PROGRESS_UPDATE", amount: 100 });
@@ -42,16 +53,7 @@ self.onmessage = ({ data }) => {
     const sp3 = toWasmSP(shapePlanes[2]);
     const t = wasm.get_best_triplet(sp1, sp2, sp3, connectedness);
 
-    const triplet = {
-      volume: Array.from(t.get_js_volume()),
-      dims: [t.w, t.h, t.d],
-      error: {
-        xy: t.error_score.sp1,
-        xz: t.error_score.sp2,
-        yz: t.error_score.sp3,
-        sum: t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3,
-      },
-    };
+    const triplet = toJSTriplet(t);
 
     self.postMessage({ type: "TRIPLET_FINISHED", triplet });
   } else if (data.type == "BUILD_RANDOM_TRIPLETS") {
@@ -63,16 +65,7 @@ self.onmessage = ({ data }) => {
       const sps = wasm.get_random_shape_planes(w, h, fill_percentage, randomness, 3);
       const t = wasm.get_best_triplet(sps[0], sps[1], sps[2], 0);
 
-      triplets.push({
-        volume: Array.from(t.get_js_volume()),
-        dims: [t.w, t.h, t.d],
-        error: {
-          xy: t.error_score.sp1,
-          xz: t.error_score.sp2,
-          yz: t.error_score.sp3,
-          sum: t.error_score.sp1 + t.error_score.sp2 + t.error_score.sp3,
-        },
-      });
+      triplets.push(toJSTriplet(t));
 
       if (i > 0 && i % 100 == 0) {
         self.postMessage({ type: "TRIPLETS_PROGRESS_UPDATE", amount: 100 });

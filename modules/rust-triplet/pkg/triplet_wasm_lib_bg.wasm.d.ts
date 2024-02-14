@@ -2,14 +2,6 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export function get_random_shape_planes(a: number, b: number, c: number, d: number, e: number, f: number): void;
-export function __wbg_tripleterrorscore_free(a: number): void;
-export function __wbg_get_tripleterrorscore_sp1(a: number): number;
-export function __wbg_set_tripleterrorscore_sp1(a: number, b: number): void;
-export function __wbg_get_tripleterrorscore_sp2(a: number): number;
-export function __wbg_set_tripleterrorscore_sp2(a: number, b: number): void;
-export function __wbg_get_tripleterrorscore_sp3(a: number): number;
-export function __wbg_set_tripleterrorscore_sp3(a: number, b: number): void;
-export function tripleterrorscore_sum(a: number): number;
 export function __wbg_triplet_free(a: number): void;
 export function __wbg_get_triplet_w(a: number): number;
 export function __wbg_set_triplet_w(a: number, b: number): void;
@@ -17,9 +9,8 @@ export function __wbg_get_triplet_h(a: number): number;
 export function __wbg_set_triplet_h(a: number, b: number): void;
 export function __wbg_get_triplet_d(a: number): number;
 export function __wbg_set_triplet_d(a: number, b: number): void;
-export function __wbg_get_triplet_error_score(a: number): number;
-export function __wbg_set_triplet_error_score(a: number, b: number): void;
 export function triplet_get_js_volume(a: number): number;
+export function triplet_get_js_error(a: number, b: number): number;
 export function get_best_triplet(a: number, b: number, c: number, d: number, e: number): void;
 export function __wbg_shapeplane_free(a: number): void;
 export function __wbg_get_shapeplane_w(a: number): number;

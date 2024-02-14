@@ -17,5 +17,13 @@ export function fromWasmShapePlane(wasmSP: WasmShapePlane): ShapePlane {
 export type Triplet = {
   volume: number[];
   dims: [number, number, number];
-  error: { xy: number; xz: number; yz: number; sum: number };
+  error: {
+    xy: number;
+    xz: number;
+    yz: number;
+    sum: number;
+    xyWrongCells: number[];
+    xzWrongCells: number[];
+    yzWrongCells: number[];
+  };
 };
