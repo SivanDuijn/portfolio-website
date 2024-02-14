@@ -18,24 +18,14 @@ import init, {
   get_random_shape_planes,
 } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
-const errorKeyMap = {
-  xy: 1,
-  xz: 2,
-  yz: 3,
-  sum: "sum",
-};
-
 export default function TripletDesigner() {
   const [gridSize, setGridSize] = useState(14);
   const [fillPercentage, setFillPercentage] = useState(0.5);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
-    xy: 0,
-    xz: 0,
-    yz: 0,
-    sum: 0,
-    xyWrongCells: [],
-    xzWrongCells: [],
-    yzWrongCells: [],
+    sp1: new Set<number>(),
+    sp2: new Set<number>(),
+    sp3: new Set<number>(),
+    totalPercentage: 0,
   });
   const [thickness, setThickness] = useState(1);
 
@@ -44,7 +34,6 @@ export default function TripletDesigner() {
   const shapePlaneRef3 = useRef<P5GridEditorElement>(null);
 
   const letterInputRef = useRef<HTMLInputElement>(null);
-
   const tripletCanvasRef = useRef<TripletCanvasElement>(null);
 
   const tripletWebWorker = useRef<TripletWebWorker>(new TripletWebWorker());
@@ -92,15 +81,10 @@ export default function TripletDesigner() {
   useEffect(() => {
     tripletWebWorker.current.init().then(() => onShapePlaneUpdated());
     tripletWebWorker.current.setOnFinished((triplet) => {
-      if (shapePlaneRef1.current) {
-        shapePlaneRef1.current.setErrorCells(triplet.error.xyWrongCells);
-      }
-      if (shapePlaneRef2.current) {
-        shapePlaneRef2.current.setErrorCells(triplet.error.xzWrongCells);
-      }
-      if (shapePlaneRef3.current) {
-        shapePlaneRef3.current.setErrorCells(triplet.error.yzWrongCells);
-      }
+      if (shapePlaneRef1.current) shapePlaneRef1.current.setErrorCells(triplet.error.sp1);
+      if (shapePlaneRef2.current) shapePlaneRef2.current.setErrorCells(triplet.error.sp2);
+      if (shapePlaneRef3.current) shapePlaneRef3.current.setErrorCells(triplet.error.sp3);
+
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
     });
@@ -180,33 +164,9 @@ export default function TripletDesigner() {
         />
         <div>
           <div className={clsx("grid", "grid-cols-1", "mx-4")}>
-            <div className={clsx("flex", "flex-col", "items-center")}>
-              <p className={clsx("text-center", "font-bold", "mb-1")}>Shadow 1</p>
-              <P5GridEditor
-                className="border"
-                ref={shapePlaneRef1}
-                width={176}
-                onUpdate={onShapePlaneUpdated}
-              />
-            </div>
-            <div className={clsx("flex", "flex-col", "items-center")}>
-              <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 2</p>
-              <P5GridEditor
-                className="border"
-                ref={shapePlaneRef2}
-                width={176}
-                onUpdate={onShapePlaneUpdated}
-              />
-            </div>
-            <div className={clsx("flex", "flex-col", "items-center")}>
-              <p className={clsx("text-center", "font-bold", "mt-0.5", "mb-1")}>Shadow 3</p>
-              <P5GridEditor
-                className="border"
-                ref={shapePlaneRef3}
-                width={176}
-                onUpdate={onShapePlaneUpdated}
-              />
-            </div>
+            {shadowEditor(shapePlaneRef1, "Shadow 1", onShapePlaneUpdated, tripletError.sp1.size)}
+            {shadowEditor(shapePlaneRef2, "Shadow 2", onShapePlaneUpdated, tripletError.sp2.size)}
+            {shadowEditor(shapePlaneRef3, "Shadow 3", onShapePlaneUpdated, tripletError.sp3.size)}
           </div>
         </div>
 
@@ -253,7 +213,7 @@ export default function TripletDesigner() {
             ))}
           </div>
 
-          <div className={clsx("mt-8")}>
+          <div className={clsx("mt-10")}>
             <Button label="Random" className="ml-[29px]" onClick={setRandomShapePlanes} />
             <div className={clsx("flex", "items-center", "mt-0.5")}>
               <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
@@ -269,31 +229,53 @@ export default function TripletDesigner() {
             </div>
           </div>
 
-          <div className={clsx("grid", "grid-cols-2", "mt-10", "font-semibold")}>
-            {["xy", "xz", "yz", "sum"].map((key) => (
-              <React.Fragment key={key}>
-                <p>Error {errorKeyMap[key as "xy"]}:</p>
-                <p
-                  className={clsx(
-                    "font-mono",
-                    tripletError[key as "xy"] > 0 ? "text-red-500" : "font-thin",
-                  )}
-                >
-                  {tripletError[key as "xy"] > 0
-                    ? tripletError[key as "xy"].toFixed(4)
-                    : tripletError[key as "xy"]}
-                </p>
-              </React.Fragment>
-            ))}
-          </div>
+          <p className={clsx("font-bold", "mt-8")}>
+            Total incorrect:{" "}
+            <span
+              className={clsx(
+                "font-mono",
+                "font-semibold",
+                tripletError.totalPercentage > 10 && "text-red-600",
+              )}
+            >
+              {tripletError.totalPercentage.toFixed(0)}%
+            </span>
+          </p>
+
           <Button
             label="Export"
-            className={clsx("ml-[29px]", "mt-8")}
+            className={clsx("ml-[29px]", "mt-9")}
             onClick={() => tripletCanvasRef.current?.export()}
           />
         </div>
       </div>
     ),
     [tripletError, gridSize, fillPercentage, thickness],
+  );
+}
+
+function shadowEditor(
+  ref: React.RefObject<P5GridEditorElement>,
+  name: string,
+  onUpdate: () => void,
+  nErrorCells: number,
+) {
+  return (
+    <div className={clsx("flex", "flex-col", "items-center", "mb-3")}>
+      <p className={clsx("text-center", "font-bold")}>{name}</p>
+      <P5GridEditor className="border" ref={ref} width={176} onUpdate={onUpdate} />
+      <p
+        className={clsx(
+          "font-mono",
+          "text-xs",
+          "text-gray-600",
+          "mt-0.5",
+          nErrorCells == 0 && "invisible",
+        )}
+      >
+        <span className={clsx("text-red-500", "font-bold")}>{nErrorCells}</span> incorrect cell
+        {nErrorCells == 1 ? "" : "s"}
+      </p>
+    </div>
   );
 }

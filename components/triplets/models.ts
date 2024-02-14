@@ -18,12 +18,11 @@ export type Triplet = {
   volume: number[];
   dims: [number, number, number];
   error: {
-    xy: number;
-    xz: number;
-    yz: number;
-    sum: number;
-    xyWrongCells: number[];
-    xzWrongCells: number[];
-    yzWrongCells: number[];
+    // A set of indices which cells are incorrect
+    sp1: Set<number>;
+    sp2: Set<number>;
+    sp3: Set<number>;
+    // The total/summed percentage of incorrect cells
+    totalPercentage: number;
   };
 };

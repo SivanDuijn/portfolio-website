@@ -60,11 +60,11 @@ export default function TripletResearchRandom() {
       );
       worker.setOnMultipleFinished((triplets) => {
         accumulatedError.current.avgError += triplets.reduce(
-          (acc, triplet) => acc + triplet.error.sum,
+          (acc, triplet) => acc + triplet.error.totalPercentage,
           0,
         );
         accumulatedError.current.percCorrect += triplets.reduce(
-          (acc, triplet) => acc + (triplet.error.sum == 0 ? 1 : 0),
+          (acc, triplet) => acc + (triplet.error.totalPercentage == 0 ? 1 : 0),
           0,
         );
         setNWorkersFinished((prev) => prev + 1);

@@ -19,7 +19,7 @@ type Grid = {
 export type P5GridEditorProps = {
   width: number;
   onUpdate?: (grid: Grid) => void;
-  errorCells?: number[];
+  errorCells?: Set<number>;
   showGridLines?: boolean;
   noInteraction?: boolean;
   darkTheme?: boolean;
@@ -28,7 +28,7 @@ export type P5GridEditorProps = {
 
 export interface P5GridEditorElement {
   setGrid: (grid: Grid) => void;
-  setErrorCells: (errorCells: number[]) => void;
+  setErrorCells: (errorCells: Set<number>) => void;
   erase: () => void;
   getGrid: () => Grid;
 }
@@ -57,7 +57,7 @@ const darkTheme = {
 export const P5GridEditor = React.memo(
   React.forwardRef<P5GridEditorElement, P5GridEditorProps>((props, ref) => {
     const grid = useRef<Grid>({ values: new Array(14 * 14).fill(0), w: 14, h: 14 });
-    const errorCells = useRef<number[]>(props.errorCells || []);
+    const errorCells = useRef<Set<number>>(props.errorCells || new Set<number>());
     const showGrid = useRef(props.showGridLines);
     const cellSize = useRef(props.width / grid.current.w);
 
@@ -108,11 +108,13 @@ export const P5GridEditor = React.memo(
       const p = p5Ref.current;
       for (let i = 0; i < grid.current.w; i++)
         for (let j = 0; j < grid.current.h; j++) {
-          if (errorCells.current.includes(i + j * grid.current.w))
-            drawRect(i, j, color.current.errorColor);
-          else {
-            drawRect(i, j, getSPValue(i, j) ? color.current.onColor : color.current.offColor);
-          }
+          const c = errorCells.current.has(i + j * grid.current.w)
+            ? color.current.errorColor
+            : getSPValue(i, j)
+            ? color.current.onColor
+            : color.current.offColor;
+
+          drawRectUsingGridNeighbors(i, j, c);
         }
       p.redraw();
     }, []);
@@ -123,6 +125,53 @@ export const P5GridEditor = React.memo(
     );
     const setSPValue = useCallback((i: number, j: number, value: number) => {
       grid.current.values[i + j * grid.current.w] = value;
+    }, []);
+
+    const drawRectUsingGridNeighbors = useCallback((i: number, j: number, color: number[]) => {
+      if (!p5Ref.current) return;
+      const p = p5Ref.current;
+
+      const index = i + j * grid.current.w;
+      const cell = errorCells.current.has(index) ? 500 : grid.current.values[index];
+
+      const aboveI = index - grid.current.w;
+      const belowI = index + grid.current.w;
+      const rightI = i < grid.current.w ? index + 1 : -1;
+      const leftI = i > 0 ? index - 1 : -1;
+      const above =
+        aboveI >= 0 ? (errorCells.current.has(aboveI) ? 500 : grid.current.values[aboveI]) : -1;
+      const below =
+        belowI < grid.current.values.length
+          ? errorCells.current.has(belowI)
+            ? 500
+            : grid.current.values[belowI]
+          : -1;
+      const right =
+        rightI >= 0 ? (errorCells.current.has(rightI) ? 500 : grid.current.values[rightI]) : -1;
+      const left =
+        leftI >= 0 ? (errorCells.current.has(leftI) ? 500 : grid.current.values[leftI]) : -1;
+
+      const offset = 0.4;
+      let x = i * cellSize.current;
+      let y = j * cellSize.current;
+      let width = cellSize.current;
+      let height = cellSize.current;
+      if (cell == above) {
+        y -= offset;
+        height += offset;
+      }
+      if (cell == below) height += offset;
+      if (cell == left) {
+        x -= offset;
+        width += offset;
+      }
+      if (cell == right) width += offset;
+
+      p.push();
+      p.fill(color);
+      p.noStroke();
+      p.rect(x, y, width, height);
+      p.pop();
     }, []);
 
     const drawRect = useCallback((i: number, j: number, color: number[]) => {
@@ -140,7 +189,7 @@ export const P5GridEditor = React.memo(
       const left = p.get(x - halfCellSize, y + halfCellSize);
       const right = p.get(x + halfCellSize * 3, y + halfCellSize);
 
-      const offset = 0.4;
+      const offset = 0.7;
       let width = cellSize.current;
       let height = cellSize.current;
       if (color.every((v, i) => v == above[i])) {
@@ -168,14 +217,13 @@ export const P5GridEditor = React.memo(
         // If mouse goes outside editor
         if (p.mouseX < 0 || p.mouseX > props.width || p.mouseY < 0 || p.mouseY > props.width) {
           if (mouseInCell.current) {
+            const { i, j } = mouseInCell.current;
             // Remove the current hovered cell
-            const val = getSPValue(mouseInCell.current.i, mouseInCell.current.j);
-            const isErrorCell = errorCells.current.includes(
-              mouseInCell.current.j * grid.current.w + mouseInCell.current.i,
-            );
+            const val = getSPValue(i, j);
+            const isErrorCell = errorCells.current.has(j * grid.current.w + i);
             drawRect(
-              mouseInCell.current.i,
-              mouseInCell.current.j,
+              i,
+              j,
               mousePressedCellValue.current == undefined && isErrorCell
                 ? color.current.errorColor
                 : val > 0
@@ -192,16 +240,15 @@ export const P5GridEditor = React.memo(
         const j = Math.floor(p.mouseY / cellSize.current);
 
         if (mouseInCell.current) {
-          if (mouseInCell.current.i != i || mouseInCell.current.j != j) {
+          const { i: mi, j: mj } = mouseInCell.current;
+          if (mi != i || mj != j) {
             // Mouse hovered in new cell
             // First put previous hovered back in original color
-            const mouseInCellVal = getSPValue(mouseInCell.current.i, mouseInCell.current.j);
-            let isErrorCell = errorCells.current.includes(
-              mouseInCell.current.j * grid.current.w + mouseInCell.current.i,
-            );
+            const mouseInCellVal = getSPValue(mi, mj);
+            let isErrorCell = errorCells.current.has(mj * grid.current.w + mi);
             drawRect(
-              mouseInCell.current.i,
-              mouseInCell.current.j,
+              mi,
+              mj,
               mousePressedCellValue.current == undefined && isErrorCell
                 ? color.current.errorColor
                 : mouseInCellVal
@@ -210,7 +257,7 @@ export const P5GridEditor = React.memo(
             );
             mouseInCell.current = { i, j };
             const val = getSPValue(i, j);
-            isErrorCell = errorCells.current.includes(j * grid.current.w + i);
+            isErrorCell = errorCells.current.has(j * grid.current.w + i);
             drawRect(
               i,
               j,
@@ -232,7 +279,7 @@ export const P5GridEditor = React.memo(
           // Mouse hovered in cell
           mouseInCell.current = { i, j };
           const val = getSPValue(i, j);
-          const isErrorCell = errorCells.current.includes(j * grid.current.w + i);
+          const isErrorCell = errorCells.current.has(j * grid.current.w + i);
           drawRect(
             i,
             j,
@@ -292,7 +339,6 @@ export const P5GridEditor = React.memo(
       };
 
       p.background(color.current.offColor);
-      p.noStroke();
     }, []);
     const draw = useCallback((p: p5) => {
       if (showGrid.current) {
@@ -309,7 +355,7 @@ export const P5GridEditor = React.memo(
     const sketchComponent = useMemo(() => <Sketch setup={setup} draw={draw} />, []);
 
     return (
-      <div className={clsx("relative")}>
+      <div className={clsx("relative")} style={{ width: props.width + 2, height: props.width + 2 }}>
         <div
           className={clsx(
             "inline-block",

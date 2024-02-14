@@ -12,13 +12,10 @@ function toJSTriplet(t) {
     volume: Array.from(t.get_js_volume()),
     dims: [t.w, t.h, t.d],
     error: {
-      xyWrongCells: sp1Error,
-      xzWrongCells: sp2Error,
-      yzWrongCells: sp3Error,
-      xy: sp1Error.length / (t.w * t.w),
-      xz: sp2Error.length / (t.w * t.w),
-      yz: sp3Error.length / (t.w * t.w),
-      sum: (sp1Error.length + sp2Error.length + sp3Error.length) / (t.w * t.w),
+      sp1: new Set(sp1Error),
+      sp2: new Set(sp2Error),
+      sp3: new Set(sp3Error),
+      totalPercentage: ((sp1Error.length + sp2Error.length + sp3Error.length) / (t.w * t.w)) * 100,
     },
   };
 }
