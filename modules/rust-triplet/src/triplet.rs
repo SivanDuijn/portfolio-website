@@ -65,20 +65,6 @@ impl Triplet {
             let i = v % self.w as i32;
             self.error[error_i][index] = (self.w as i32 - 1 - i) * self.h as i32 + j;
         }
-
-// const rotatePoint = (x: number, y: number): [number, number] => [y, w - 1 - x];
-
-// // Create a new array for the rotated values
-// const rotatedArr: number[] = new Array(w * h);
-
-// // Iterate over each element in the original array and map it to the rotated array
-// for (let x = 0; x < w; x++) {
-//   for (let y = 0; y < h; y++) {
-//     const originalIndex = y * w + x;
-//     const rotatedIndex = rotatePoint(x, y)[1] * h + rotatePoint(x, y)[0];
-//     rotatedArr[rotatedIndex] = arr[originalIndex];
-//   }
-// }
     }
 }
 
