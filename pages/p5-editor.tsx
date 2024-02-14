@@ -33,7 +33,6 @@ export default function P5Editor() {
         ref={p5SPEditorRef}
         className={clsx("border-2", "border-gray-300")}
         width={300}
-        grid={{ values: new Array(gridSize * gridSize).fill(0), w: gridSize, h: gridSize }}
         showGridLines={showGrid}
         darkTheme={darkTheme}
       />
