@@ -18,6 +18,9 @@ export default class TripletThreeJSViewGL {
 
   private tripletMesh: THREE.Mesh | undefined;
   private tripletGroup: THREE.Group = new THREE.Group();
+  private tripletOutline: THREE.BufferGeometry | undefined;
+  private outlineOffsetVec: THREE.Vector3 = new THREE.Vector3(1, 1, 1).normalize();
+  private outlineOffset = 0.02;
 
   // Rotation timer
   private radiansRotated = 0;
@@ -60,6 +63,7 @@ export default class TripletThreeJSViewGL {
     geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
     geometry.computeVertexNormals();
     geometry.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
+    geometry.scale(14 / triplet.dims[0], 14 / triplet.dims[0], 14 / triplet.dims[0]);
 
     const material = new THREE.MeshStandardMaterial({
       color: 0x74c4cf,
@@ -75,13 +79,15 @@ export default class TripletThreeJSViewGL {
     // for (let i = 0; i < lines.length; i += 6) {
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(lines, 3));
-    const l = new THREE.LineSegments(g, lineMaterial);
-    const offset = 0.012;
-    g.translate(
-      -triplet.dims[0] / 2 + offset,
-      -triplet.dims[1] / 2 + offset,
-      -triplet.dims[2] / 2 + offset,
+    g.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
+    g.scale(14 / triplet.dims[0], 14 / triplet.dims[0], 14 / triplet.dims[0]);
+    this.tripletOutline = g;
+    this.tripletOutline.translate(
+      this.outlineOffsetVec.x * this.outlineOffset,
+      this.outlineOffsetVec.y * this.outlineOffset,
+      this.outlineOffsetVec.z * this.outlineOffset,
     );
+    const l = new THREE.LineSegments(g, lineMaterial);
     this.tripletGroup.add(l);
     // }
 
@@ -100,11 +106,11 @@ export default class TripletThreeJSViewGL {
     this.canvas = canvas;
 
     const clippingPlane = [0.1, 1000];
-    this.camera = new THREE.PerspectiveCamera(60, 1, ...clippingPlane);
-    this.camera.position.x = 39;
-    this.camera.position.y = 15;
-    this.camera.position.z = 45;
-    // this.camera.lookAt(new THREE.Vector3(100, 30, 0));
+    this.camera = new THREE.PerspectiveCamera(50, 1, ...clippingPlane);
+    this.camera.setViewOffset(width, height, 0, 50, width, height);
+    this.camera.position.set(43, 16, 47);
+    this.controls = new OrbitControls(this.camera, this.canvas);
+    this.controls.enablePan = false;
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: canvas,
@@ -114,8 +120,6 @@ export default class TripletThreeJSViewGL {
     if (window) this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; //THREE.VSMShadowMap;
-
-    this.controls = new OrbitControls(this.camera, this.canvas);
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color("white");
@@ -160,7 +164,17 @@ export default class TripletThreeJSViewGL {
     lightFront.shadow.blurSamples = 15;
     this.scene.add(lightFront);
 
-    const AmbientLight = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
+    const lightBottom = new THREE.DirectionalLight(0xffffff, 0.35);
+    lightBottom.position.set(0, -10, 0); //default; light shining from top
+    this.scene.add(lightBottom);
+    const lightLeft = new THREE.DirectionalLight(0xffffff, 0.35);
+    lightLeft.position.set(-10, 0, 0); //default; light shining from top
+    this.scene.add(lightLeft);
+    const lightBack = new THREE.DirectionalLight(0xffffff, 0.35);
+    lightBack.position.set(0, 0, -10); //default; light shining from top
+    this.scene.add(lightBack);
+
+    const AmbientLight = new THREE.AmbientLight(0xffffff, 0.075); // soft white light
     this.scene.add(AmbientLight);
 
     // PLANES
@@ -224,6 +238,22 @@ export default class TripletThreeJSViewGL {
     this.renderer.render(this.scene, this.camera);
 
     this.controls.update();
+
+    this.tripletOutline?.translate(
+      -this.outlineOffsetVec.x * this.outlineOffset,
+      -this.outlineOffsetVec.y * this.outlineOffset,
+      -this.outlineOffsetVec.z * this.outlineOffset,
+    );
+    this.outlineOffsetVec = new THREE.Vector3(
+      this.camera.position.x,
+      this.camera.position.y,
+      this.camera.position.z,
+    ).normalize();
+    this.tripletOutline?.translate(
+      this.outlineOffsetVec.x * this.outlineOffset,
+      this.outlineOffsetVec.y * this.outlineOffset,
+      this.outlineOffsetVec.z * this.outlineOffset,
+    );
 
     // // Attempt at object rotation
     // if (this.tripletMesh && this.radiansRotated >= 0) {
