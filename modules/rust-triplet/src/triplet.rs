@@ -77,6 +77,37 @@ impl Triplet {
     pub fn get_js_error(&self, i: usize) -> js_sys::Int32Array {
         js_sys::Int32Array::from(&self.error[i][..])
     }
+
+    pub fn remove_cells_to_minimize_same_plane(&self, n: i32) {
+        // Only allow this if triplet is perfect, e.g. has error score of 0
+        if self.get_error_sum() > 0 { return; }
+
+        let mut i_plane: Vec<i32> = vec![0; self.w];
+        let mut j_plane: Vec<i32> = vec![0; self.h];
+        let mut k_plane: Vec<i32> = vec![0; self.d];
+
+        let mut shadow_plane_1: Vec<i32> = vec![0; self.w*self.h]; // Probably not the right dimensions!
+        let mut shadow_plane_2: Vec<i32> = vec![0; self.w*self.d];
+        let mut shadow_plane_3: Vec<i32> = vec![0; self.h*self.d];
+
+        for i in 0..self.w {
+            for j in 0..self.h {
+                for k in 0..self.d {
+                    let v = self.volume[i + self.w * (j + self.h * k)];
+
+                    if v == 0 { continue; }
+
+                    shadow_plane_1[j * self.w + i] += 1;
+                    shadow_plane_2[j * self.d + k] += 1;
+                    shadow_plane_3[k * self.w + i] += 1;
+
+                    i_plane[i] += 1;
+                    j_plane[j] += 1;
+                    k_plane[k] += 1;
+                }
+            }
+        }
+    }
 }
 
 fn calc_shape_plane_error(v1: &Vec<i32>, v2: &Vec<i32>, error_cells: &mut Vec<i32>) {

@@ -76,7 +76,12 @@ export default class TripletThreeJSViewGL {
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(lines, 3));
     const l = new THREE.LineSegments(g, lineMaterial);
-    g.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
+    const offset = 0.012;
+    g.translate(
+      -triplet.dims[0] / 2 + offset,
+      -triplet.dims[1] / 2 + offset,
+      -triplet.dims[2] / 2 + offset,
+    );
     this.tripletGroup.add(l);
     // }
 
@@ -155,8 +160,8 @@ export default class TripletThreeJSViewGL {
     lightFront.shadow.blurSamples = 15;
     this.scene.add(lightFront);
 
-    // const AmbientLight = new THREE.AmbientLight(0xffffff, 0.35); // soft white light
-    // this.scene.add(AmbientLight);
+    const AmbientLight = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
+    this.scene.add(AmbientLight);
 
     // PLANES
     const planeGeometry = new THREE.PlaneGeometry(400, 400);

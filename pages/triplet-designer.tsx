@@ -169,8 +169,7 @@ export default function TripletDesigner() {
             {shadowEditor(shapePlaneRef3, "Shadow 3", onShapePlaneUpdated, tripletError.sp3.size)}
           </div>
         </div>
-
-        <div className={clsx("flex", "flex-col", "mx-4", "w-44")}>
+        <div className={clsx("flex", "flex-col", "w-44")}>
           <div className={clsx("flex", "items-center", "mt-8")}>
             <p className={inputStyle.label}>Grid size</p>
             <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />

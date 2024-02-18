@@ -63,17 +63,7 @@ export function greedyMesh(triplet: Triplet): {
             x[v] = j + 1;
             const du = [0, 0, 0];
             du[u] = w;
-            const m = 0.005;
-            lines.push(
-              ...[
-                x[0] + m,
-                x[1] + m,
-                x[2] + m,
-                x[0] + du[0] + m,
-                x[1] + du[1] + m,
-                x[2] + du[2] + m,
-              ],
-            );
+            lines.push(...[x[0], x[1], x[2], x[0] + du[0], x[1] + du[1], x[2] + du[2]]);
 
             i += w;
             n += w;
