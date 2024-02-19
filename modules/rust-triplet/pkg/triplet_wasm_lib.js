@@ -297,6 +297,14 @@ export class Triplet {
         const ret = wasm.triplet_get_js_error(this.__wbg_ptr, i);
         return takeObject(ret);
     }
+    /**
+    * @param {number} n
+    * @param {number} plane_edge_weight_ratio
+    * @param {number} weight_modifier
+    */
+    remove_cells_to_minimize_same_plane(n, plane_edge_weight_ratio, weight_modifier) {
+        wasm.triplet_remove_cells_to_minimize_same_plane(this.__wbg_ptr, n, plane_edge_weight_ratio, weight_modifier);
+    }
 }
 
 async function __wbg_load(module, imports) {

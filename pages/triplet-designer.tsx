@@ -21,6 +21,7 @@ import init, {
 export default function TripletDesigner() {
   const [gridSize, setGridSize] = useState(14);
   const [fillPercentage, setFillPercentage] = useState(0.5);
+  const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.5);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
     sp1: new Set<number>(),
     sp2: new Set<number>(),
@@ -228,6 +229,50 @@ export default function TripletDesigner() {
             </div>
           </div>
 
+          <div className={clsx("mt-10")}>
+            <div
+              className={clsx(
+                "flex",
+                "justify-between",
+                "text-xs",
+                "font-mono",
+                "mb-0",
+                "translate-y-2",
+                "font-bold",
+              )}
+            >
+              <p style={{ opacity: 0.5 + (1 - planeEdgeWeightRatio) * 0.5 }}>Plane</p>
+              <p style={{ opacity: 0.5 + planeEdgeWeightRatio * 0.5 }}>Edges</p>
+            </div>
+            <input
+              type="range"
+              step="any"
+              defaultValue={0.5}
+              min={0}
+              max={1}
+              className={clsx(
+                "transparent",
+                "mb-3",
+                "h-[4px]",
+                "w-full",
+                "rounded",
+                "cursor-pointer",
+                "appearance-none",
+                "border-transparent",
+                "bg-red-500",
+              )}
+              onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
+            />
+            <Button
+              label="Remove"
+              className="ml-[47px]"
+              disabled={tripletError.totalPercentage > 0}
+              onClick={() =>
+                tripletWebWorker.current.removeCellsOfPreviousTriplet(200, planeEdgeWeightRatio, 3)
+              }
+            />
+          </div>
+
           <p className={clsx("font-bold", "mt-8")}>
             Total incorrect:{" "}
             <span
@@ -249,7 +294,7 @@ export default function TripletDesigner() {
         </div>
       </div>
     ),
-    [tripletError, gridSize, fillPercentage, thickness],
+    [tripletError, gridSize, fillPercentage, thickness, planeEdgeWeightRatio],
   );
 }
 

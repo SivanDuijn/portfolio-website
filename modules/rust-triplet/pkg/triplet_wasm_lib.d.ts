@@ -66,6 +66,12 @@ export class Triplet {
 */
   get_js_error(i: number): Int32Array;
 /**
+* @param {number} n
+* @param {number} plane_edge_weight_ratio
+* @param {number} weight_modifier
+*/
+  remove_cells_to_minimize_same_plane(n: number, plane_edge_weight_ratio: number, weight_modifier: number): void;
+/**
 */
   d: number;
 /**
@@ -80,7 +86,6 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly get_random_shape_planes: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly __wbg_triplet_free: (a: number) => void;
   readonly __wbg_get_triplet_w: (a: number) => number;
   readonly __wbg_set_triplet_w: (a: number, b: number) => void;
@@ -90,6 +95,8 @@ export interface InitOutput {
   readonly __wbg_set_triplet_d: (a: number, b: number) => void;
   readonly triplet_get_js_volume: (a: number) => number;
   readonly triplet_get_js_error: (a: number, b: number) => number;
+  readonly triplet_remove_cells_to_minimize_same_plane: (a: number, b: number, c: number, d: number) => void;
+  readonly get_random_shape_planes: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly get_best_triplet: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbg_shapeplane_free: (a: number) => void;
   readonly __wbg_get_shapeplane_w: (a: number) => number;

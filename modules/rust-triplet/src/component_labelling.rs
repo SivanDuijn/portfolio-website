@@ -8,7 +8,10 @@ use crate::{triplet::Triplet, get_best_triplet::ConnectednessOptions, shape_plan
 /// * `connectedness` - Check for connecteness for either volume, edge or vertex. Volume means faces need to be connected, edge means edges ...
 /// 
 pub fn remove_smaller_components(triplet: &mut Triplet, connectedness: &ConnectednessOptions) {
-    let (_, components) = get_triplet_components(triplet, connectedness);
+    let mut labels: Vec<i32> = vec![0;triplet.volume().len()];
+    let mut components: Vec<Vec<usize>> = Vec::new();
+
+    get_triplet_components(triplet, connectedness, &mut labels, &mut components);
 
     let (_, largest_component_index) = components.iter()
         .enumerate()
@@ -34,14 +37,15 @@ pub fn remove_smaller_components(triplet: &mut Triplet, connectedness: &Connecte
 /// # Arguments
 /// * `triplet` - Reference to a triplet
 /// * `connectedness` - Check for connecteness for either volume, edge or vertex. Volume means faces need to be connected, edge means edges ...
-pub fn get_triplet_components(triplet: &Triplet, connectedness: &ConnectednessOptions) 
-    -> (Vec<i32>, Vec<Vec<usize>>) 
+pub fn get_triplet_components(
+    triplet: &Triplet, 
+    connectedness: &ConnectednessOptions, 
+    labels: &mut Vec<i32>, 
+    components: &mut Vec<Vec<usize>>) 
 {
-    let mut labels: Vec<i32> = vec![0;triplet.volume().len()];
     let mut current_label = 1;
 
     // Store the indices of each component
-    let mut components: Vec<Vec<usize>> = Vec::new();
     for i in 0..triplet.w {
         for j in 0..triplet.h {
             for k in 0..triplet.d {
@@ -50,7 +54,7 @@ pub fn get_triplet_components(triplet: &Triplet, connectedness: &ConnectednessOp
                 // If a voxel is on and not labeled yet, do depth first search for neighboring voxels and label them as well
                 if triplet.volume()[index] > 0 && labels[index] == 0 {
                     let mut component_indices: Vec<usize> = Vec::new();
-                    dfs_queue(triplet, &mut labels, i, j, k, current_label, &mut component_indices, connectedness);
+                    dfs_queue(triplet, labels, i, j, k, current_label, &mut component_indices, connectedness);
                     
                     // Add the indices of this component to the list of indices
                     components.push(component_indices);
@@ -60,8 +64,6 @@ pub fn get_triplet_components(triplet: &Triplet, connectedness: &ConnectednessOp
             }
         }
     }
-
-    return (labels, components);
 }
 
 pub fn dfs_queue(

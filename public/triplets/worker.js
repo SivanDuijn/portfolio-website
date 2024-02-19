@@ -20,6 +20,8 @@ function toJSTriplet(t) {
   };
 }
 
+let prev_triplet;
+
 self.onmessage = ({ data }) => {
   if (data.type == "BUILD_TRIPLETS") {
     const { shapePlanes, connectedness } = data.data;
@@ -50,6 +52,8 @@ self.onmessage = ({ data }) => {
     const sp3 = toWasmSP(shapePlanes[2]);
     const t = wasm.get_best_triplet(sp1, sp2, sp3, connectedness);
 
+    prev_triplet = t;
+
     const triplet = toJSTriplet(t);
 
     self.postMessage({ type: "TRIPLET_FINISHED", triplet });
@@ -71,6 +75,16 @@ self.onmessage = ({ data }) => {
 
     self.postMessage({ type: "TRIPLETS_PROGRESS_UPDATE", amount: amount % 100 || 100 });
     self.postMessage({ type: "TRIPLETS_FINISHED", triplets });
+  } else if (data.type == "REMOVE_CELLS") {
+    if (prev_triplet) {
+      const { n, plane_edge_weight_ratio, weight_modifier } = data.data;
+
+      prev_triplet.remove_cells_to_minimize_same_plane(n, plane_edge_weight_ratio, weight_modifier);
+
+      const triplet = toJSTriplet(prev_triplet);
+
+      self.postMessage({ type: "TRIPLET_FINISHED", triplet });
+    }
   } else {
     /**
      * When we receive the bytes as an `ArrayBuffer` we can use that to

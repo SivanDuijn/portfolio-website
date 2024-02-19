@@ -63,6 +63,18 @@ export class TripletWebWorker {
     });
   }
 
+  public removeCellsOfPreviousTriplet(
+    n: number,
+    plane_edge_weight_ratio: number,
+    weight_modifier: number,
+  ) {
+    if (!this.wasmLoaded) return;
+    this.worker?.postMessage({
+      type: "REMOVE_CELLS",
+      data: { n, plane_edge_weight_ratio, weight_modifier },
+    });
+  }
+
   public destroy() {
     this.worker?.terminate();
   }

@@ -1,12 +1,57 @@
 use std::{fs, io::{stdin, stdout, Write}};
 
-use triplet_wasm_lib::{get_best_triplet::{get_best_triplet, ConnectednessOptions}, get_random_shape_plane::{get_random_shape_planes, ShapePlaneFillRandomness}};
+use triplet_wasm_lib::{get_best_triplet::{get_best_triplet, ConnectednessOptions}, get_random_shape_plane::{get_random_shape_planes, ShapePlaneFillRandomness}, triplet::Triplet};
 
 const FILL_PERCENTAGES: [f32; 11] = [0.3, 0.35, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.80, 0.85];
 // const GRID_SIZES: [i32; 2] = [5, 8];
 const GRID_SIZES: [i32; 5] = [14, 18, 22, 26, 30];
 
 pub fn main() {
+
+    // let mut t = Triplet::new(vec![
+    //     1,1,1,
+    //     1,1,1,
+    //     1,1,1,
+
+    //     1,1,1,
+    //     1,1,1,
+    //     1,1,1,
+
+    //     1,1,1,
+    //     1,1,1,
+    //     1,1,1,
+    //     ], 3, 3, 3);
+
+    // // let x: usize = get_user_input("cell x?").parse().unwrap_or(1);
+    // // let y: usize = get_user_input("cell x?").parse().unwrap_or(1);
+    // // let z: usize = get_user_input("cell x?").parse().unwrap_or(1);
+    // // println!("{}", format!("edges: {}", t.get_edges_of_cube(x,y,z, false)));
+    // let mut n = 0;
+    // for v in t.volume() {
+    //     if *v > 0 { n+=1; }
+    // }
+    // println!("{}", format!("volume: {}", n));
+    
+    // t.remove_cells_to_minimize_same_plane(0.5, 1.0);
+    // n = 0;
+    // for v in t.volume() {
+    //     if *v > 0 { n+=1; }
+    // }
+    // println!("{}", format!("volume: {}", n));
+    // t.remove_cells_to_minimize_same_plane(0.5, 1.0);
+    // n = 0;
+    // for v in t.volume() {
+    //     if *v > 0 { n+=1; }
+    // }
+    // println!("{}", format!("volume: {}", n));
+    // t.remove_cells_to_minimize_same_plane(0.5, 1.0);
+    // n = 0;
+    // for v in t.volume() {
+    //     if *v > 0 { n+=1; }
+    // }
+    // println!("{}", format!("volume: {}", n));
+
+    // return;
     let mut answer = get_user_input("Which randomness to use? [Fully, Weighted]");
 
     let mut randomness = ShapePlaneFillRandomness::NeighborWeighted;

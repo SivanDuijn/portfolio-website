@@ -147,10 +147,10 @@ function handleError(f, args) {
 }
 /**
 */
-export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
+export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
 /**
 */
-export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
+export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
 /**
 */
 export class ShapePlane {
@@ -296,6 +296,14 @@ export class Triplet {
     get_js_error(i) {
         const ret = wasm.triplet_get_js_error(this.__wbg_ptr, i);
         return takeObject(ret);
+    }
+    /**
+    * @param {number} n
+    * @param {number} plane_edge_weight_ratio
+    * @param {number} weight_modifier
+    */
+    remove_cells_to_minimize_same_plane(n, plane_edge_weight_ratio, weight_modifier) {
+        wasm.triplet_remove_cells_to_minimize_same_plane(this.__wbg_ptr, n, plane_edge_weight_ratio, weight_modifier);
     }
 }
 
