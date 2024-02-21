@@ -21,7 +21,8 @@ import init, {
 export default function TripletDesigner() {
   const [gridSize, setGridSize] = useState(14);
   const [fillPercentage, setFillPercentage] = useState(0.5);
-  const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.5);
+  const [weightAmplifier, setWeightAmplifier] = useState(8);
+  const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.7);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
     sp1: new Set<number>(),
     sp2: new Set<number>(),
@@ -170,7 +171,7 @@ export default function TripletDesigner() {
             {shadowEditor(shapePlaneRef3, "Shadow 3", onShapePlaneUpdated, tripletError.sp3.size)}
           </div>
         </div>
-        <div className={clsx("flex", "flex-col", "w-44")}>
+        <div className={clsx("flex", "flex-col", "w-44", "items-center")}>
           <div className={clsx("flex", "items-center", "mt-8")}>
             <p className={inputStyle.label}>Grid size</p>
             <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
@@ -213,65 +214,74 @@ export default function TripletDesigner() {
             ))}
           </div>
 
-          <div className={clsx("mt-10")}>
-            <Button label="Random" className="ml-[29px]" onClick={setRandomShapePlanes} />
-            <div className={clsx("flex", "items-center", "mt-0.5")}>
-              <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
-              <NumberInput
-                value={fillPercentage}
-                min={0.1}
-                max={1}
-                incrStep={0.1}
-                decrStep={-0.1}
-                disableLargeStep
-                onChange={setFillPercentage}
-              />
-            </div>
-          </div>
-
-          <div className={clsx("mt-10")}>
-            <div
-              className={clsx(
-                "flex",
-                "justify-between",
-                "text-xs",
-                "font-mono",
-                "mb-0",
-                "translate-y-2",
-                "font-bold",
-              )}
-            >
-              <p style={{ opacity: 0.5 + (1 - planeEdgeWeightRatio) * 0.5 }}>Plane</p>
-              <p style={{ opacity: 0.5 + planeEdgeWeightRatio * 0.5 }}>Edges</p>
-            </div>
-            <input
-              type="range"
-              step="any"
-              defaultValue={0.5}
-              min={0}
+          <div className={clsx("flex", "items-center", "mt-12")}>
+            <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
+            <NumberInput
+              value={fillPercentage}
+              min={0.1}
               max={1}
-              className={clsx(
-                "transparent",
-                "mb-3",
-                "h-[4px]",
-                "w-full",
-                "rounded",
-                "cursor-pointer",
-                "appearance-none",
-                "border-transparent",
-                "bg-red-500",
-              )}
-              onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
-            />
-            <Button
-              label="Remove"
-              className="ml-[47px]"
-              disabled={tripletError.totalPercentage > 0}
-              onClick={() =>
-                tripletWebWorker.current.removeCellsOfPreviousTriplet(200, planeEdgeWeightRatio, 3)
-              }
+              incrStep={0.1}
+              decrStep={-0.1}
+              disableLargeStep
+              onChange={setFillPercentage}
             />
           </div>
+          <Button label="Random" className="mt-1" onClick={setRandomShapePlanes} />
+
+          <div className={clsx("flex", "items-center", "mt-10")}>
+            <p className={clsx("text-sm", "font-semibold", "mr-1.5")}>Weight amplifier</p>
+            <NumberInput
+              value={weightAmplifier}
+              min={1}
+              max={15}
+              disableLargeStep
+              onChange={setWeightAmplifier}
+            />
+          </div>
+          <div
+            className={clsx(
+              "flex",
+              "justify-between",
+              "mt-2",
+              "text-xs",
+              "font-mono",
+              "mb-1.5",
+              "w-full",
+              "font-bold",
+            )}
+          >
+            <p style={{ opacity: 0.5 + (1 - planeEdgeWeightRatio) * 0.5 }}>Plane</p>
+            <p style={{ opacity: 0.5 + planeEdgeWeightRatio * 0.5 }}>Edges</p>
+          </div>
+          <input
+            type="range"
+            step="any"
+            defaultValue={0.7}
+            min={0}
+            max={1}
+            className={clsx(
+              "transparent",
+              "mb-3",
+              "h-[4px]",
+              "w-full",
+              "rounded",
+              "cursor-pointer",
+              "appearance-none",
+              "border-transparent",
+              "bg-red-500",
+            )}
+            onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
+          />
+          <Button
+            label="Remove"
+            onClick={() =>
+              tripletWebWorker.current.removeCellsOfPreviousTriplet(
+                100,
+                planeEdgeWeightRatio,
+                weightAmplifier,
+              )
+            }
+          />
 
           <p className={clsx("font-bold", "mt-8")}>
             Total incorrect:{" "}
@@ -288,13 +298,13 @@ export default function TripletDesigner() {
 
           <Button
             label="Export"
-            className={clsx("ml-[29px]", "mt-9")}
+            className={clsx("mt-9")}
             onClick={() => tripletCanvasRef.current?.export()}
           />
         </div>
       </div>
     ),
-    [tripletError, gridSize, fillPercentage, thickness, planeEdgeWeightRatio],
+    [tripletError, gridSize, fillPercentage, thickness, planeEdgeWeightRatio, weightAmplifier],
   );
 }
 

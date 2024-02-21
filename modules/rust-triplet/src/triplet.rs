@@ -1,7 +1,7 @@
 use rand::Rng;
 use wasm_bindgen::prelude::*;
 
-use crate::{component_labelling::get_triplet_components, get_best_triplet::ConnectednessOptions, shape_plane::ShapePlane};
+use crate::{component_labelling::get_triplet_components, get_best_triplet::ConnectednessOptions, log, shape_plane::ShapePlane};
 
 #[wasm_bindgen]
 #[derive(Clone)]
@@ -111,23 +111,23 @@ impl Triplet {
 
     pub fn get_edges_of_cube(&self, i: usize, j: usize, k: usize, enabled: bool) -> i32 {
         let t = j+1 < self.h && self.get_value(i, j+1, k) > 0;
-        let b = j == 1 && self.get_value(i, j-1, k) > 0;
+        let b = j >= 1 && self.get_value(i, j-1, k) > 0;
         let r = i+1 < self.w && self.get_value(i+1, j, k) > 0;
-        let l = i == 1 && self.get_value(i-1, j, k) > 0;
+        let l = i >= 1 && self.get_value(i-1, j, k) > 0;
         let f = k+1 < self.d && self.get_value(i, j, k+1) > 0;
-        let c = k == 1 && self.get_value(i, j, k-1) > 0; // back
+        let c = k >= 1 && self.get_value(i, j, k-1) > 0; // back
         let tr = j+1 < self.h && i+1 < self.w && self.get_value(i+1, j+1, k) > 0;
-        let tl = j+1 < self.h && i == 1 && self.get_value(i-1, j+1, k) > 0;
+        let tl = j+1 < self.h && i >= 1 && self.get_value(i-1, j+1, k) > 0;
         let tf = j+1 < self.h && k+1 < self.d && self.get_value(i, j+1, k+1) > 0;
-        let tc = j+1 < self.h && k == 1 && self.get_value(i, j+1, k-1) > 0;
-        let br = j == 1 && i+1 < self.w && self.get_value(i+1, j-1, k) > 0;
-        let bl = j == 1 && i == 1 && self.get_value(i-1, j-1, k) > 0;
-        let bf = j == 1 && k+1 < self.d && self.get_value(i, j-1, k+1) > 0;
-        let bc = j == 1 && k == 1 && self.get_value(i, j-1, k-1) > 0;
+        let tc = j+1 < self.h && k >= 1 && self.get_value(i, j+1, k-1) > 0;
+        let br = j >= 1 && i+1 < self.w && self.get_value(i+1, j-1, k) > 0;
+        let bl = j >= 1 && i >= 1 && self.get_value(i-1, j-1, k) > 0;
+        let bf = j >= 1 && k+1 < self.d && self.get_value(i, j-1, k+1) > 0;
+        let bc = j >= 1 && k >= 1 && self.get_value(i, j-1, k-1) > 0;
         let rf = i+1 < self.w && k+1 < self.d && self.get_value(i+1, j, k+1) > 0;
-        let rc = i+1 < self.w && k == 1 && self.get_value(i+1, j, k-1) > 0;
-        let lf = i == 1 && k+1 < self.d && self.get_value(i-1, j, k+1) > 0;
-        let lc = i == 1 && k == 1 && self.get_value(i-1, j, k-1) > 0;
+        let rc = i+1 < self.w && k >= 1 && self.get_value(i+1, j, k-1) > 0;
+        let lf = i >= 1 && k+1 < self.d && self.get_value(i-1, j, k+1) > 0;
+        let lc = i >= 1 && k >= 1 && self.get_value(i-1, j, k-1) > 0;
         
         fn count_edge(n: &mut i32, x: bool, y: bool, xy: bool) {
             if xy {
@@ -141,6 +141,7 @@ impl Triplet {
                 if !x && !y { *n+=1; }
                 else if x && y { *n+=1; }
             }
+            else if x && y { *n+=1000; } // TODO different: Dirty dirty hack to disallow edge-contacts
             else if x || y { *n+=1; }
         }
         
@@ -189,17 +190,14 @@ impl Triplet {
     }
 
     pub fn remove_cells_to_minimize_same_plane(&mut self, n: i32, plane_edge_weight_ratio: f32, weight_modifier: f32) {
-        // Only allow this if triplet is perfect, e.g. has error score of 0
-        if self.get_error_sum() > 0 { return; }
-
         // Record the number of cubes in a plane
-        let mut i_plane: Vec<i32> = vec![0; self.w];
-        let mut j_plane: Vec<i32> = vec![0; self.h];
-        let mut k_plane: Vec<i32> = vec![0; self.d];
+        let mut i_plane: Vec<f32> = vec![0.0; self.w];
+        let mut j_plane: Vec<f32> = vec![0.0; self.h];
+        let mut k_plane: Vec<f32> = vec![0.0; self.d];
 
-        let mut shadow_plane_1: Vec<i32> = vec![0; self.w*self.h]; // Probably not the right dimensions!
-        let mut shadow_plane_2: Vec<i32> = vec![0; self.w*self.d];
-        let mut shadow_plane_3: Vec<i32> = vec![0; self.h*self.d];
+        let mut shadow_plane_i: Vec<i32> = vec![0; self.w*self.d]; // Probably not the right dimensions!
+        let mut shadow_plane_j: Vec<i32> = vec![0; self.h*self.d];
+        let mut shadow_plane_k: Vec<i32> = vec![0; self.w*self.h]; 
 
         for i in 0..self.w {
             for j in 0..self.h {
@@ -208,16 +206,20 @@ impl Triplet {
 
                     if v == 0 { continue; }
 
-                    shadow_plane_1[j * self.w + i] += 1;
-                    shadow_plane_2[j * self.d + k] += 1;
-                    shadow_plane_3[k * self.w + i] += 1;
+                    shadow_plane_i[j * self.d + k] += 1;
+                    shadow_plane_j[k * self.w + i] += 1;
+                    shadow_plane_k[j * self.w + i] += 1;
 
-                    i_plane[i] += 1;
-                    j_plane[j] += 1;
-                    k_plane[k] += 1;
+                    i_plane[i] += 1.0;
+                    j_plane[j] += 1.0;
+                    k_plane[k] += 1.0;
                 }
             }
         }
+
+        let n_cells_shadow_i: f32 = shadow_plane_i.iter().filter(|&c| *c > 0).count() as f32;
+        let n_cells_shadow_j: f32 = shadow_plane_j.iter().filter(|&c| *c > 0).count() as f32;
+        let n_cells_shadow_k: f32 = shadow_plane_k.iter().filter(|&c| *c > 0).count() as f32;
 
         // Take all cubes that have a face exposed to the outside
         let mut cubes_outside: Vec<(usize, usize, usize)> = Vec::new();
@@ -237,9 +239,9 @@ impl Triplet {
             // For each of those, check if it is possible to remove
             // While the trip-let stays perfect and volume connected
             for (i,j,k) in &cubes_outside {
-                if shadow_plane_1[j*self.w+i] == 1 || 
-                shadow_plane_2[j*self.d+k] == 1 ||
-                shadow_plane_3[k*self.w+i] == 1 {
+                if shadow_plane_k[j*self.w+i] == 1 || 
+                   shadow_plane_i[j*self.d+k] == 1 ||
+                   shadow_plane_j[k*self.w+i] == 1 {
                     continue;
                 }
 
@@ -256,22 +258,28 @@ impl Triplet {
 
             // Determine weights for each possible cell to remove
             for (i,j,k) in &possible_cubes {
-                let plane_fill_ratio = (i_plane[*i] + 
-                                            j_plane[*j] +
-                                            k_plane[*k]) as f32 / (self.w*self.w*3) as f32;
+                let plane_fill_ratio = (i_plane[*i] / n_cells_shadow_i +
+                                             j_plane[*j] / n_cells_shadow_j +
+                                             k_plane[*k] / n_cells_shadow_k) / 3.0;
                 
                 // Determine number of current edges, and number of edges once removed
                 let e_old = self.get_edges_of_cube(*i, *j, *k, true); // [0-12]
                 let e_new = self.get_edges_of_cube(*i, *j, *k, false); // [0-12]
-                let edges_ratio = (e_old-e_new+12) as f32 / 24.0;
+                // TODO different: Dirty dirty hack to disallow edge-contacts
+                if e_new < 100 {
+                    let edges_ratio = (e_old-e_new+12) as f32 / 24.0;
 
-                // Both weight ratio's are between 0 and 1
-                let weight = (plane_edge_weight_ratio*edges_ratio+
-                                  (1.0-plane_edge_weight_ratio)*plane_fill_ratio)
-                                  .powf(weight_modifier);
-                acc_weight += weight;
+                    // Both weight ratio's are between 0 and 1
+                    let weight = (plane_edge_weight_ratio*edges_ratio+
+                                    (1.0-plane_edge_weight_ratio)*plane_fill_ratio)
+                                    .powf(weight_modifier);
+                    
+                    acc_weight += weight;
+                }
                 acc_weights.push(acc_weight);
             }
+
+            if acc_weight == 0.0 { return; }
 
             // Randomly choose cube and remove from volume
             let r = rng.gen_range(0.0..acc_weight);
@@ -279,13 +287,13 @@ impl Triplet {
                 if acc_weights[i] > r {
                     let c = possible_cubes[i];
                     self.volume[c.0 + self.w * (c.1 + self.h * c.2)] = 0;
-                    shadow_plane_1[c.1 * self.w + c.0] -= 1;
-                    shadow_plane_2[c.1 * self.d + c.2] -= 1;
-                    shadow_plane_3[c.2 * self.w + c.0] -= 1;
+                    shadow_plane_k[c.1 * self.w + c.0] -= 1;
+                    shadow_plane_i[c.1 * self.d + c.2] -= 1;
+                    shadow_plane_j[c.2 * self.w + c.0] -= 1;
 
-                    i_plane[c.0] -= 1;
-                    j_plane[c.1] -= 1;
-                    k_plane[c.2] -= 1;
+                    i_plane[c.0] -= 1.0;
+                    j_plane[c.1] -= 1.0;
+                    k_plane[c.2] -= 1.0;
                     break;
                 }
             }

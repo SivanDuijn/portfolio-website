@@ -65,7 +65,7 @@ export default class TripletThreeJSViewGL {
     geometry.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
     geometry.scale(14 / triplet.dims[0], 14 / triplet.dims[0], 14 / triplet.dims[0]);
 
-    const material = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshLambertMaterial({
       color: 0x74c4cf,
     }); //color: 0xbd9476 });
     const mesh = new THREE.Mesh(geometry, material);
@@ -138,7 +138,7 @@ export default class TripletThreeJSViewGL {
     lightTop.shadow.blurSamples = 15;
     this.scene.add(lightTop);
 
-    const lightRight = new THREE.DirectionalLight(0xffffff, 1);
+    const lightRight = new THREE.DirectionalLight(0xffffff, 0.8);
     lightRight.position.set(10, 0, 0); //default; light shining from right
     lightRight.castShadow = true;
     lightRight.shadow.mapSize.width = 256;
@@ -151,7 +151,7 @@ export default class TripletThreeJSViewGL {
     lightRight.shadow.blurSamples = 15;
     this.scene.add(lightRight);
 
-    const lightFront = new THREE.DirectionalLight(0xffffff, 1);
+    const lightFront = new THREE.DirectionalLight(0xffffff, 0.9);
     lightFront.position.set(0, 0, 10); //default; light shining from right
     lightFront.castShadow = true;
     lightFront.shadow.mapSize.width = 256;
@@ -164,10 +164,10 @@ export default class TripletThreeJSViewGL {
     lightFront.shadow.blurSamples = 15;
     this.scene.add(lightFront);
 
-    const lightBottom = new THREE.DirectionalLight(0xffffff, 0.35);
+    const lightBottom = new THREE.DirectionalLight(0xffffff, 0.4);
     lightBottom.position.set(0, -10, 0); //default; light shining from top
     this.scene.add(lightBottom);
-    const lightLeft = new THREE.DirectionalLight(0xffffff, 0.35);
+    const lightLeft = new THREE.DirectionalLight(0xffffff, 0.45);
     lightLeft.position.set(-10, 0, 0); //default; light shining from top
     this.scene.add(lightLeft);
     const lightBack = new THREE.DirectionalLight(0xffffff, 0.35);
