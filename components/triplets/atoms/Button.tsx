@@ -32,7 +32,7 @@ export default function Button(props: ButtonProps) {
             : `bg-[#77d87e] ${
                 props.disabled
                   ? "text-gray-600 border-gray-600 mt-[1px] mr-[1px]"
-                  : `text-gray-800 hover:text-black hover:bg-[#68d970] active:bg-[#77d87e] 
+                  : `text-gray-900 hover:text-black hover:bg-[#68d970] active:bg-[#77d87e] 
                  border-gray-600 hover:border-black border-2 border-t border-r active:border-2 active:border-b active:border-l`
               }`,
           props.disabled && "cursor-default",

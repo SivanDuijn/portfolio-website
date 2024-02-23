@@ -1,7 +1,7 @@
 use rand::Rng;
 use wasm_bindgen::prelude::*;
 
-use crate::{component_labelling::get_triplet_components, get_best_triplet::ConnectednessOptions, log, shape_plane::ShapePlane};
+use crate::{component_labelling::get_triplet_components, get_best_triplet::ConnectednessOptions, shape_plane::ShapePlane};
 
 #[wasm_bindgen]
 #[derive(Clone)]
