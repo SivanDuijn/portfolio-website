@@ -23,6 +23,7 @@ export default function TripletDesigner() {
   const [fillPercentage, setFillPercentage] = useState(0.5);
   const [weightAmplifier, setWeightAmplifier] = useState(8);
   const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.7);
+  const [pageIsLoaded, setPageIsLoaded] = useState(false);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
     sp1: new Set<number>(),
     sp2: new Set<number>(),
@@ -90,6 +91,8 @@ export default function TripletDesigner() {
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
     });
+
+    setPageIsLoaded(true);
 
     return () => {
       tripletWebWorker.current.destroy();
@@ -162,7 +165,7 @@ export default function TripletDesigner() {
             "font-extrabold",
             "italic",
             "text-5xl",
-            "pt-14",
+            "pt-12",
             "px-10",
             "md:text-7xl",
             "w-full",
@@ -171,152 +174,257 @@ export default function TripletDesigner() {
         >
           TRIPLET DESIGNER
         </p>
-        <div className={clsx("flex", "justify-center", "mt-10")}>
-          <TripletCanvas
-            className={clsx("mx-4", "inline-block", "mt-7")} // "border-2", "border-slate-200",
-            ref={tripletCanvasRef}
-          />
-          <div className={clsx("grid", "grid-cols-1", "mx-4")}>
+        <div className={clsx("flex", "justify-center", "mt-8")}>
+          <div className="relative">
+            <TripletCanvas
+              className={clsx("mx-4", "inline-block", "mt-7")} // "border-2", "border-slate-200",
+              ref={tripletCanvasRef}
+            />
+            <div
+              style={{
+                transform: `translateY(${pageIsLoaded ? 10000 : 0}px)`,
+                transition: "transform ease-in 3.5s 0.1s",
+              }}
+              className={clsx("absolute", "bg-white", "top-0", "left-0", "h-full", "w-full")}
+            ></div>
+          </div>
+          <div
+            style={{
+              transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
+              transition: "transform ease-out 1s",
+            }}
+            className={clsx(
+              "grid",
+              "grid-cols-1",
+              "mx-4",
+              "px-6",
+              "pt-4",
+              "pb-1",
+              "border",
+              "border-black",
+              "rounded-lg",
+              "shadow-md",
+            )}
+          >
             {shadowEditor(shapePlaneRef1, "Shadow 1", onShapePlaneUpdated, tripletError.sp1.size)}
             {shadowEditor(shapePlaneRef2, "Shadow 2", onShapePlaneUpdated, tripletError.sp2.size)}
             {shadowEditor(shapePlaneRef3, "Shadow 3", onShapePlaneUpdated, tripletError.sp3.size)}
           </div>
-          <div className={clsx("flex", "flex-col", "w-44", "items-center")}>
-            <div className={clsx("flex", "items-center", "mt-8")}>
-              <p className={inputStyle.label}>Grid size</p>
-              <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
-            </div>
-            <div className={clsx("flex", "items-center", "mt-8")}>
-              <label htmlFor="letters" className={clsx(inputStyle.label, "mr-3")}>
-                Letters
-              </label>
-              <input
-                ref={letterInputRef}
-                type="text"
-                className={inputStyle.input}
-                maxLength={3}
-                onChange={(e) => letterInputChanged(e.target.value)}
-                defaultValue={"shg"}
-                autoComplete="off"
-              />
-            </div>
-            <div className={clsx("flex", "mt-1")}>
-              {["thin", "normal", "bold"].map((thicknessName, i) => (
-                <div
-                  key={thicknessName}
-                  className={clsx(
-                    "px-1",
-                    "pt-[1px]",
-                    "text-xs",
-                    "border",
-                    "border-x-0",
-                    "font-semibold",
-                    i == 0 && "rounded-l border-l-[1px]",
-                    i == 2 && "rounded-r border-r-[1px]",
-                    i == thickness ? "bg-[#fa6e75]" : "bg-[#f6a1a5]",
-                    "hover:cursor-pointer",
-                    "hover:bg-[#fa6e75]",
-                    "border-gray-400",
-                  )}
-                  onClick={() => setThickness(i)}
-                >
-                  {thicknessName}
-                </div>
-              ))}
-            </div>
-
-            <div className={clsx("flex", "items-center", "mt-12")}>
-              <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
-              <NumberInput
-                value={fillPercentage}
-                min={0.1}
-                max={1}
-                incrStep={0.1}
-                decrStep={-0.1}
-                disableLargeStep
-                onChange={setFillPercentage}
-              />
-            </div>
-            <Button label="Random" className="mt-1" onClick={setRandomShapePlanes} />
-
-            <div className={clsx("flex", "items-center", "mt-10")}>
-              <p className={clsx("text-sm", "font-semibold", "mr-1.5")}>Weight amplifier</p>
-              <NumberInput
-                value={weightAmplifier}
-                min={1}
-                max={15}
-                disableLargeStep
-                onChange={setWeightAmplifier}
-              />
-            </div>
+          <div className={clsx("w-52", "flex", "flex-col", "items-center")}>
             <div
+              style={{
+                transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
+                transition: "transform 1s ease-out 0.1s",
+              }}
               className={clsx(
                 "flex",
-                "justify-between",
-                "mt-2",
-                "text-xs",
-                "font-mono",
-                "mb-1.5",
+                "flex-col",
+                "items-center",
+                "shadow-md",
+                "px-6",
+                "pt-4",
+                "pb-6",
                 "w-full",
-                "font-bold",
+                "border",
+                "border-black",
+                "rounded-lg",
               )}
             >
-              <p style={{ opacity: 0.5 + (1 - planeEdgeWeightRatio) * 0.5 }}>Plane</p>
-              <p style={{ opacity: 0.5 + planeEdgeWeightRatio * 0.5 }}>Edges</p>
-            </div>
-            <input
-              type="range"
-              step="any"
-              defaultValue={0.7}
-              min={0}
-              max={1}
-              className={clsx(
-                "transparent",
-                "mb-3",
-                "h-[4px]",
-                "w-full",
-                "rounded",
-                "cursor-pointer",
-                "appearance-none",
-                "border-transparent",
-                "bg-red-500",
-              )}
-              onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
-            />
-            <Button
-              label="Remove"
-              onClick={() =>
-                tripletWebWorker.current.removeCellsOfPreviousTriplet(
-                  100,
-                  planeEdgeWeightRatio,
-                  weightAmplifier,
-                )
-              }
-            />
+              <p className={clsx("font-bold", "text-center", "font-sarabun", "italic", "text-lg")}>
+                Shadow Definition
+              </p>
+              <div className={clsx("flex", "items-center", "mt-6")}>
+                <label htmlFor="letters" className={clsx(inputStyle.label, "mr-3")}>
+                  Letters
+                </label>
+                <input
+                  ref={letterInputRef}
+                  type="text"
+                  className={inputStyle.input}
+                  maxLength={3}
+                  onChange={(e) => letterInputChanged(e.target.value)}
+                  defaultValue={"shg"}
+                  autoComplete="off"
+                />
+              </div>
+              <div className={clsx("flex", "mt-1")}>
+                {["thin", "normal", "bold"].map((thicknessName, i) => (
+                  <div
+                    key={thicknessName}
+                    className={clsx(
+                      "px-1",
+                      "pt-[1px]",
+                      "text-xs",
+                      "border",
+                      "border-x-0",
+                      "font-semibold",
+                      i == 0 && "rounded-l border-l-[1px]",
+                      i == 2 && "rounded-r border-r-[1px]",
+                      i == thickness ? "bg-[#fa6e75]" : "bg-[#f6a1a5]",
+                      "hover:cursor-pointer",
+                      "hover:bg-[#fa6e75]",
+                      "border-gray-400",
+                    )}
+                    onClick={() => setThickness(i)}
+                  >
+                    {thicknessName}
+                  </div>
+                ))}
+              </div>
+              <div className={clsx("flex", "items-center", "mt-6")}>
+                <p className={inputStyle.label}>Grid size</p>
+                <NumberInput value={gridSize} min={2} onChange={(v) => updateGridSize(v)} />
+              </div>
 
-            <p className={clsx("font-bold", "mt-8")}>
-              Total incorrect:{" "}
-              <span
+              <div className={clsx("flex", "items-center", "mt-5")}>
+                <p className={clsx("font-bold", "mr-1.5")}>Fill ratio</p>
+                <NumberInput
+                  value={fillPercentage}
+                  min={0.1}
+                  max={1}
+                  incrStep={0.1}
+                  decrStep={-0.1}
+                  disableLargeStep
+                  onChange={setFillPercentage}
+                />
+              </div>
+              <Button label="Random" className="mt-1  " onClick={setRandomShapePlanes} />
+            </div>
+
+            <div
+              style={{
+                transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
+                transition: "transform 1s ease-out 0.16s",
+              }}
+              className={clsx(
+                "flex",
+                "flex-col",
+                "items-center",
+                "shadow-md",
+                "mt-4",
+                "px-6",
+                "pt-4",
+                "pb-6",
+                "w-full",
+                "border",
+                "border-black",
+                "rounded-lg",
+              )}
+            >
+              <p className={clsx("font-bold", "text-center", "font-sarabun", "italic", "text-lg")}>
+                Modify Triplet
+              </p>
+              <div className={clsx("flex", "items-center", "mt-3")}>
+                <p className={clsx("text-sm", "font-semibold", "mr-1.5")}>Weight amp.</p>
+                <NumberInput
+                  value={weightAmplifier}
+                  min={1}
+                  max={15}
+                  disableLargeStep
+                  onChange={setWeightAmplifier}
+                />
+              </div>
+              <div
                 className={clsx(
+                  "flex",
+                  "justify-between",
+                  "mt-2",
+                  "text-xs",
                   "font-mono",
-                  "font-semibold",
-                  tripletError.totalPercentage > 10 && "text-red-600",
+                  "mb-1.5",
+                  "w-full",
+                  "font-bold",
                 )}
               >
-                {tripletError.totalPercentage.toFixed(0)}%
-              </span>
-            </p>
+                <p style={{ opacity: 0.5 + (1 - planeEdgeWeightRatio) * 0.5 }}>Plane</p>
+                <p style={{ opacity: 0.5 + planeEdgeWeightRatio * 0.5 }}>Edges</p>
+              </div>
+              <input
+                type="range"
+                step="any"
+                defaultValue={0.7}
+                min={0}
+                max={1}
+                className={clsx(
+                  "transparent",
+                  "mb-4",
+                  "h-[4px]",
+                  "w-full",
+                  "rounded",
+                  "cursor-pointer",
+                  "appearance-none",
+                  "border-transparent",
+                  "bg-red-500",
+                )}
+                onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
+              />
+              <Button
+                label="Remove"
+                onClick={() =>
+                  tripletWebWorker.current.removeCellsOfPreviousTriplet(
+                    100,
+                    planeEdgeWeightRatio,
+                    weightAmplifier,
+                  )
+                }
+              />
+            </div>
 
-            <Button
-              label="Export"
-              className={clsx("mt-9")}
-              onClick={() => tripletCanvasRef.current?.export()}
-            />
+            <div
+              style={{
+                transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
+                transition: "transform 1s ease-out 0.21s",
+              }}
+              className={clsx(
+                "flex",
+                "flex-col",
+                "items-center",
+                "shadow-md",
+                "mt-4",
+                "px-6",
+                "pt-4",
+                "pb-6",
+                "w-full",
+                "border",
+                "border-black",
+                "rounded-lg",
+              )}
+            >
+              <p className={clsx("font-bold", "text-center", "font-sarabun", "italic", "text-lg")}>
+                Export Triplet
+              </p>
+              <p className={clsx("font-bold", "mt-2")}>
+                Total incorrect:{" "}
+                <span
+                  className={clsx(
+                    "font-mono",
+                    "font-semibold",
+                    tripletError.totalPercentage > 10 && "text-red-600",
+                  )}
+                >
+                  {tripletError.totalPercentage.toFixed(0)}%
+                </span>
+              </p>
+
+              <Button
+                label="Export"
+                className={clsx("mt-4")}
+                onClick={() => tripletCanvasRef.current?.export()}
+              />
+            </div>
           </div>
         </div>
       </div>
     ),
-    [tripletError, gridSize, fillPercentage, thickness, planeEdgeWeightRatio, weightAmplifier],
+    [
+      tripletError,
+      gridSize,
+      fillPercentage,
+      thickness,
+      planeEdgeWeightRatio,
+      weightAmplifier,
+      pageIsLoaded,
+    ],
   );
 }
 
@@ -329,13 +437,14 @@ function shadowEditor(
   return (
     <div className={clsx("flex", "flex-col", "items-center")}>
       <p className={clsx("text-center", "font-bold")}>{name}</p>
-      <P5GridEditor className="border" ref={ref} width={176} onUpdate={onUpdate} />
+      <P5GridEditor ref={ref} width={176} onUpdate={onUpdate} />
       <p
         className={clsx(
           "font-mono",
           "text-xs",
           "text-gray-600",
           "mt-0.5",
+          "mb-1.5",
           nErrorCells == 0 && "invisible",
         )}
       >

@@ -35,7 +35,7 @@ export interface P5GridEditorElement {
 
 const lightTheme = {
   onColor: [130],
-  offColor: [255],
+  offColor: [246],
   errorColor: [214, 86, 90],
   hoverErrorOnColor: [235, 129, 133],
   hoverErrorOffColor: [179, 71, 75],
