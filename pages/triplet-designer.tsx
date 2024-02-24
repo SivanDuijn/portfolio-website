@@ -165,7 +165,7 @@ export default function TripletDesigner() {
             "font-extrabold",
             "italic",
             "text-5xl",
-            "pt-12",
+            "pt-10",
             "px-10",
             "md:text-7xl",
             "w-full",
