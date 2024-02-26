@@ -69,8 +69,9 @@ export class Triplet {
 * @param {number} n
 * @param {number} plane_edge_weight_ratio
 * @param {number} weight_modifier
+* @returns {number}
 */
-  remove_cells_to_minimize_same_plane(n: number, plane_edge_weight_ratio: number, weight_modifier: number): void;
+  remove_cells_to_minimize_same_plane(n: number, plane_edge_weight_ratio: number, weight_modifier: number): number;
 /**
 */
   d: number;
@@ -95,7 +96,7 @@ export interface InitOutput {
   readonly __wbg_set_triplet_d: (a: number, b: number) => void;
   readonly triplet_get_js_volume: (a: number) => number;
   readonly triplet_get_js_error: (a: number, b: number) => number;
-  readonly triplet_remove_cells_to_minimize_same_plane: (a: number, b: number, c: number, d: number) => void;
+  readonly triplet_remove_cells_to_minimize_same_plane: (a: number, b: number, c: number, d: number) => number;
   readonly get_random_shape_planes: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly get_best_triplet: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbg_shapeplane_free: (a: number) => void;

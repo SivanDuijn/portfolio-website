@@ -189,7 +189,7 @@ impl Triplet {
         js_sys::Int32Array::from(&self.error[i][..])
     }
 
-    pub fn remove_cells_to_minimize_same_plane(&mut self, n: i32, plane_edge_weight_ratio: f32, weight_modifier: f32) {
+    pub fn remove_cells_to_minimize_same_plane(&mut self, n: i32, plane_edge_weight_ratio: f32, weight_modifier: f32) -> i32 {
         // Record the number of cubes in a plane
         let mut i_plane: Vec<f32> = vec![0.0; self.w];
         let mut j_plane: Vec<f32> = vec![0.0; self.h];
@@ -227,6 +227,8 @@ impl Triplet {
         let mut acc_weights: Vec<f32> = Vec::new();
         let mut acc_weight: f32;
         let mut rng = rand::thread_rng();
+
+        let mut n_cells_removed = 0;
         for _ in 0..n {
             cubes_outside.clear();
             possible_cubes.clear();
@@ -234,7 +236,7 @@ impl Triplet {
             acc_weight = 0.0;
 
             self.get_cubes_on_outside(&mut cubes_outside);
-            if cubes_outside.len() == 0 { return; }
+            if cubes_outside.len() == 0 { break; }
 
             // For each of those, check if it is possible to remove
             // While the trip-let stays perfect and volume connected
@@ -254,7 +256,7 @@ impl Triplet {
                 }
                 self.volume[index] = v;
             }
-            if possible_cubes.len() == 0 { return; }
+            if possible_cubes.len() == 0 { break; }
 
             // Determine weights for each possible cell to remove
             for (i,j,k) in &possible_cubes {
@@ -279,7 +281,7 @@ impl Triplet {
                 acc_weights.push(acc_weight);
             }
 
-            if acc_weight == 0.0 { return; }
+            if acc_weight == 0.0 { break; }
 
             // Randomly choose cube and remove from volume
             let r = rng.gen_range(0.0..acc_weight);
@@ -294,10 +296,13 @@ impl Triplet {
                     i_plane[c.0] -= 1.0;
                     j_plane[c.1] -= 1.0;
                     k_plane[c.2] -= 1.0;
+                    n_cells_removed += 1;
                     break;
                 }
             }
         }
+
+        return n_cells_removed;
 
     }
 }

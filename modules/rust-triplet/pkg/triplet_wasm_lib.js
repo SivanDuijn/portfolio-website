@@ -301,9 +301,11 @@ export class Triplet {
     * @param {number} n
     * @param {number} plane_edge_weight_ratio
     * @param {number} weight_modifier
+    * @returns {number}
     */
     remove_cells_to_minimize_same_plane(n, plane_edge_weight_ratio, weight_modifier) {
-        wasm.triplet_remove_cells_to_minimize_same_plane(this.__wbg_ptr, n, plane_edge_weight_ratio, weight_modifier);
+        const ret = wasm.triplet_remove_cells_to_minimize_same_plane(this.__wbg_ptr, n, plane_edge_weight_ratio, weight_modifier);
+        return ret;
     }
 }
 

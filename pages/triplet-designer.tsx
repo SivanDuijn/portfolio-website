@@ -23,7 +23,7 @@ export default function TripletDesigner() {
   const [fillPercentage, setFillPercentage] = useState(0.5);
   const [weightAmplifier, setWeightAmplifier] = useState(8);
   const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.7);
-  const [pageIsLoaded, setPageIsLoaded] = useState(false);
+  // const [pageIsLoaded, setPageIsLoaded] = useState(false);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
     sp1: new Set<number>(),
     sp2: new Set<number>(),
@@ -91,8 +91,7 @@ export default function TripletDesigner() {
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
     });
-
-    setPageIsLoaded(true);
+    // setPageIsLoaded(true);
 
     return () => {
       tripletWebWorker.current.destroy();
@@ -150,7 +149,17 @@ export default function TripletDesigner() {
   return useMemo(
     () => (
       <div className={clsx("min-h-[100svh]", "bg-white", "text-black")}>
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            style: {
+              boxShadow: "-1px 1px black",
+              border: "1px solid black",
+              paddingTop: 5,
+              paddingBottom: 5,
+            },
+          }}
+          containerStyle={{ top: 6 }}
+        />
         <Head>
           <title>Triplet Designer</title>
         </Head>
@@ -180,19 +189,19 @@ export default function TripletDesigner() {
               className={clsx("mx-4", "inline-block", "mt-7")} // "border-2", "border-slate-200",
               ref={tripletCanvasRef}
             />
-            <div
-              style={{
-                transform: `translateY(${pageIsLoaded ? 10000 : 0}px)`,
-                transition: "transform ease-in 3.5s 0.1s",
-              }}
+            {/* <div
+              // style={{
+              //   transform: `translateY(${pageIsLoaded ? 10000 : 0}px)`,
+              //   transition: "transform ease-in 3.5s 0.1s",
+              // }}
               className={clsx("absolute", "bg-white", "top-0", "left-0", "h-full", "w-full")}
-            ></div>
+            ></div> */}
           </div>
           <div
-            style={{
-              transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
-              transition: "transform ease-out 1s",
-            }}
+            // style={{
+            //   transform: `translateX(${pageIsLoaded ? 0 : 10000}px)`,
+            //   transition: "transform ease-out 1s",
+            // }}
             className={clsx(
               "grid",
               "grid-cols-1",
@@ -212,10 +221,10 @@ export default function TripletDesigner() {
           </div>
           <div className={clsx("w-52", "flex", "flex-col", "items-center")}>
             <div
-              style={{
-                transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
-                transition: "transform 1s ease-out 0.1s",
-              }}
+              // style={{
+              //   transform: `translateX(${pageIsLoaded ? 0 : 10000}px)`,
+              //   transition: "transform 1s ease-out 0.1s",
+              // }}
               className={clsx(
                 "flex",
                 "flex-col",
@@ -289,13 +298,26 @@ export default function TripletDesigner() {
                 />
               </div>
               <Button label="Random" className="mt-1  " onClick={setRandomShapePlanes} />
+
+              <p className={clsx("text-xs", "font-bold", "mt-4")}>
+                <span
+                  className={clsx(
+                    "font-mono",
+                    "font-semibold",
+                    tripletError.totalPercentage > 5 && "text-red-600",
+                  )}
+                >
+                  {tripletError.totalPercentage.toFixed(2)}
+                </span>
+                % impossible
+              </p>
             </div>
 
             <div
-              style={{
-                transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
-                transition: "transform 1s ease-out 0.16s",
-              }}
+              // style={{
+              //   transform: `translateX(${pageIsLoaded ? 0 : 10000}px)`,
+              //   transition: "transform 1s ease-out 0.16s",
+              // }}
               className={clsx(
                 "flex",
                 "flex-col",
@@ -359,7 +381,7 @@ export default function TripletDesigner() {
                 onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
               />
               <Button
-                label="Remove"
+                label="Remove cubes"
                 onClick={() =>
                   tripletWebWorker.current.removeCellsOfPreviousTriplet(
                     100,
@@ -371,10 +393,10 @@ export default function TripletDesigner() {
             </div>
 
             <div
-              style={{
-                transform: `translateX(${pageIsLoaded ? 0 : 1000}px)`,
-                transition: "transform 1s ease-out 0.21s",
-              }}
+              // style={{
+              //   transform: `translateX(${pageIsLoaded ? 0 : 10000}px)`,
+              //   transition: "transform 1s ease-out 0.21s",
+              // }}
               className={clsx(
                 "flex",
                 "flex-col",
@@ -392,18 +414,6 @@ export default function TripletDesigner() {
             >
               <p className={clsx("font-bold", "text-center", "font-sarabun", "italic", "text-lg")}>
                 Export Triplet
-              </p>
-              <p className={clsx("font-bold", "mt-2")}>
-                Total incorrect:{" "}
-                <span
-                  className={clsx(
-                    "font-mono",
-                    "font-semibold",
-                    tripletError.totalPercentage > 10 && "text-red-600",
-                  )}
-                >
-                  {tripletError.totalPercentage.toFixed(0)}%
-                </span>
               </p>
 
               <Button
@@ -423,7 +433,7 @@ export default function TripletDesigner() {
       thickness,
       planeEdgeWeightRatio,
       weightAmplifier,
-      pageIsLoaded,
+      // pageIsLoaded,
     ],
   );
 }

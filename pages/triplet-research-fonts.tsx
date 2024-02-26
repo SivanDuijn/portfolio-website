@@ -67,6 +67,18 @@ export default function TripletResearchFonts() {
           (acc, triplet) => acc + (triplet.error.totalPercentage == 0 ? 1 : 0),
           0,
         );
+
+        // if (
+        //   configurations[configurationIndex.current].thickness == 1 &&
+        //   configurations[configurationIndex.current].connectedness == 2
+        // ) {
+        //   // Log fully correct letter combinations
+        //   const start = i * 546;
+        //   triplets.forEach((t, i) => {
+        //     if (t.error.totalPercentage == 0) console.log(alphabetCombinations[start + i]);
+        //   });
+        // }
+
         // finishedTriplets.current[configurationIndex.current].push(...triplets);
         setNWorkersFinished((prev) => prev + 1);
       });

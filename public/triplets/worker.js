@@ -15,7 +15,8 @@ function toJSTriplet(t) {
       sp1: new Set(sp1Error),
       sp2: new Set(sp2Error),
       sp3: new Set(sp3Error),
-      totalPercentage: ((sp1Error.length + sp2Error.length + sp3Error.length) / (t.w * t.w)) * 100,
+      totalPercentage:
+        ((sp1Error.length + sp2Error.length + sp3Error.length) / (t.w * t.w)) * 33.3333333333,
     },
   };
 }
@@ -79,11 +80,20 @@ self.onmessage = ({ data }) => {
     if (prev_triplet) {
       const { n, plane_edge_weight_ratio, weight_modifier } = data.data;
 
-      prev_triplet.remove_cells_to_minimize_same_plane(n, plane_edge_weight_ratio, weight_modifier);
+      const i = prev_triplet.remove_cells_to_minimize_same_plane(
+        n,
+        plane_edge_weight_ratio,
+        weight_modifier,
+      );
 
       const triplet = toJSTriplet(prev_triplet);
 
       self.postMessage({ type: "TRIPLET_FINISHED", triplet });
+      self.postMessage({
+        type: "LOG_USER",
+        message: i > 0 ? `Removed ${i} cube${i == 1 ? "" : "s"}!` : "Can't remove more cubes!",
+        success: i > 0,
+      });
     }
   } else {
     /**

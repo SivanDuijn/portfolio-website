@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import {
   ConnectednessOptions,
   ShapePlaneFillRandomness,
@@ -106,6 +107,11 @@ export class TripletWebWorker {
           }
           case "TRIPLETS_FINISHED": {
             this.onMultipleFinished(data.triplets);
+            break;
+          }
+          case "LOG_USER": {
+            if (data.success) toast.success(data.message);
+            else toast.error(data.message);
             break;
           }
           case "WASM_READY": {
