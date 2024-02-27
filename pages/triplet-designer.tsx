@@ -307,9 +307,9 @@ export default function TripletDesigner() {
                     tripletError.totalPercentage > 5 && "text-red-600",
                   )}
                 >
-                  {tripletError.totalPercentage.toFixed(2)}
+                  {tripletError.totalPercentage.toFixed(2)}%{" "}
                 </span>
-                % impossible
+                unviable cells
               </p>
             </div>
 
