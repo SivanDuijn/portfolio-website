@@ -310,7 +310,14 @@ export const P5GridEditor = React.memo(
         const j = Math.floor(p.mouseY / cellSize.current);
 
         const cellValue = getSPValue(i, j);
-        if (cellValue != mousePressedCellValue.current) {
+
+        if (
+          cellValue != mousePressedCellValue.current &&
+          p.mouseX >= 0 &&
+          p.mouseX <= props.width &&
+          p.mouseY >= 0 &&
+          p.mouseY <= props.width
+        ) {
           setSPValue(i, j, mousePressedCellValue.current);
         }
         p.mouseMoved();

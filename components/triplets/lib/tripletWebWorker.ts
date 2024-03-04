@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import toast from "react-hot-toast";
 import {
   ConnectednessOptions,
@@ -12,6 +13,11 @@ export class TripletWebWorker {
   private onFinished: (triplet: Triplet) => void = () => true;
   private onProgressUpdate: (amount: number) => void = () => true;
   private onMultipleFinished: (triplets: Triplet[]) => void = () => true;
+  private onRemoveCellsFinished: (
+    nCubesRemoved: number,
+    maxNCellsPerPlane: number[],
+    newMaxNCellsPerPlane: number[],
+  ) => void = () => true;
 
   public setOnFinished(onFinished: (triplet: Triplet) => void) {
     this.onFinished = onFinished;
@@ -22,6 +28,15 @@ export class TripletWebWorker {
   public setOnMultipleFinished(onMultipleFinished: (triplets: Triplet[]) => void) {
     this.onMultipleFinished = onMultipleFinished;
   }
+  public setOnRemoveCellsFinished(
+    onRemoveCellsFinished: (
+      nCubesRemoved: number,
+      maxNCellsPerPlane: number[],
+      newMaxNCellsPerPlane: number[],
+    ) => void,
+  ) {
+    this.onRemoveCellsFinished = onRemoveCellsFinished;
+  }
 
   public buildTriplet(
     sp1: ShapePlane,
@@ -29,7 +44,10 @@ export class TripletWebWorker {
     sp3: ShapePlane,
     connectedness: ConnectednessOptions,
   ) {
-    if (!this.wasmLoaded) return;
+    if (!this.wasmLoaded) {
+      console.log("wasm not loaded! Call init() first!");
+      return;
+    }
     this.worker?.postMessage({
       type: "BUILD_TRIPLET",
       data: {
@@ -40,7 +58,10 @@ export class TripletWebWorker {
   }
 
   public buildMultipleTriplets(shapePlanes: ShapePlane[][], connectedness: ConnectednessOptions) {
-    if (!this.wasmLoaded) return;
+    if (!this.wasmLoaded) {
+      console.log("wasm not loaded! Call init() first!");
+      return;
+    }
     this.worker?.postMessage({
       type: "BUILD_TRIPLETS",
       data: {
@@ -57,7 +78,10 @@ export class TripletWebWorker {
     randomness: ShapePlaneFillRandomness,
     amount: number,
   ) {
-    if (!this.wasmLoaded) return;
+    if (!this.wasmLoaded) {
+      console.log("wasm not loaded! Call init() first!");
+      return;
+    }
     this.worker?.postMessage({
       type: "BUILD_RANDOM_TRIPLETS",
       data: { w, h, fill_percentage, randomness, amount },
@@ -69,7 +93,10 @@ export class TripletWebWorker {
     plane_edge_weight_ratio: number,
     weight_modifier: number,
   ) {
-    if (!this.wasmLoaded) return;
+    if (!this.wasmLoaded) {
+      console.log("wasm not loaded! Call init() first!");
+      return;
+    }
     this.worker?.postMessage({
       type: "REMOVE_CELLS",
       data: { n, plane_edge_weight_ratio, weight_modifier },
@@ -107,6 +134,14 @@ export class TripletWebWorker {
           }
           case "TRIPLETS_FINISHED": {
             this.onMultipleFinished(data.triplets);
+            break;
+          }
+          case "REMOVE_CELLS_FINISHED": {
+            this.onRemoveCellsFinished(
+              data.nCubesRemoved,
+              data.maxNCellsPerPlane,
+              data.newMaxNCellsPerPlane,
+            );
             break;
           }
           case "LOG_USER": {

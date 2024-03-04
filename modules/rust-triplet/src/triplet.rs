@@ -189,7 +189,7 @@ impl Triplet {
         js_sys::Int32Array::from(&self.error[i][..])
     }
 
-    pub fn remove_cells_to_minimize_same_plane(&mut self, n: i32, plane_edge_weight_ratio: f32, weight_modifier: f32) -> i32 {
+    pub fn remove_cells_to_minimize_same_plane(&mut self, n: i32, plane_edge_weight_ratio: f32, weight_modifier: f32) -> Vec<f32> {
         // Record the number of cubes in a plane
         let mut i_plane: Vec<f32> = vec![0.0; self.w];
         let mut j_plane: Vec<f32> = vec![0.0; self.h];
@@ -216,6 +216,10 @@ impl Triplet {
                 }
             }
         }
+
+        let max_i_plane = i_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+        let max_j_plane = j_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+        let max_k_plane = k_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
 
         let n_cells_shadow_i: f32 = shadow_plane_i.iter().filter(|&c| *c > 0).count() as f32;
         let n_cells_shadow_j: f32 = shadow_plane_j.iter().filter(|&c| *c > 0).count() as f32;
@@ -302,7 +306,11 @@ impl Triplet {
             }
         }
 
-        return n_cells_removed;
+        let new_max_i_plane = i_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+        let new_max_j_plane = j_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+        let new_max_k_plane = k_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+
+        return vec![n_cells_removed as f32, max_i_plane, max_j_plane, max_k_plane, new_max_i_plane, new_max_j_plane, new_max_k_plane];
 
     }
 }

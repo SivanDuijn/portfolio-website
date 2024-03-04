@@ -80,7 +80,15 @@ self.onmessage = ({ data }) => {
     if (prev_triplet) {
       const { n, plane_edge_weight_ratio, weight_modifier } = data.data;
 
-      const i = prev_triplet.remove_cells_to_minimize_same_plane(
+      const [
+        i,
+        max_i_plane,
+        max_j_plane,
+        max_k_plane,
+        new_max_i_plane,
+        new_max_j_plane,
+        new_max_k_plane,
+      ] = prev_triplet.remove_cells_to_minimize_same_plane(
         n,
         plane_edge_weight_ratio,
         weight_modifier,
@@ -89,6 +97,12 @@ self.onmessage = ({ data }) => {
       const triplet = toJSTriplet(prev_triplet);
 
       self.postMessage({ type: "TRIPLET_FINISHED", triplet });
+      self.postMessage({
+        type: "REMOVE_CELLS_FINISHED",
+        nCubesRemoved: i,
+        maxNCellsPerPlane: [max_i_plane, max_j_plane, max_k_plane],
+        newMaxNCellsPerPlane: [new_max_i_plane, new_max_j_plane, new_max_k_plane],
+      });
       self.postMessage({
         type: "LOG_USER",
         message: i > 0 ? `Removed ${i} cube${i == 1 ? "" : "s"}!` : "Can't remove more cubes!",

@@ -50,9 +50,9 @@ export default function TripletDesigner() {
 
       if ((c1 || c2 || c3) && gridSize != 14) setGridSize(14);
 
-      if (c1) shapePlaneRef1.current?.setGrid({ values: c1[thickness], h: 14, w: 14 });
-      if (c2) shapePlaneRef2.current?.setGrid({ values: c2[thickness], h: 14, w: 14 });
-      if (c3) shapePlaneRef3.current?.setGrid({ values: c3[thickness], h: 14, w: 14 });
+      if (c1) shapePlaneRef1.current?.setGrid({ values: [...c1[thickness]], h: 14, w: 14 });
+      if (c2) shapePlaneRef2.current?.setGrid({ values: [...c2[thickness]], h: 14, w: 14 });
+      if (c3) shapePlaneRef3.current?.setGrid({ values: [...c3[thickness]], h: 14, w: 14 });
       onShapePlaneUpdated();
     },
     [gridSize, thickness],
@@ -458,7 +458,7 @@ function shadowEditor(
           nErrorCells == 0 && "invisible",
         )}
       >
-        <span className={clsx("text-red-500", "font-bold")}>{nErrorCells}</span> incorrect cell
+        <span className={clsx("text-red-500", "font-bold")}>{nErrorCells}</span> unviable cell
         {nErrorCells == 1 ? "" : "s"}
       </p>
     </div>

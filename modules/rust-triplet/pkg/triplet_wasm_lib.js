@@ -56,6 +56,20 @@ function getInt32Memory0() {
     return cachedInt32Memory0;
 }
 
+let cachedFloat32Memory0 = null;
+
+function getFloat32Memory0() {
+    if (cachedFloat32Memory0 === null || cachedFloat32Memory0.byteLength === 0) {
+        cachedFloat32Memory0 = new Float32Array(wasm.memory.buffer);
+    }
+    return cachedFloat32Memory0;
+}
+
+function getArrayF32FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getFloat32Memory0().subarray(ptr / 4, ptr / 4 + len);
+}
+
 let cachedUint32Memory0 = null;
 
 function getUint32Memory0() {
@@ -147,10 +161,10 @@ function handleError(f, args) {
 }
 /**
 */
-export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
+export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
 /**
 */
-export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
+export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
 /**
 */
 export class ShapePlane {
@@ -301,11 +315,20 @@ export class Triplet {
     * @param {number} n
     * @param {number} plane_edge_weight_ratio
     * @param {number} weight_modifier
-    * @returns {number}
+    * @returns {Float32Array}
     */
     remove_cells_to_minimize_same_plane(n, plane_edge_weight_ratio, weight_modifier) {
-        const ret = wasm.triplet_remove_cells_to_minimize_same_plane(this.__wbg_ptr, n, plane_edge_weight_ratio, weight_modifier);
-        return ret;
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.triplet_remove_cells_to_minimize_same_plane(retptr, this.__wbg_ptr, n, plane_edge_weight_ratio, weight_modifier);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            var v1 = getArrayF32FromWasm0(r0, r1).slice();
+            wasm.__wbindgen_free(r0, r1 * 4, 4);
+            return v1;
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+        }
     }
 }
 
@@ -346,12 +369,12 @@ function __wbg_get_imports() {
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
     };
-    imports.wbg.__wbg_shapeplane_new = function(arg0) {
-        const ret = ShapePlane.__wrap(arg0);
-        return addHeapObject(ret);
-    };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         const ret = getStringFromWasm0(arg0, arg1);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_shapeplane_new = function(arg0) {
+        const ret = ShapePlane.__wrap(arg0);
         return addHeapObject(ret);
     };
     imports.wbg.__wbg_crypto_d05b68a3572bb8ca = function(arg0) {
@@ -482,6 +505,7 @@ function __wbg_init_memory(imports, maybe_memory) {
 function __wbg_finalize_init(instance, module) {
     wasm = instance.exports;
     __wbg_init.__wbindgen_wasm_module = module;
+    cachedFloat32Memory0 = null;
     cachedInt32Memory0 = null;
     cachedUint32Memory0 = null;
     cachedUint8Memory0 = null;

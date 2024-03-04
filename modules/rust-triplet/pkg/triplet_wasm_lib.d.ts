@@ -19,17 +19,17 @@ export function get_random_shape_planes(w: number, h: number, fill_percentage: n
 export function get_best_triplet(sp1: ShapePlane, sp2: ShapePlane, sp3: ShapePlane, connectedness: ConnectednessOptions): Triplet;
 /**
 */
-export enum ShapePlaneFillRandomness {
-  Fully = 0,
-  OptimalEdgesConnect = 1,
-  NeighborWeighted = 2,
-}
-/**
-*/
 export enum ConnectednessOptions {
   Volume = 0,
   Edge = 1,
   Vertex = 2,
+}
+/**
+*/
+export enum ShapePlaneFillRandomness {
+  Fully = 0,
+  OptimalEdgesConnect = 1,
+  NeighborWeighted = 2,
 }
 /**
 */
@@ -69,9 +69,9 @@ export class Triplet {
 * @param {number} n
 * @param {number} plane_edge_weight_ratio
 * @param {number} weight_modifier
-* @returns {number}
+* @returns {Float32Array}
 */
-  remove_cells_to_minimize_same_plane(n: number, plane_edge_weight_ratio: number, weight_modifier: number): number;
+  remove_cells_to_minimize_same_plane(n: number, plane_edge_weight_ratio: number, weight_modifier: number): Float32Array;
 /**
 */
   d: number;
@@ -96,7 +96,7 @@ export interface InitOutput {
   readonly __wbg_set_triplet_d: (a: number, b: number) => void;
   readonly triplet_get_js_volume: (a: number) => number;
   readonly triplet_get_js_error: (a: number, b: number) => number;
-  readonly triplet_remove_cells_to_minimize_same_plane: (a: number, b: number, c: number, d: number) => number;
+  readonly triplet_remove_cells_to_minimize_same_plane: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly get_random_shape_planes: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly get_best_triplet: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbg_shapeplane_free: (a: number) => void;
