@@ -1,10 +1,13 @@
 /* eslint-disable no-console */
 import { useEffect, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/Characters1D";
+import perfectMediumCombinations from "@/components/triplets/data/perfectMediumBoldCombinations.json";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
-const letterCombinations = ["DJM", "EMP", "FGR", "BOS", "DFW", "ADJ", "INU", "MUY", "BGV", "GRW"];
+// const letterCombinations = ["DJM", "EMP", "FGR", "BOS", "DFW", "ADJ", "INU", "MUY", "BGV", "GRW"];
+const letterCombinations = perfectMediumCombinations;
+
 const shapePlanes = letterCombinations.map((c) => [
   { values: characters1D[c[0] as "A"][1], w: 14, h: 14 },
   { values: characters1D[c[1] as "A"][1], w: 14, h: 14 },
@@ -59,7 +62,7 @@ export default function TripletRemoving() {
           shapePlanes[letterCombIndex.current][2],
           ConnectednessOptions.Volume,
         );
-        w.removeCellsOfPreviousTriplet(100000, 0.7, 8);
+        w.removeCellsOfPreviousTriplet(10000000, 0.7, 0);
       });
     });
 
@@ -74,7 +77,7 @@ export default function TripletRemoving() {
         data.current.initialCubes[letterCombIndex.current] -
           data.current.maxNCubesRemoved[letterCombIndex.current],
       );
-      console.log(data.current);
+      console.log(letterCombIndex.current);
     }
 
     if (
@@ -93,6 +96,12 @@ export default function TripletRemoving() {
         w.removeCellsOfPreviousTriplet(100000, 0.7, 8);
       });
     }
+
+    if (
+      nWorkersFinished == workers.current.length &&
+      letterCombIndex.current == shapePlanes.length - 1
+    )
+      console.log(JSON.stringify(data.current));
   }, [nWorkersFinished]);
 
   return <div>hi</div>;

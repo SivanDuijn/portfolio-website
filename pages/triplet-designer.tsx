@@ -340,7 +340,7 @@ export default function TripletDesigner() {
                 <p className={clsx("text-sm", "font-semibold", "mr-1.5")}>Weight amp.</p>
                 <NumberInput
                   value={weightAmplifier}
-                  min={1}
+                  min={0}
                   max={15}
                   disableLargeStep
                   onChange={setWeightAmplifier}
