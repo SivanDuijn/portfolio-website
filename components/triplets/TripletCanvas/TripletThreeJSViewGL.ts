@@ -185,40 +185,40 @@ export default class TripletThreeJSViewGL {
     planeBottom.rotateX(-Math.PI / 2);
     planeBottom.position.y = -30;
     planeBottom.receiveShadow = true;
-    this.scene.add(planeBottom);
 
     const planeLeft = new THREE.Mesh(planeGeometry, shadowMaterial);
     planeLeft.rotateY(Math.PI / 2);
     planeLeft.position.x = -30;
     planeLeft.receiveShadow = true;
-    this.scene.add(planeLeft);
 
     const planeBack = new THREE.Mesh(planeGeometry, shadowMaterial);
     planeBack.position.z = -30;
     planeBack.receiveShadow = true;
+    this.scene.add(planeBottom);
+    this.scene.add(planeLeft);
     this.scene.add(planeBack);
 
     // AXIS
-    const axisGeometry = new THREE.CylinderGeometry(0.2, 0.2, 100, 32);
+    const axisGeometry = new THREE.CylinderGeometry(0.1, 0.1, 100, 32);
     const xAxisMaterial = new THREE.MeshBasicMaterial({ color: 0x8fd687 }); // 00aa00
     const xAxisCylinder = new THREE.Mesh(axisGeometry, xAxisMaterial);
     xAxisCylinder.rotateX(Math.PI / 2);
     xAxisCylinder.position.z = 20;
     xAxisCylinder.position.x = -30;
     xAxisCylinder.position.y = -30;
-    this.scene.add(xAxisCylinder);
     const yAxisMaterial = new THREE.MeshBasicMaterial({ color: 0x80abb0 }); //0000cc
     const yAxisCylinder = new THREE.Mesh(axisGeometry, yAxisMaterial);
     yAxisCylinder.position.y = 20;
     yAxisCylinder.position.x = -30;
     yAxisCylinder.position.z = -30;
-    this.scene.add(yAxisCylinder);
     const zAxisMaterial = new THREE.MeshBasicMaterial({ color: 0xe08486 }); //dd0000
     const zAxisCylinder = new THREE.Mesh(axisGeometry, zAxisMaterial);
     zAxisCylinder.rotateZ(Math.PI / 2);
     zAxisCylinder.position.x = 20;
     zAxisCylinder.position.z = -30;
     zAxisCylinder.position.y = -30;
+    this.scene.add(xAxisCylinder);
+    this.scene.add(yAxisCylinder);
     this.scene.add(zAxisCylinder);
 
     // const origin = new THREE.Mesh(

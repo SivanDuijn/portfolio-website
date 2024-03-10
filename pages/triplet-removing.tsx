@@ -24,8 +24,8 @@ export default function TripletRemoving() {
   ]);
   const data = useRef<{
     initialCubes: number[];
-    maxNCubesRemoved: number[];
     afterRemoveCubes: number[];
+    maxNCubesRemoved: number[];
     maxNCellsInPlane: number[];
     newMaxNCellsInPlane: number[];
   }>({
@@ -42,8 +42,11 @@ export default function TripletRemoving() {
   useEffect(() => {
     workers.current.forEach((w) => {
       w.setOnRemoveCellsFinished((nCubesRemoved, maxNCellsInPlane, newMaxNCellsInPlane) => {
-        data.current.maxNCubesRemoved[letterCombIndex.current] +=
-          nCubesRemoved / workers.current.length;
+        data.current.maxNCubesRemoved[letterCombIndex.current] =
+          nCubesRemoved > data.current.maxNCubesRemoved[letterCombIndex.current]
+            ? nCubesRemoved
+            : data.current.maxNCubesRemoved[letterCombIndex.current];
+        nCubesRemoved / workers.current.length;
         data.current.maxNCellsInPlane[letterCombIndex.current] +=
           Math.max(...maxNCellsInPlane) / workers.current.length;
         data.current.newMaxNCellsInPlane[letterCombIndex.current] +=
@@ -93,7 +96,7 @@ export default function TripletRemoving() {
           shapePlanes[letterCombIndex.current][2],
           ConnectednessOptions.Volume,
         );
-        w.removeCellsOfPreviousTriplet(100000, 0.7, 8);
+        w.removeCellsOfPreviousTriplet(100000, 0.7, 0);
       });
     }
 
@@ -104,7 +107,7 @@ export default function TripletRemoving() {
       console.log(JSON.stringify(data.current));
   }, [nWorkersFinished]);
 
-  return <div>hi</div>;
+  return <div></div>;
 }
 
 // afterRemoveCubes: [280.6, 275.59999999999997, 257, 279, 275.79999999999995, 255.19999999999993, 276.20000000000005, 271.20000000000005, 278.2] (9)
