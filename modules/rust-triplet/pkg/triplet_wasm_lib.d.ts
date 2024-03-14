@@ -19,17 +19,17 @@ export function get_random_shape_planes(w: number, h: number, fill_percentage: n
 export function get_best_triplet(sp1: ShapePlane, sp2: ShapePlane, sp3: ShapePlane, connectedness: ConnectednessOptions): Triplet;
 /**
 */
-export enum ConnectednessOptions {
-  Volume = 0,
-  Edge = 1,
-  Vertex = 2,
-}
-/**
-*/
 export enum ShapePlaneFillRandomness {
   Fully = 0,
   OptimalEdgesConnect = 1,
   NeighborWeighted = 2,
+}
+/**
+*/
+export enum ConnectednessOptions {
+  Volume = 0,
+  Edge = 1,
+  Vertex = 2,
 }
 /**
 */

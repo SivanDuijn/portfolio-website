@@ -14,11 +14,38 @@ export default function ImageToStamp() {
   const whiteThreshold = useRef<number>(255);
   const blackThreshold = useRef<number>(0);
   const depth = useRef<number>(0.05);
+  const mouse = useRef<number[]>();
+  const selection = useRef<number[]>();
 
   const imageDataRef = useRef<ImageData>();
 
   useEffect(() => {
     viewGLRef.current = new StampThreeJSViewGL(threeCanvasRef.current || undefined);
+  }, []);
+
+  const mouseDown = useCallback((cx: number, cy: number) => {
+    const { x, y } = getMousePos(cx, cy);
+    mouse.current = [x, y];
+    selection.current = [x, y, x, y];
+  }, []);
+  const mouseMove = useCallback((cx: number, cy: number) => {
+    if (!mouse.current || !selection.current) return;
+    const { x, y } = getMousePos(cx, cy);
+    selection.current[2] = x;
+    selection.current[3] = y;
+  }, []);
+  const mouseUp = useCallback(() => {
+    mouse.current = undefined;
+    if (!selection.current) return;
+    selection.current[2] = selection.current[2] - selection.current[0];
+    selection.current[3] = selection.current[3] - selection.current[1];
+    console.log(selection.current);
+  }, []);
+
+  const getMousePos = useCallback((cx: number, cy: number): { x: number; y: number } => {
+    if (!imageCanvasRef.current) return { x: 0, y: 0 };
+    const { left, top } = imageCanvasRef.current.getBoundingClientRect();
+    return { x: cx - left, y: cy - top };
   }, []);
 
   const onFileChange = useCallback(
@@ -147,7 +174,15 @@ export default function ImageToStamp() {
       </div>
       <div className={clsx("flex", "justify-evenly", "items-center")}>
         <div className="w-md">
-          <canvas className="max-w-md" ref={imageCanvasRef} width={300} height={300}></canvas>
+          <canvas
+            className="max-w-md"
+            ref={imageCanvasRef}
+            width={300}
+            height={300}
+            onMouseDown={(e) => mouseDown(e.clientX, e.clientY)}
+            onMouseMove={(e) => mouseMove(e.clientX, e.clientY)}
+            onMouseUp={mouseUp}
+          ></canvas>
         </div>
         <canvas ref={threeCanvasRef} />
       </div>
@@ -216,7 +251,7 @@ class StampThreeJSViewGL {
         if (value > whiteThreshold) value = 255;
         if (value < blackThreshold) value = 0;
 
-        value = 255 - value;
+        // value = 255 - value;
 
         // value = 255 - value;
         // Use the pixel value as the height here

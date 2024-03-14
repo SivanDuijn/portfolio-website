@@ -217,13 +217,21 @@ impl Triplet {
             }
         }
 
-        let max_i_plane = i_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
-        let max_j_plane = j_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
-        let max_k_plane = k_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
-
         let n_cells_shadow_i: f32 = shadow_plane_i.iter().filter(|&c| *c > 0).count() as f32;
         let n_cells_shadow_j: f32 = shadow_plane_j.iter().filter(|&c| *c > 0).count() as f32;
         let n_cells_shadow_k: f32 = shadow_plane_k.iter().filter(|&c| *c > 0).count() as f32;
+
+        let one_over_ncs_i: f32 = 1.0 / n_cells_shadow_i;
+        let one_over_ncs_j: f32 = 1.0 / n_cells_shadow_j;
+        let one_over_ncs_k: f32 = 1.0 / n_cells_shadow_k;
+        
+        i_plane = i_plane.iter().map(|v| v / n_cells_shadow_i).collect();
+        j_plane = j_plane.iter().map(|v| v / n_cells_shadow_j).collect();
+        k_plane = k_plane.iter().map(|v| v / n_cells_shadow_k).collect();
+        
+        let max_i_plane = i_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+        let max_j_plane = j_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
+        let max_k_plane = k_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
 
         // Take all cubes that have a face exposed to the outside
         let mut cubes_outside: Vec<(usize, usize, usize)> = Vec::new();
@@ -245,9 +253,9 @@ impl Triplet {
             // For each of those, check if it is possible to remove
             // While the trip-let stays perfect and volume connected
             for (i,j,k) in &cubes_outside {
-                if shadow_plane_k[j*self.w+i] == 1 || 
-                   shadow_plane_i[j*self.d+k] == 1 ||
-                   shadow_plane_j[k*self.w+i] == 1 {
+                if shadow_plane_i[j * self.d + k] == 1 ||
+                   shadow_plane_j[k * self.w + i] == 1 ||
+                   shadow_plane_k[j * self.w + i] == 1 {
                     continue;
                 }
 
@@ -264,9 +272,9 @@ impl Triplet {
 
             // Determine weights for each possible cell to remove
             for (i,j,k) in &possible_cubes {
-                let plane_fill_ratio = (i_plane[*i] / n_cells_shadow_i +
-                                             j_plane[*j] / n_cells_shadow_j +
-                                             k_plane[*k] / n_cells_shadow_k) / 3.0;
+                let plane_fill_ratio = (i_plane[*i] +
+                                             j_plane[*j] +
+                                             k_plane[*k]) / 3.0;
                 
                 // Determine number of current edges, and number of edges once removed
                 let e_old = self.get_edges_of_cube(*i, *j, *k, true); // [0-12]
@@ -297,9 +305,9 @@ impl Triplet {
                     shadow_plane_i[c.1 * self.d + c.2] -= 1;
                     shadow_plane_j[c.2 * self.w + c.0] -= 1;
 
-                    i_plane[c.0] -= 1.0;
-                    j_plane[c.1] -= 1.0;
-                    k_plane[c.2] -= 1.0;
+                    i_plane[c.0] -= one_over_ncs_i;
+                    j_plane[c.1] -= one_over_ncs_j;
+                    k_plane[c.2] -= one_over_ncs_k;
                     n_cells_removed += 1;
                     break;
                 }

@@ -21,8 +21,8 @@ import init, {
 export default function TripletDesigner() {
   const [gridSize, setGridSize] = useState(14);
   const [fillPercentage, setFillPercentage] = useState(0.5);
-  const [weightAmplifier, setWeightAmplifier] = useState(8);
-  const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.7);
+  const [weightAmplifier, setWeightAmplifier] = useState(9);
+  const [planeEdgeWeightRatio, setPlaneEdgeWeightRatio] = useState(0.6);
   // const [pageIsLoaded, setPageIsLoaded] = useState(false);
   const [tripletError, setTripletError] = useState<Triplet["error"]>({
     sp1: new Set<number>(),
@@ -167,16 +167,16 @@ export default function TripletDesigner() {
           style={{
             textShadow: "-1px 1px 1px black",
             WebkitTextStroke: "2px black",
-            color: "#6fdcf0",
+            color: "#3fcdeb",
           }}
           className={clsx(
             "font-sarabun",
             "font-extrabold",
             "italic",
             "text-5xl",
-            "pt-10",
+            "pt-6",
             "px-10",
-            "md:text-7xl",
+            "md:text-6xl",
             "w-full",
             "text-center",
           )}
@@ -364,7 +364,7 @@ export default function TripletDesigner() {
               <input
                 type="range"
                 step="any"
-                defaultValue={0.7}
+                defaultValue={0.6}
                 min={0}
                 max={1}
                 className={clsx(
