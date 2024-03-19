@@ -81,16 +81,22 @@ export default function TripletDesigner() {
     setGridSize(size);
   }, []);
 
-  useEffect(() => {
-    tripletWebWorker.current.init().then(() => onShapePlaneUpdated());
-    tripletWebWorker.current.setOnFinished((triplet) => {
+  const setNewTriplet = useCallback(
+    (triplet: Triplet) => {
       if (shapePlaneRef1.current) shapePlaneRef1.current.setErrorCells(triplet.error.sp1);
       if (shapePlaneRef2.current) shapePlaneRef2.current.setErrorCells(triplet.error.sp2);
       if (shapePlaneRef3.current) shapePlaneRef3.current.setErrorCells(triplet.error.sp3);
 
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
-    });
+    },
+    [setTripletError],
+  );
+
+  useEffect(() => {
+    tripletWebWorker.current.init().then(() => onShapePlaneUpdated());
+    tripletWebWorker.current.setOnFinished(setNewTriplet);
+    tripletWebWorker.current.setOnRemoveCellsFinished(setNewTriplet);
     // setPageIsLoaded(true);
 
     return () => {
@@ -363,7 +369,7 @@ export default function TripletDesigner() {
               </div>
               <input
                 type="range"
-                step="any"
+                step={0.1}
                 defaultValue={0.6}
                 min={0}
                 max={1}
@@ -384,7 +390,7 @@ export default function TripletDesigner() {
                 label="Remove cubes"
                 onClick={() =>
                   tripletWebWorker.current.removeCellsOfPreviousTriplet(
-                    100,
+                    50,
                     planeEdgeWeightRatio,
                     weightAmplifier,
                   )

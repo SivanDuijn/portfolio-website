@@ -74,9 +74,8 @@ export default class TripletThreeJSViewGL {
     if (this.tripletMesh) this.scene.remove(this.tripletMesh);
     this.tripletMesh = mesh;
 
-    // add outlines;
+    // add outlines
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x1c1c1c, depthWrite: false });
-    // for (let i = 0; i < lines.length; i += 6) {
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(lines, 3));
     g.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
@@ -89,7 +88,6 @@ export default class TripletThreeJSViewGL {
     );
     const l = new THREE.LineSegments(g, lineMaterial);
     this.tripletGroup.add(l);
-    // }
 
     // Verify quads
 

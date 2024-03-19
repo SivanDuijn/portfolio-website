@@ -2,10 +2,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/Characters1D";
 import perfectMediumCombinations from "@/components/triplets/data/perfectMediumBoldCombinations.json";
+import { greedyMesh } from "@/components/triplets/lib/greedyMesh";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
+import { Triplet } from "@/components/triplets/models";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
 
-// const letterCombinations = ["DJM", "EMP", "FGR", "BOS", "DFW", "ADJ", "INU", "MUY", "BGV", "GRW"];
+// const letterCombinations = ["AGR", "BFG", "BLW", "CRW", "DNU", "FLM", "GNN", "HIP", "HLN", "MPS"];
 const letterCombinations = perfectMediumCombinations;
 
 const shapePlanes = letterCombinations.map((c) => [
@@ -28,12 +30,16 @@ export default function TripletRemoving() {
     maxNCubesRemoved: number[];
     maxNCellsInPlane: number[];
     newMaxNCellsInPlane: number[];
+    nEdges: number[];
+    newNEdges: number[];
   }>({
     initialCubes: [],
     afterRemoveCubes: [],
     maxNCubesRemoved: new Array(letterCombinations.length).fill(0).map(() => 0),
     maxNCellsInPlane: new Array(letterCombinations.length).fill(0).map(() => 0),
     newMaxNCellsInPlane: new Array(letterCombinations.length).fill(0).map(() => 0),
+    nEdges: new Array(letterCombinations.length).fill(0).map(() => 0),
+    newNEdges: new Array(letterCombinations.length).fill(0).map(() => 0),
   });
   const letterCombIndex = useRef(0);
 
@@ -47,24 +53,43 @@ export default function TripletRemoving() {
         shapePlanes[letterCombIndex.current][2],
         ConnectednessOptions.Volume,
       );
-      w.removeCellsOfPreviousTriplet(200, 0.6, 9);
+      w.removeCellsOfPreviousTriplet(250, 0.6, 0);
     });
+  }, []);
+
+  const getNEdges = useCallback((triplet: Triplet) => {
+    const { lines } = greedyMesh(triplet);
+    let len = 0;
+    for (let i = 0; i < lines.length; i += 6) {
+      len += Math.abs(
+        lines[i] - lines[i + 3] + lines[i + 1] - lines[i + 4] + lines[i + 2] - lines[i + 5],
+      );
+    }
+    return len;
   }, []);
 
   useEffect(() => {
     workers.current.forEach((w) => {
-      w.setOnRemoveCellsFinished((nCubesRemoved, maxNCellsInPlane, newMaxNCellsInPlane) => {
-        data.current.maxNCubesRemoved[letterCombIndex.current] =
-          nCubesRemoved > data.current.maxNCubesRemoved[letterCombIndex.current]
-            ? nCubesRemoved
-            : data.current.maxNCubesRemoved[letterCombIndex.current];
-        nCubesRemoved / workers.current.length;
-        data.current.maxNCellsInPlane[letterCombIndex.current] +=
-          Math.max(...maxNCellsInPlane) / workers.current.length;
-        data.current.newMaxNCellsInPlane[letterCombIndex.current] +=
-          Math.max(...newMaxNCellsInPlane) / workers.current.length;
-        setNWorkersFinished((prev) => prev + 1);
+      w.setOnFinished((t) => {
+        data.current.nEdges[letterCombIndex.current] += getNEdges(t) / workers.current.length;
       });
+      w.setOnRemoveCellsFinished(
+        (triplet, nCubesRemoved, maxNCellsInPlane, newMaxNCellsInPlane) => {
+          data.current.newNEdges[letterCombIndex.current] +=
+            getNEdges(triplet) / workers.current.length;
+
+          data.current.maxNCubesRemoved[letterCombIndex.current] =
+            nCubesRemoved > data.current.maxNCubesRemoved[letterCombIndex.current]
+              ? nCubesRemoved
+              : data.current.maxNCubesRemoved[letterCombIndex.current];
+          nCubesRemoved / workers.current.length;
+          data.current.maxNCellsInPlane[letterCombIndex.current] +=
+            Math.max(...maxNCellsInPlane) / workers.current.length;
+          data.current.newMaxNCellsInPlane[letterCombIndex.current] +=
+            Math.max(...newMaxNCellsInPlane) / workers.current.length;
+          setNWorkersFinished((prev) => prev + 1);
+        },
+      );
     });
 
     workers.current[0].setOnMultipleFinished((ts) => {

@@ -319,7 +319,6 @@ impl Triplet {
         let new_max_k_plane = k_plane.iter().fold(0.0, |acc, v| if v > &acc {*v} else {acc});
 
         return vec![n_cells_removed as f32, max_i_plane, max_j_plane, max_k_plane, new_max_i_plane, new_max_j_plane, new_max_k_plane];
-
     }
 }
 

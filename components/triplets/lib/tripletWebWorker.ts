@@ -14,6 +14,7 @@ export class TripletWebWorker {
   private onProgressUpdate: (amount: number) => void = () => true;
   private onMultipleFinished: (triplets: Triplet[]) => void = () => true;
   private onRemoveCellsFinished: (
+    triplet: Triplet,
     nCubesRemoved: number,
     maxNCellsPerPlane: number[],
     newMaxNCellsPerPlane: number[],
@@ -30,6 +31,7 @@ export class TripletWebWorker {
   }
   public setOnRemoveCellsFinished(
     onRemoveCellsFinished: (
+      triplet: Triplet,
       nCubesRemoved: number,
       maxNCellsPerPlane: number[],
       newMaxNCellsPerPlane: number[],
@@ -138,6 +140,7 @@ export class TripletWebWorker {
           }
           case "REMOVE_CELLS_FINISHED": {
             this.onRemoveCellsFinished(
+              data.triplet,
               data.nCubesRemoved,
               data.maxNCellsPerPlane,
               data.newMaxNCellsPerPlane,

@@ -96,9 +96,9 @@ self.onmessage = ({ data }) => {
 
       const triplet = toJSTriplet(prev_triplet);
 
-      self.postMessage({ type: "TRIPLET_FINISHED", triplet });
       self.postMessage({
         type: "REMOVE_CELLS_FINISHED",
+        triplet,
         nCubesRemoved: i,
         maxNCellsPerPlane: [max_i_plane, max_j_plane, max_k_plane],
         newMaxNCellsPerPlane: [new_max_i_plane, new_max_j_plane, new_max_k_plane],
