@@ -369,20 +369,21 @@ export default function TripletDesigner() {
               </div>
               <input
                 type="range"
-                step={0.1}
+                step="any"
                 defaultValue={0.6}
                 min={0}
                 max={1}
+                // className="styled-input"
                 className={clsx(
-                  "transparent",
+                  "styled-input",
                   "mb-4",
-                  "h-[4px]",
+                  // "h-[4px]",
                   "w-full",
-                  "rounded",
-                  "cursor-pointer",
-                  "appearance-none",
-                  "border-transparent",
-                  "bg-red-500",
+                  // "rounded",
+                  // "cursor-pointer",
+                  // "appearance-none",
+                  // "border-transparent",
+                  // "bg-red-500",
                 )}
                 onChange={(e) => setPlaneEdgeWeightRatio(parseFloat(e.target.value))}
               />
