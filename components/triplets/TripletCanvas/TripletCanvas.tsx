@@ -11,6 +11,7 @@ type TripletCanvasProps = {
 export interface TripletCanvasElement {
   export: (name?: string) => void;
   setTriplet: (triplet: Triplet) => void;
+  setShowRemovedComponents: (v: boolean) => void;
 }
 
 // eslint-disable-next-line react/display-name
@@ -27,6 +28,7 @@ export const TripletCanvas = memo(
           triplet.dims.some((d) => d == 0)
             ? viewGL.current?.removeTriplet()
             : viewGL.current?.updateTriplet(triplet),
+        setShowRemovedComponents: (v: boolean) => viewGL.current?.setShowRemovedComponents(v),
       }),
       [],
     );

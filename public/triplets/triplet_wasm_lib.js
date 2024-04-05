@@ -111,6 +111,15 @@ export function get_random_shape_planes(w, h, fill_percentage, randomness, amoun
     }
 }
 
+let WASM_VECTOR_LEN = 0;
+
+function passArray32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getUint32Memory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
@@ -143,15 +152,6 @@ export function get_best_triplet(sp1, sp2, sp3, connectedness) {
     }
 }
 
-let WASM_VECTOR_LEN = 0;
-
-function passArray32ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 4, 4) >>> 0;
-    getUint32Memory0().set(arg, ptr / 4);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
-}
-
 function handleError(f, args) {
     try {
         return f.apply(this, args);
@@ -161,10 +161,10 @@ function handleError(f, args) {
 }
 /**
 */
-export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
+export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
 /**
 */
-export const ConnectednessOptions = Object.freeze({ Volume:0,"0":"Volume",Edge:1,"1":"Edge",Vertex:2,"2":"Vertex", });
+export const ShapePlaneFillRandomness = Object.freeze({ Fully:0,"0":"Fully",OptimalEdgesConnect:1,"1":"OptimalEdgesConnect",NeighborWeighted:2,"2":"NeighborWeighted", });
 /**
 */
 export class ShapePlane {
@@ -301,6 +301,20 @@ export class Triplet {
     */
     get_js_volume() {
         const ret = wasm.triplet_get_js_volume(this.__wbg_ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {Int32Array}
+    */
+    get_js_removed_component_cubes() {
+        const ret = wasm.triplet_get_js_removed_component_cubes(this.__wbg_ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {Int32Array}
+    */
+    get_js_removed_component_sizes() {
+        const ret = wasm.triplet_get_js_removed_component_sizes(this.__wbg_ptr);
         return takeObject(ret);
     }
     /**

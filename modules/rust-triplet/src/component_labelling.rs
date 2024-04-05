@@ -13,6 +13,7 @@ pub fn remove_smaller_components(triplet: &mut Triplet, connectedness: &Connecte
 
     get_triplet_components(triplet, connectedness, &mut labels, &mut components);
 
+    // Get the largest component index
     let (_, largest_component_index) = components.iter()
         .enumerate()
         .fold((0, 0), |(largest_size, largest_index), (i, c)| {
@@ -22,13 +23,17 @@ pub fn remove_smaller_components(triplet: &mut Triplet, connectedness: &Connecte
         (largest_size, largest_index)
     });
 
+    // Remove cubes that are not this largest component
+    triplet.clear_removed_components();
     components.iter().enumerate().for_each(|(i, c)|  {
-        if i == largest_component_index {
-            return;
+        if i != largest_component_index {
+            // Store the indices of the removed components
+            triplet.add_removed_component_size(c.len().try_into().unwrap());
+            c.iter().for_each(|&index| {
+                triplet.add_removed_component_cube(index.try_into().unwrap());
+                triplet.volume_mut()[index] = 0;
+            });
         }
-        c.iter().for_each(|&index| {
-            triplet.volume_mut()[index] = 0;
-        }) 
     });
 }
 

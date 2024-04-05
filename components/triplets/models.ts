@@ -17,6 +17,7 @@ export function fromWasmShapePlane(wasmSP: WasmShapePlane): ShapePlane {
 export type Triplet = {
   volume: number[];
   dims: [number, number, number];
+  removedComponents: Set<number>[];
   error: {
     // A set of indices which cells are incorrect
     sp1: Set<number>;

@@ -3,8 +3,9 @@ import toast from "react-hot-toast";
 import * as THREE from "three";
 import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { greedyMesh } from "../lib/greedyMesh";
+import { greedyMeshSetVolume, greedyMeshTriplet } from "../lib/greedyMesh";
 import { Triplet } from "../models";
+import createVoxelGeometry from "./createVoxelGeometry";
 
 // const rotationalAxis = new THREE.Vector3(Math.sqrt(3), Math.sqrt(3), Math.sqrt(3));
 // const halfPI = (Math.PI * 2) / 9;
@@ -18,13 +19,16 @@ export default class TripletThreeJSViewGL {
 
   private tripletMesh: THREE.Mesh | undefined;
   private tripletGroup: THREE.Group = new THREE.Group();
-  private tripletOutline: THREE.BufferGeometry | undefined;
-  private outlineOffsetVec: THREE.Vector3 = new THREE.Vector3(1, 1, 1).normalize();
+  private outlineGroup: THREE.Group = new THREE.Group();
+  private outlineOffsetVec: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
   private outlineOffset = 0.02;
+  private showRemovedComponents = false;
+
+  private triplet: Triplet | null = null;
 
   // Rotation timer
-  private radiansRotated = 0;
-  private radiansRotated2 = 0;
+  // private radiansRotated = 0;
+  // private radiansRotated2 = 0;
 
   public canvas?: HTMLCanvasElement;
 
@@ -45,59 +49,49 @@ export default class TripletThreeJSViewGL {
   }
 
   public removeTriplet() {
-    if (this.tripletMesh) this.scene.remove(this.tripletMesh);
     this.tripletMesh = undefined;
 
     this.tripletGroup.clear();
+    this.outlineGroup.clear();
+  }
+
+  public setShowRemovedComponents(v: boolean) {
+    this.showRemovedComponents = v;
+    if (this.triplet) this.updateTriplet(this.triplet);
   }
 
   /** Build a mesh from 3D grid triplet definition, and updates the rendered canvas. */
   public updateTriplet(triplet: Triplet) {
+    this.triplet = triplet;
     this.tripletGroup.clear();
+    this.outlineGroup.clear();
 
-    const { vertices, indices, lines } = greedyMesh(triplet);
+    const { vertices, indices, lines } = greedyMeshTriplet(triplet);
 
-    const geometry = new THREE.BufferGeometry();
-
-    geometry.setIndex(indices);
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
-    geometry.computeVertexNormals();
-    geometry.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
-    geometry.scale(14 / triplet.dims[0], 14 / triplet.dims[0], 14 / triplet.dims[0]);
-
-    const material = new THREE.MeshLambertMaterial({
-      color: 0x74c4cf,
-    }); //color: 0xbd9476 });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.castShadow = true;
-    // mesh.receiveShadow = true;
-    if (this.tripletMesh) this.scene.remove(this.tripletMesh);
+    const { mesh, outline } = createVoxelGeometry(vertices, indices, lines, triplet.dims, 0x67c2cf); //36c9b8
+    this.tripletGroup.add(mesh);
     this.tripletMesh = mesh;
 
-    // add outlines
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x1c1c1c, depthWrite: false });
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute(lines, 3));
-    g.translate(-triplet.dims[0] / 2, -triplet.dims[1] / 2, -triplet.dims[2] / 2);
-    g.scale(14 / triplet.dims[0], 14 / triplet.dims[0], 14 / triplet.dims[0]);
-    this.tripletOutline = g;
-    this.tripletOutline.translate(
-      this.outlineOffsetVec.x * this.outlineOffset,
-      this.outlineOffsetVec.y * this.outlineOffset,
-      this.outlineOffsetVec.z * this.outlineOffset,
-    );
-    const l = new THREE.LineSegments(g, lineMaterial);
-    this.tripletGroup.add(l);
+    this.outlineGroup.add(outline);
 
-    // Verify quads
+    // If there are any removed components, show them if option is enabled
+    if (this.showRemovedComponents) {
+      // orange, blue, yellow, red, green
+      const colors = [0xed9078, 0x96bfcf, 0xeed490, 0xf7ba88, 0x9ae4dc];
+      triplet.removedComponents.forEach((rc, i) => {
+        const { vertices, indices, lines } = greedyMeshSetVolume(rc, triplet.dims);
+        const { mesh, outline } = createVoxelGeometry(
+          vertices,
+          indices,
+          lines,
+          triplet.dims,
+          colors[i % 5],
+        );
 
-    // const edges = new THREE.EdgesGeometry(geometry);
-    // const lines = new THREE.LineSegments(edges, lineMaterial);
-    // this.tripletGroup.add(lines);
-
-    // this.radiansRotated = 0;
-    // this.radiansRotated2 = 0;
-    this.scene.add(this.tripletMesh);
+        this.tripletGroup.add(mesh);
+        this.outlineGroup.add(outline);
+      });
+    }
   }
 
   constructor(canvas: HTMLCanvasElement | undefined, width = 600, height = 600) {
@@ -227,6 +221,7 @@ export default class TripletThreeJSViewGL {
     // this.scene.add(origin);
 
     this.scene.add(this.tripletGroup);
+    this.scene.add(this.outlineGroup);
 
     requestAnimationFrame(this.update.bind(this));
   }
@@ -237,22 +232,15 @@ export default class TripletThreeJSViewGL {
 
     this.controls.update();
 
-    this.tripletOutline?.translate(
-      -this.outlineOffsetVec.x * this.outlineOffset,
-      -this.outlineOffsetVec.y * this.outlineOffset,
-      -this.outlineOffsetVec.z * this.outlineOffset,
-    );
+    this.outlineGroup.position.sub(this.outlineOffsetVec);
+
     this.outlineOffsetVec = new THREE.Vector3(
       this.camera.position.x,
       this.camera.position.y,
       this.camera.position.z,
     ).normalize();
-    this.tripletOutline?.translate(
-      this.outlineOffsetVec.x * this.outlineOffset,
-      this.outlineOffsetVec.y * this.outlineOffset,
-      this.outlineOffsetVec.z * this.outlineOffset,
-    );
-
+    this.outlineOffsetVec.multiplyScalar(this.outlineOffset);
+    this.outlineGroup.position.add(this.outlineOffsetVec);
     // // Attempt at object rotation
     // if (this.tripletMesh && this.radiansRotated >= 0) {
     //   this.tripletMesh.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), Math.PI * 0.005);

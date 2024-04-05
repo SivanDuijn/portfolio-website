@@ -8,9 +8,23 @@ function toJSTriplet(t) {
   const sp1Error = t.get_js_error(0);
   const sp2Error = t.get_js_error(1);
   const sp3Error = t.get_js_error(2);
+
+  // Convert removed component cubes into hashset
+  const removedComponents = [];
+  const wasmRemovedCubes = t.get_js_removed_component_cubes();
+
+  let i = 0;
+  t.get_js_removed_component_sizes().forEach((s) => {
+    const set = new Set();
+    const t = s + i;
+    for (; i < t; i++) set.add(wasmRemovedCubes[i]);
+    removedComponents.push(set);
+  });
+
   return {
     volume: Array.from(t.get_js_volume()),
     dims: [t.w, t.h, t.d],
+    removedComponents,
     error: {
       sp1: new Set(sp1Error),
       sp2: new Set(sp2Error),

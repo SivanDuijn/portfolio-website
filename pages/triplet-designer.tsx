@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Toaster } from "react-hot-toast";
 import NumberInput from "@/components/NumberInput";
 import Button from "@/components/triplets/atoms/Button";
+import CheckBox from "@/components/triplets/atoms/CheckBox";
 import characters1D from "@/components/triplets/data/characters1D.json";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
 import { Triplet, fromWasmShapePlane } from "@/components/triplets/models";
@@ -31,6 +32,7 @@ export default function TripletDesigner() {
     totalPercentage: 0,
   });
   const [thickness, setThickness] = useState(1);
+  const [removeComponentsAvailable, setRemovedComponentsAvailable] = useState(false);
 
   const shapePlaneRef1 = useRef<P5GridEditorElement>(null);
   const shapePlaneRef2 = useRef<P5GridEditorElement>(null);
@@ -86,6 +88,8 @@ export default function TripletDesigner() {
       if (shapePlaneRef1.current) shapePlaneRef1.current.setErrorCells(triplet.error.sp1);
       if (shapePlaneRef2.current) shapePlaneRef2.current.setErrorCells(triplet.error.sp2);
       if (shapePlaneRef3.current) shapePlaneRef3.current.setErrorCells(triplet.error.sp3);
+
+      setRemovedComponentsAvailable(triplet.removedComponents.length > 0);
 
       tripletCanvasRef.current?.setTriplet(triplet);
       setTripletError(triplet.error);
@@ -192,22 +196,21 @@ export default function TripletDesigner() {
         <div className={clsx("flex", "justify-center", "mt-8")}>
           <div className="relative">
             <TripletCanvas
-              className={clsx("mx-4", "inline-block", "mt-7")} // "border-2", "border-slate-200",
+              className={clsx("mx-4", "inline-block", "mt-6")} // "border-2", "border-slate-200",
               ref={tripletCanvasRef}
             />
-            {/* <div
-              // style={{
-              //   transform: `translateY(${pageIsLoaded ? 10000 : 0}px)`,
-              //   transition: "transform ease-in 3.5s 0.1s",
-              // }}
-              className={clsx("absolute", "bg-white", "top-0", "left-0", "h-full", "w-full")}
-            ></div> */}
+            <CheckBox
+              className={clsx(
+                "absolute",
+                "top-8",
+                "left-6",
+                !removeComponentsAvailable && "hidden",
+              )}
+              label="Show removed components"
+              onChange={tripletCanvasRef.current?.setShowRemovedComponents}
+            />
           </div>
           <div
-            // style={{
-            //   transform: `translateX(${pageIsLoaded ? 0 : 10000}px)`,
-            //   transition: "transform ease-out 1s",
-            // }}
             className={clsx(
               "grid",
               "grid-cols-1",

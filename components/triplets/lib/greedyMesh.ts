@@ -3,15 +3,29 @@
 import { Triplet } from "../models";
 
 /** Greedy meshes a triplet (3D grid cell volume) */
-export function greedyMesh(triplet: Triplet): {
+export function greedyMeshTriplet(triplet: Triplet) {
+  const { volume, dims } = triplet;
+  const getValue = (i: number, j: number, k: number) => volume[i + dims[0] * (j + dims[1] * k)];
+
+  return greedyMesh(getValue, dims);
+}
+
+export function greedyMeshSetVolume(volume: Set<number>, dims: [number, number, number]) {
+  const getValue = (i: number, j: number, k: number) =>
+    volume.has(i + dims[0] * (j + dims[1] * k)) ? 1 : 0;
+
+  return greedyMesh(getValue, dims);
+}
+
+/** Greedy meshes a 3D grid cell volume */
+export function greedyMesh(
+  getValue: (i: number, j: number, k: number) => number,
+  dims: [number, number, number],
+): {
   vertices: number[];
   indices: number[];
   lines: number[];
 } {
-  const { volume, dims } = triplet;
-
-  const f = (i: number, j: number, k: number) => volume[i + dims[0] * (j + dims[1] * k)];
-
   //Sweep over 3-axes
   const vertices: number[] = [];
   const indices: number[] = [];
@@ -33,8 +47,9 @@ export function greedyMesh(triplet: Triplet): {
       let n = 0;
       for (x[v] = 0; x[v] < dims[v]; ++x[v])
         for (x[u] = 0; x[u] < dims[u]; ++x[u]) {
-          const cell = 0 <= x[d] ? f(x[0], x[1], x[2]) : false;
-          const above = x[d] < dims[d] - 1 ? f(x[0] + q[0], x[1] + q[1], x[2] + q[2]) : false;
+          const cell = 0 <= x[d] ? getValue(x[0], x[1], x[2]) : false;
+          const above =
+            x[d] < dims[d] - 1 ? getValue(x[0] + q[0], x[1] + q[1], x[2] + q[2]) : false;
           if (cell != above) {
             if (cell) mask[n++] = 1;
             else mask[n++] = 2;

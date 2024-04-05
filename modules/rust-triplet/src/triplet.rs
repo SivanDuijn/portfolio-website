@@ -10,12 +10,14 @@ pub struct Triplet {
     pub w: usize,
     pub h: usize,
     pub d: usize,
+    removed_component_cubes: Vec<i32>, // This should actually be a 2d vec, but for wasm bindgen the start indices are stored
+    removed_component_sizes: Vec<i32>, // here seperately
     error: [Vec<i32>; 3]
 }
 
 impl Triplet {
     pub fn new(volume: Vec<i32>, w: usize, h: usize, d: usize) -> Self {
-        Self { volume, w, h, d, error: Default::default() }
+        Self { volume, w, h, d, removed_component_cubes: Vec::new(), removed_component_sizes: Vec::new(), error: Default::default() }
     }
 
     pub fn volume_mut(&mut self) -> &mut Vec<i32> {
@@ -28,6 +30,17 @@ impl Triplet {
 
     pub fn get_value(&self, i: usize, j: usize, k: usize) -> i32 {
         self.volume[i + self.w * (j + self.h * k)]
+    }
+
+    pub fn add_removed_component_cube(&mut self, ci: i32) {
+        self.removed_component_cubes.push(ci);
+    }
+    pub fn add_removed_component_size(&mut self, s: i32) {
+        self.removed_component_sizes.push(s);
+    }
+    pub fn clear_removed_components(&mut self) {
+        self.removed_component_cubes.clear();
+        self.removed_component_sizes.clear();
     }
 
     pub fn calc_error(&mut self, sp1: &ShapePlane, sp2: &ShapePlane, sp3: &ShapePlane) {
@@ -183,6 +196,13 @@ impl Triplet {
 impl Triplet {
     pub fn get_js_volume(&self) -> js_sys::Int32Array {
         js_sys::Int32Array::from(&self.volume[..])
+    }
+
+    pub fn get_js_removed_component_cubes(&self) -> js_sys::Int32Array {
+        js_sys::Int32Array::from(&self.removed_component_cubes[..])
+    }
+    pub fn get_js_removed_component_sizes(&self) -> js_sys::Int32Array {
+        js_sys::Int32Array::from(&self.removed_component_sizes[..])
     }
 
     pub fn get_js_error(&self, i: usize) -> js_sys::Int32Array {
