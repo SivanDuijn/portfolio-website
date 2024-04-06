@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import characters1D from "@/components/triplets/data/Characters1D";
 import perfectMediumCombinations from "@/components/triplets/data/perfectMediumBoldCombinations.json";
-import { greedyMesh } from "@/components/triplets/lib/greedyMesh";
+import { greedyMeshTriplet } from "@/components/triplets/lib/greedyMesh";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
 import { Triplet } from "@/components/triplets/models";
 import { ConnectednessOptions } from "@/modules/rust-triplet/pkg/triplet_wasm_lib";
@@ -58,7 +58,7 @@ export default function TripletRemoving() {
   }, []);
 
   const getNEdges = useCallback((triplet: Triplet) => {
-    const { lines } = greedyMesh(triplet);
+    const { lines } = greedyMeshTriplet(triplet);
     let len = 0;
     for (let i = 0; i < lines.length; i += 6) {
       len += Math.abs(
