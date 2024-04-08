@@ -192,31 +192,5 @@ export default class TripletThreeJSViewGL {
     this.renderer.render(this.scene, this.camera);
 
     this.controls.update();
-
-    // // Attempt at object rotation
-    // if (this.tripletMesh && this.radiansRotated >= 0) {
-    //   this.tripletMesh.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), Math.PI * 0.005);
-
-    //   this.radiansRotated += Math.PI * 0.005;
-    //   this.radiansRotated2 += Math.PI * 0.005;
-
-    //   if (this.radiansRotated > (Math.PI * 2) / 3) {
-    //     if (this.radiansRotated2 > Math.PI * 2) {
-    //       this.tripletMesh.rotation.set(0, 0, 0);
-    //       this.radiansRotated2 = 0;
-    //     }
-
-    //     // console.log(
-    //     //   this.tripletMesh.rotation.x,
-    //     //   this.tripletMesh.rotation.y,
-    //     //   this.tripletMesh.rotation.z,
-    //     // );
-
-    //     this.radiansRotated = -1;
-    //     setTimeout(() => {
-    //       this.radiansRotated = 0;
-    //     }, 500);
-    //   }
-    // }
   }
 }

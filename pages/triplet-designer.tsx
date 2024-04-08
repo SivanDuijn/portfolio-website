@@ -33,6 +33,7 @@ export default function TripletDesigner() {
   });
   const [thickness, setThickness] = useState(1);
   const [removeComponentsAvailable, setRemovedComponentsAvailable] = useState(false);
+  const [usingSpotLight, setUsingSpotLight] = useState(false);
 
   const shapePlaneRef1 = useRef<P5GridEditorElement>(null);
   const shapePlaneRef2 = useRef<P5GridEditorElement>(null);
@@ -200,13 +201,29 @@ export default function TripletDesigner() {
               ref={tripletCanvasRef}
             />
             <CheckBox
+              className={clsx("absolute", "top-[2rem]", "left-6")}
+              label="Rotate"
+              darkMode={usingSpotLight}
+              onChange={tripletCanvasRef.current?.setRotate}
+            />
+            <CheckBox
+              className={clsx("absolute", "top-[3.2rem]", "left-6")}
+              darkMode={usingSpotLight}
+              label="Spotlight"
+              onChange={(v) => {
+                tripletCanvasRef.current?.setSpotLight(v);
+                setUsingSpotLight(v);
+              }}
+            />
+            <CheckBox
               className={clsx(
                 "absolute",
-                "top-8",
+                "top-[4.4rem]",
                 "left-6",
                 !removeComponentsAvailable && "hidden",
               )}
               label="Show removed components"
+              darkMode={usingSpotLight}
               onChange={tripletCanvasRef.current?.setShowRemovedComponents}
             />
           </div>
@@ -443,7 +460,7 @@ export default function TripletDesigner() {
       thickness,
       planeEdgeWeightRatio,
       weightAmplifier,
-      // pageIsLoaded,
+      usingSpotLight,
     ],
   );
 }

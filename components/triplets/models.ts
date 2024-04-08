@@ -26,4 +26,5 @@ export type Triplet = {
     // The total/summed percentage of incorrect cells
     totalPercentage: number;
   };
+  rotations: [number, number, number];
 };

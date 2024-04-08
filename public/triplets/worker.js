@@ -32,6 +32,7 @@ function toJSTriplet(t) {
       totalPercentage:
         ((sp1Error.length + sp2Error.length + sp3Error.length) / (t.w * t.w)) * 33.3333333333,
     },
+    rotations: [t.r1, t.r2, t.r3],
   };
 }
 

@@ -35,6 +35,8 @@ pub fn get_best_triplet(
     let mut sp2_rot = 0;
     let mut sp3_rot = 0;
 
+    let mut swapped_sp = false;
+
     'outer: for sp1_rot_i in 0..4 {
         for sp2_rot_i in 0..4 {
             for sp3_rot_i in 0..4 {
@@ -49,6 +51,7 @@ pub fn get_best_triplet(
                     sp1_rot = sp1_rot_i;
                     sp2_rot = sp2_rot_i;
                     sp3_rot = sp3_rot_i;
+                    swapped_sp = false;
                     if error_sum == 0 {
                         best_triplet = triplet;
                         break 'outer;
@@ -71,6 +74,7 @@ pub fn get_best_triplet(
                     sp1_rot = sp1_rot_i;
                     sp2_rot = sp2_rot_i;
                     sp3_rot = sp3_rot_i;
+                    swapped_sp = true;
 
                     if error_sum == 0 {
                         best_triplet = triplet;
@@ -94,6 +98,16 @@ pub fn get_best_triplet(
     for _ in 1..=sp3_rot {
         best_triplet.rotate_error(2);
     }
+
+    if swapped_sp {
+        best_triplet.r1 = sp2_rot as i32;
+        best_triplet.r2 = sp1_rot as i32;
+    }
+    else {
+        best_triplet.r1 = sp1_rot as i32;
+        best_triplet.r2 = sp2_rot as i32;
+    }
+    best_triplet.r3 = sp3_rot as i32;
 
     return Ok(best_triplet);
 }

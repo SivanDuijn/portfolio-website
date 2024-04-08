@@ -88,6 +88,15 @@ export class Triplet {
   h: number;
 /**
 */
+  r1: number;
+/**
+*/
+  r2: number;
+/**
+*/
+  r3: number;
+/**
+*/
   w: number;
 }
 
@@ -102,12 +111,19 @@ export interface InitOutput {
   readonly __wbg_set_triplet_h: (a: number, b: number) => void;
   readonly __wbg_get_triplet_d: (a: number) => number;
   readonly __wbg_set_triplet_d: (a: number, b: number) => void;
+  readonly __wbg_get_triplet_r1: (a: number) => number;
+  readonly __wbg_set_triplet_r1: (a: number, b: number) => void;
+  readonly __wbg_get_triplet_r2: (a: number) => number;
+  readonly __wbg_set_triplet_r2: (a: number, b: number) => void;
+  readonly __wbg_get_triplet_r3: (a: number) => number;
+  readonly __wbg_set_triplet_r3: (a: number, b: number) => void;
   readonly triplet_get_js_volume: (a: number) => number;
   readonly triplet_get_js_removed_component_cubes: (a: number) => number;
   readonly triplet_get_js_removed_component_sizes: (a: number) => number;
   readonly triplet_get_js_error: (a: number, b: number) => number;
   readonly triplet_remove_cells_to_minimize_same_plane: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly get_random_shape_planes: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly get_best_triplet: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbg_shapeplane_free: (a: number) => void;
   readonly __wbg_get_shapeplane_w: (a: number) => number;
   readonly __wbg_set_shapeplane_w: (a: number, b: number) => void;
@@ -115,7 +131,6 @@ export interface InitOutput {
   readonly __wbg_set_shapeplane_h: (a: number, b: number) => void;
   readonly shapeplane_new: (a: number, b: number, c: number, d: number) => number;
   readonly shapeplane_get_js_values: (a: number) => number;
-  readonly get_best_triplet: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;

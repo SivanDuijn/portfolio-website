@@ -18,23 +18,24 @@ export default class TripletThreeJSViewGL {
   private controls: OrbitControls;
 
   private tripletMesh: THREE.Mesh | undefined;
-  private tripletGroup: THREE.Group = new THREE.Group();
-  private outlineGroup: THREE.Group = new THREE.Group();
+  private tripletGroup = new THREE.Group();
+  private outlineGroup = new THREE.Group();
   private outlineOffsetVec: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
   private outlineOffset = 0.02;
+
+  // These are used to store all objects like lights and planes for different render types
+  private scientificGroup = new THREE.Group();
+  private singleShadowGroup = new THREE.Group();
+
   private showRemovedComponents = false;
+  private rotate = false;
+
+  private actions: THREE.AnimationAction[] = [];
+  private clock = new THREE.Clock();
 
   private triplet: Triplet | null = null;
 
-  // Rotation timer
-  // private radiansRotated = 0;
-  // private radiansRotated2 = 0;
-
   public canvas?: HTMLCanvasElement;
-
-  public setSize(width: number, height: number) {
-    this.renderer.setSize(width, height);
-  }
 
   public exportTriplet(name?: string) {
     if (!this.tripletMesh) {
@@ -60,8 +61,32 @@ export default class TripletThreeJSViewGL {
     if (this.triplet) this.updateTriplet(this.triplet);
   }
 
+  public setRotate(v: boolean) {
+    this.rotate = v;
+    if (v) this.actions.forEach((a) => a.play());
+    else this.actions.forEach((a) => a.stop());
+  }
+
+  public setSpotLight(v: boolean) {
+    const size = new THREE.Vector2();
+    this.renderer.getSize(size);
+
+    if (v) {
+      this.camera.setViewOffset(size.x, size.y, -100, 0, size.x, size.y);
+      this.scene.background = new THREE.Color(0x3d3d3d);
+      this.scene.remove(this.scientificGroup);
+      this.scene.add(this.singleShadowGroup);
+    } else {
+      this.camera.setViewOffset(size.x, size.y, 0, 50, size.x, size.y);
+      this.scene.background = new THREE.Color("white");
+      this.scene.remove(this.singleShadowGroup);
+      this.scene.add(this.scientificGroup);
+    }
+  }
+
   /** Build a mesh from 3D grid triplet definition, and updates the rendered canvas. */
   public updateTriplet(triplet: Triplet) {
+    this.actions.forEach((a) => a.stop());
     this.triplet = triplet;
     this.tripletGroup.clear();
     this.outlineGroup.clear();
@@ -77,7 +102,7 @@ export default class TripletThreeJSViewGL {
     // If there are any removed components, show them if option is enabled
     if (this.showRemovedComponents) {
       // orange, blue, yellow, red, green
-      const colors = [0xed9078, 0x96bfcf, 0xeed490, 0xf7ba88, 0x9ae4dc];
+      const colors = [0xed9078, 0xeed490, 0x96bfcf, 0xf7ba88, 0x9ae4dc];
       triplet.removedComponents.forEach((rc, i) => {
         const { vertices, indices, lines } = greedyMeshSetVolume(rc, triplet.dims);
         const { mesh, outline } = createVoxelGeometry(
@@ -92,6 +117,56 @@ export default class TripletThreeJSViewGL {
         this.outlineGroup.add(outline);
       });
     }
+
+    // const times = [0, 2, 3, 5, 6, 8, 9];
+    const times = [0, 1, 2, 3, 4, 5, 6];
+
+    const hPI = Math.PI / 2;
+
+    // Extra rotations needed if the shape planes were rotated
+    const reverseR = (r: number) => (r > Math.PI * 1.5 ? -hPI : r); // reverse rotation if rotating 270 degrees
+    const er1 = hPI * triplet.rotations[0];
+    const er2 = hPI * triplet.rotations[1];
+    const er3 = hPI * triplet.rotations[2];
+
+    // x, y, z rotations per shapeplane
+    const sp1R = [er1, 0, 0];
+    const sp2R = [0, reverseR(er2 + hPI), -hPI];
+    const sp3R = [hPI, reverseR(-er3 + hPI), hPI];
+
+    const aX = new THREE.Vector3(1, 0, 0).normalize();
+    const aY = new THREE.Vector3(0, 1, 0).normalize();
+    const aZ = new THREE.Vector3(0, 0, 1).normalize();
+
+    const spRsToArr = (rs: number[]) => {
+      const qX = new THREE.Quaternion().setFromAxisAngle(aX, rs[0]);
+      const qY = new THREE.Quaternion().setFromAxisAngle(aY, rs[1]);
+      const qZ = new THREE.Quaternion().setFromAxisAngle(aZ, rs[2]);
+      const q = qZ.multiply(qY.multiply(qX));
+
+      return [q.x, q.y, q.z, q.w];
+    };
+
+    const quaternionKFs = new THREE.QuaternionKeyframeTrack(".quaternion", times, [
+      ...spRsToArr(sp1R),
+      ...spRsToArr(sp1R),
+      ...spRsToArr(sp2R),
+      ...spRsToArr(sp2R),
+      ...spRsToArr(sp3R),
+      ...spRsToArr(sp3R),
+      ...spRsToArr(sp1R),
+    ]);
+
+    // just one track for now
+    const tracks = [quaternionKFs];
+
+    // use duration -1 to automatically calculate duration
+    const clip = new THREE.AnimationClip(undefined, -1, tracks);
+    this.actions = [];
+    this.actions.push(new THREE.AnimationMixer(this.tripletGroup).clipAction(clip));
+    this.actions.push(new THREE.AnimationMixer(this.outlineGroup).clipAction(clip));
+
+    if (this.rotate) this.actions.forEach((a) => a.play());
   }
 
   constructor(canvas: HTMLCanvasElement | undefined, width = 600, height = 600) {
@@ -117,44 +192,26 @@ export default class TripletThreeJSViewGL {
     this.scene.background = new THREE.Color("white");
 
     // LIGHTS
-    const lightTop = new THREE.DirectionalLight(0xffffff, 1);
-    lightTop.position.set(0, 10, 0); //default; light shining from top
-    lightTop.castShadow = true;
-    lightTop.shadow.mapSize.width = 256;
-    lightTop.shadow.mapSize.height = 256;
-    lightTop.shadow.camera.left = -20;
-    lightTop.shadow.camera.right = 20;
-    lightTop.shadow.camera.top = 20;
-    lightTop.shadow.camera.bottom = -20;
-    lightTop.shadow.radius = 3;
-    lightTop.shadow.blurSamples = 15;
-    this.scene.add(lightTop);
+    const addLight = (x: number, y: number, z: number, i: number) => {
+      const light = new THREE.DirectionalLight(0xffffff, i);
+      light.position.set(x, y, z); //default; light shining from top
+      light.castShadow = true;
+      light.shadow.mapSize.width = 255;
+      light.shadow.mapSize.height = 255;
+      light.shadow.camera.left = -20;
+      light.shadow.camera.right = 20;
+      light.shadow.camera.top = 20;
+      light.shadow.camera.bottom = -20;
+      light.shadow.radius = 3;
+      light.shadow.blurSamples = 15;
+      this.scientificGroup.add(light);
+    };
+    addLight(0, 200, 0, 1);
+    addLight(200, 0, 0, 0.8);
+    addLight(0, 0, 200, 0.9);
 
-    const lightRight = new THREE.DirectionalLight(0xffffff, 0.8);
-    lightRight.position.set(10, 0, 0); //default; light shining from right
-    lightRight.castShadow = true;
-    lightRight.shadow.mapSize.width = 256;
-    lightRight.shadow.mapSize.height = 256;
-    lightRight.shadow.camera.left = -20;
-    lightRight.shadow.camera.right = 20;
-    lightRight.shadow.camera.top = 20;
-    lightRight.shadow.camera.bottom = -20;
-    lightRight.shadow.radius = 3;
-    lightRight.shadow.blurSamples = 15;
-    this.scene.add(lightRight);
-
-    const lightFront = new THREE.DirectionalLight(0xffffff, 0.9);
-    lightFront.position.set(0, 0, 10); //default; light shining from right
-    lightFront.castShadow = true;
-    lightFront.shadow.mapSize.width = 256;
-    lightFront.shadow.mapSize.height = 256;
-    lightFront.shadow.camera.left = -20;
-    lightFront.shadow.camera.right = 20;
-    lightFront.shadow.camera.top = 20;
-    lightFront.shadow.camera.bottom = -20;
-    lightFront.shadow.radius = 3;
-    lightFront.shadow.blurSamples = 15;
-    this.scene.add(lightFront);
+    // const helper = new THREE.DirectionalLightHelper(lightFront, 5);
+    // this.scene.add(helper);
 
     const lightBottom = new THREE.DirectionalLight(0xffffff, 0.4);
     lightBottom.position.set(0, -10, 0); //default; light shining from top
@@ -166,12 +223,24 @@ export default class TripletThreeJSViewGL {
     lightBack.position.set(0, 0, -10); //default; light shining from top
     this.scene.add(lightBack);
 
-    const AmbientLight = new THREE.AmbientLight(0xffffff, 0.075); // soft white light
-    this.scene.add(AmbientLight);
+    // 0.075 when not fancy
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.075); // soft white light
+    this.scene.add(ambientLight);
+
+    const spotLight = new THREE.SpotLight(0xffffff, 0.8, 0, Math.PI / 30, 1, 1);
+    spotLight.position.set(150, 0, 0);
+    spotLight.castShadow = true;
+    spotLight.shadow.mapSize.width = 256;
+    spotLight.shadow.mapSize.height = 256;
+    this.singleShadowGroup.add(spotLight);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10, 30, 20);
+    this.singleShadowGroup.add(dirLight);
+    // this.scene.add(new THREE.DirectionalLightHelper(dirLight, 5));
 
     // PLANES
     const planeGeometry = new THREE.PlaneGeometry(400, 400);
-    // const planeMaterial = new THREE.MeshPhongMaterial();
     const shadowMaterial = new THREE.ShadowMaterial({ color: 0x013840, opacity: 0.7 });
     const planeBottom = new THREE.Mesh(planeGeometry, shadowMaterial);
     planeBottom.rotateX(-Math.PI / 2);
@@ -186,9 +255,17 @@ export default class TripletThreeJSViewGL {
     const planeBack = new THREE.Mesh(planeGeometry, shadowMaterial);
     planeBack.position.z = -30;
     planeBack.receiveShadow = true;
-    this.scene.add(planeBottom);
-    this.scene.add(planeLeft);
-    this.scene.add(planeBack);
+    this.scientificGroup.add(planeBottom);
+    this.scientificGroup.add(planeLeft);
+    this.scientificGroup.add(planeBack);
+
+    const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xcfcfcf }); //0x9f9f9f });
+    const yzPlane = new THREE.Mesh(planeGeometry, planeMaterial);
+    yzPlane.rotateY(Math.PI / 2);
+    yzPlane.position.x = -40;
+    yzPlane.receiveShadow = true;
+    this.singleShadowGroup.add(yzPlane);
+    spotLight.target = yzPlane;
 
     // AXIS
     const axisGeometry = new THREE.CylinderGeometry(0.1, 0.1, 100, 32);
@@ -209,19 +286,13 @@ export default class TripletThreeJSViewGL {
     zAxisCylinder.position.x = 20;
     zAxisCylinder.position.z = -30;
     zAxisCylinder.position.y = -30;
-    this.scene.add(xAxisCylinder);
-    this.scene.add(yAxisCylinder);
-    this.scene.add(zAxisCylinder);
-
-    // const origin = new THREE.Mesh(
-    //   new THREE.SphereGeometry(1),
-    //   new THREE.MeshStandardMaterial({ color: "red" }),
-    // );
-    // origin.position.set(0, 0, 0);
-    // this.scene.add(origin);
+    this.scientificGroup.add(xAxisCylinder);
+    this.scientificGroup.add(yAxisCylinder);
+    this.scientificGroup.add(zAxisCylinder);
 
     this.scene.add(this.tripletGroup);
     this.scene.add(this.outlineGroup);
+    this.scene.add(this.scientificGroup);
 
     requestAnimationFrame(this.update.bind(this));
   }
@@ -241,30 +312,8 @@ export default class TripletThreeJSViewGL {
     ).normalize();
     this.outlineOffsetVec.multiplyScalar(this.outlineOffset);
     this.outlineGroup.position.add(this.outlineOffsetVec);
-    // // Attempt at object rotation
-    // if (this.tripletMesh && this.radiansRotated >= 0) {
-    //   this.tripletMesh.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), Math.PI * 0.005);
 
-    //   this.radiansRotated += Math.PI * 0.005;
-    //   this.radiansRotated2 += Math.PI * 0.005;
-
-    //   if (this.radiansRotated > (Math.PI * 2) / 3) {
-    //     if (this.radiansRotated2 > Math.PI * 2) {
-    //       this.tripletMesh.rotation.set(0, 0, 0);
-    //       this.radiansRotated2 = 0;
-    //     }
-
-    //     // console.log(
-    //     //   this.tripletMesh.rotation.x,
-    //     //   this.tripletMesh.rotation.y,
-    //     //   this.tripletMesh.rotation.z,
-    //     // );
-
-    //     this.radiansRotated = -1;
-    //     setTimeout(() => {
-    //       this.radiansRotated = 0;
-    //     }, 500);
-    //   }
-    // }
+    const delta = this.clock.getDelta();
+    this.actions.forEach((a) => a.getMixer().update(delta));
   }
 }

@@ -21,9 +21,13 @@ pub fn build_triplet(
     for i in 0..dim {
         for j in 0..dim {
             for k in 0..dim {
-                let sp1_v = sp1.values()[(dim - j - 1) * sp1.w + i];
+                // let sp1_v = sp1.values()[(dim - j - 1) * sp1.w + i];
+                // let sp2_v = sp2.values()[k * sp2.w + i];
+                // let sp3_v = sp3.values()[(dim - j - 1) * sp3.w + dim - k - 1];
+
+                let sp1_v = sp1.values()[(dim - j - 1) * sp3.w + dim - k - 1];
                 let sp2_v = sp2.values()[k * sp2.w + i];
-                let sp3_v = sp3.values()[(dim - j - 1) * sp3.w + dim - k - 1];
+                let sp3_v = sp3.values()[(dim - j - 1) * sp1.w + i];
 
                 let index = i + dim * (j + dim * k);
 

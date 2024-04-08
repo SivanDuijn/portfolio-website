@@ -111,15 +111,6 @@ export function get_random_shape_planes(w, h, fill_percentage, randomness, amoun
     }
 }
 
-let WASM_VECTOR_LEN = 0;
-
-function passArray32ToWasm0(arg, malloc) {
-    const ptr = malloc(arg.length * 4, 4) >>> 0;
-    getUint32Memory0().set(arg, ptr / 4);
-    WASM_VECTOR_LEN = arg.length;
-    return ptr;
-}
-
 function _assertClass(instance, klass) {
     if (!(instance instanceof klass)) {
         throw new Error(`expected instance of ${klass.name}`);
@@ -150,6 +141,15 @@ export function get_best_triplet(sp1, sp2, sp3, connectedness) {
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
+}
+
+let WASM_VECTOR_LEN = 0;
+
+function passArray32ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 4, 4) >>> 0;
+    getUint32Memory0().set(arg, ptr / 4);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
 }
 
 function handleError(f, args) {
@@ -295,6 +295,45 @@ export class Triplet {
     */
     set d(arg0) {
         wasm.__wbg_set_triplet_d(this.__wbg_ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get r1() {
+        const ret = wasm.__wbg_get_triplet_r1(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set r1(arg0) {
+        wasm.__wbg_set_triplet_r1(this.__wbg_ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get r2() {
+        const ret = wasm.__wbg_get_triplet_r2(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set r2(arg0) {
+        wasm.__wbg_set_triplet_r2(this.__wbg_ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get r3() {
+        const ret = wasm.__wbg_get_triplet_r3(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set r3(arg0) {
+        wasm.__wbg_set_triplet_r3(this.__wbg_ptr, arg0);
     }
     /**
     * @returns {Int32Array}

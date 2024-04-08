@@ -6,9 +6,10 @@ type CheckBoxProps = {
   label: string;
   onChange?: (value: boolean) => void;
   initial?: boolean;
+  darkMode?: boolean;
 };
 
-export default function CheckBox({ className, label, onChange, initial }: CheckBoxProps) {
+export default function CheckBox({ className, label, onChange, initial, darkMode }: CheckBoxProps) {
   const [checked, setChecked] = useState(initial ?? false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function CheckBox({ className, label, onChange, initial }: CheckB
           checked ? "bg-[#68d16f]" : "bg-white",
         )}
       />
-      <p className={clsx("font-mono", "text-xs")}>{label}</p>
+      <p className={clsx("text-xs", darkMode ? "text-white" : "text-black")}>{label}</p>
     </div>
   );
 }

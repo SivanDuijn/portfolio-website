@@ -12,6 +12,8 @@ export interface TripletCanvasElement {
   export: (name?: string) => void;
   setTriplet: (triplet: Triplet) => void;
   setShowRemovedComponents: (v: boolean) => void;
+  setRotate: (v: boolean) => void;
+  setSpotLight: (v: boolean) => void;
 }
 
 // eslint-disable-next-line react/display-name
@@ -29,6 +31,8 @@ export const TripletCanvas = memo(
             ? viewGL.current?.removeTriplet()
             : viewGL.current?.updateTriplet(triplet),
         setShowRemovedComponents: (v: boolean) => viewGL.current?.setShowRemovedComponents(v),
+        setRotate: (v: boolean) => viewGL.current?.setRotate(v),
+        setSpotLight: (v: boolean) => viewGL.current?.setSpotLight(v),
       }),
       [],
     );

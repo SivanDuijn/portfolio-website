@@ -12,12 +12,19 @@ pub struct Triplet {
     pub d: usize,
     removed_component_cubes: Vec<i32>, // This should actually be a 2d vec, but for wasm bindgen the start indices are stored
     removed_component_sizes: Vec<i32>, // here seperately
-    error: [Vec<i32>; 3]
+    error: [Vec<i32>; 3],
+    pub r1: i32,
+    pub r2: i32,
+    pub r3: i32
 }
 
 impl Triplet {
     pub fn new(volume: Vec<i32>, w: usize, h: usize, d: usize) -> Self {
-        Self { volume, w, h, d, removed_component_cubes: Vec::new(), removed_component_sizes: Vec::new(), error: Default::default() }
+        Self { volume, w, h, d, 
+            removed_component_cubes: Vec::new(), 
+            removed_component_sizes: Vec::new(), 
+            error: Default::default(), 
+            r1: 0, r2: 0, r3: 0 }
     }
 
     pub fn volume_mut(&mut self) -> &mut Vec<i32> {
@@ -55,9 +62,12 @@ impl Triplet {
 
                     // TODO: these are probably not the right triplet.dims[], works rn because we assume square and same dimension shape planes
                     if v > 0 {
-                        sp1_shadow_plane[(self.w - j - 1) * self.w + i] = 1;
+                        // sp1_shadow_plane[(self.w - j - 1) * self.w + i] = 1;
+                        // sp2_shadow_plane[k * self.h + i] = 1;
+                        // sp3_shadow_plane[(self.w - j - 1) * self.w + self.h - k - 1] = 1;
+                        sp1_shadow_plane[(self.w - j - 1) * self.w + self.h - k - 1] = 1;
                         sp2_shadow_plane[k * self.h + i] = 1;
-                        sp3_shadow_plane[(self.w - j - 1) * self.w + self.h - k - 1] = 1;
+                        sp3_shadow_plane[(self.w - j - 1) * self.w + i] = 1;
                     }
                 }
             }
