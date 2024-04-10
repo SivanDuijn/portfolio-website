@@ -14,7 +14,7 @@ const labelClassname = clsx(
   "absolute",
   "origin-top-left",
   "-rotate-90",
-  "bottom-7",
+  "bottom-0",
   "-left-4",
   "font-mono",
   "font-bold",
@@ -117,13 +117,13 @@ export default function RandomShapePlanesViewer() {
           />
         </div>
         <Button darkTheme={darkTheme} label="Refresh" onClick={refresh} />
-        <div className={clsx("grid", "grid-cols-5")}>
+        <div className={clsx("grid", "grid-cols-5", "gap-8")}>
           {editorRefs.current.map((_, i) => (
             <div key={i} className="relative">
               {i == 0 && <p className={labelClassname}>Fully random</p>}
               {i == 5 && <p className={clsx(labelClassname)}>Connect edges</p>}
               {i == 10 && (
-                <p style={{ bottom: 0 }} className={clsx(labelClassname)}>
+                <p style={{ bottom: -40 }} className={clsx(labelClassname)}>
                   Neighbour weighted
                 </p>
               )}
