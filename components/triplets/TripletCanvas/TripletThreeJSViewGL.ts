@@ -35,8 +35,6 @@ export default class TripletThreeJSViewGL {
 
   private triplet: Triplet | null = null;
 
-  public canvas?: HTMLCanvasElement;
-
   public exportTriplet(name?: string) {
     if (!this.tripletMesh) {
       toast.error("Nothing to export");
@@ -170,17 +168,15 @@ export default class TripletThreeJSViewGL {
   }
 
   constructor(canvas: HTMLCanvasElement | undefined, width = 600, height = 600) {
-    this.canvas = canvas;
-
     const clippingPlane = [0.1, 1000];
     this.camera = new THREE.PerspectiveCamera(50, 1, ...clippingPlane);
     this.camera.setViewOffset(width, height, 0, 50, width, height);
     this.camera.position.set(43, 16, 47);
-    this.controls = new OrbitControls(this.camera, this.canvas);
+    this.controls = new OrbitControls(this.camera, canvas);
     this.controls.enablePan = false;
 
     this.renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
+      canvas,
       antialias: true,
     });
     this.renderer.setSize(width, height);

@@ -5,7 +5,6 @@ import TripletThreeJSViewGL from "./TripletThreeJSViewGL";
 
 type TripletCanvasProps = {
   className?: string;
-  // triplet: Triplet;
 };
 
 export interface TripletCanvasElement {
@@ -40,6 +39,11 @@ export const TripletCanvas = memo(
     useEffect(() => {
       // const height = window.innerHeight * 0.8;
       viewGL.current = new TripletThreeJSViewGL(canvasRef.current || undefined);
+      if (canvasRef.current) {
+        canvasRef.current.style.width = "100%";
+        canvasRef.current.style.height = "unset";
+        canvasRef.current.style.aspectRatio = "1";
+      }
     }, []);
 
     return (
