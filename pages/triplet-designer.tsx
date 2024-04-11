@@ -192,7 +192,7 @@ export default function TripletDesigner() {
             "font-extrabold",
             "italic",
             "text-5xl",
-            "pt-6",
+            "pt-4",
             "px-10",
             "md:text-6xl",
             "w-full",
@@ -201,7 +201,7 @@ export default function TripletDesigner() {
         >
           TRIPLET DESIGNER
         </p>
-        <div className={clsx("flex", "flex-wrap", "justify-center", "mt-0", "sm:mt-8")}>
+        <div className={clsx("flex", "flex-wrap", "justify-center", "mt-0", "sm:mt-5")}>
           <div className={clsx("relative")}>
             <TripletCanvas
               className={clsx("mx-4", "inline-block", "mt-6", "max-w-[600px]")} // "border-2", "border-slate-200",
@@ -234,7 +234,7 @@ export default function TripletDesigner() {
               onChange={tripletCanvasRef.current?.setShowRemovedComponents}
             />
           </div>
-          <div className={clsx("flex", "flex-wrap-reverse", "justify-center")}>
+          <div className={clsx("flex", "flex-wrap-reverse", "justify-center", "mb-10", "lg:my-0")}>
             <div
               className={clsx(
                 "grid",
