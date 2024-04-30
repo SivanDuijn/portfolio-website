@@ -422,6 +422,9 @@ function __wbg_get_imports() {
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
     };
+    imports.wbg.__wbg_log_f7e8d968069fb17e = function(arg0, arg1) {
+        console.log(getStringFromWasm0(arg0, arg1));
+    };
     imports.wbg.__wbg_shapeplane_new = function(arg0) {
         const ret = ShapePlane.__wrap(arg0);
         return addHeapObject(ret);

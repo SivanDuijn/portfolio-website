@@ -131,6 +131,9 @@ export default class TripletThreeJSViewGL {
     const sp1R = [er1, 0, 0];
     const sp2R = [0, reverseR(er2 + hPI), -hPI];
     const sp3R = [hPI, reverseR(-er3 + hPI), hPI];
+    // const sp1R = [er1, 0, 0];
+    // const sp2R = [0, reverseR(er2 - hPI), 0];
+    // const sp3R = [hPI, reverseR(-er3), 0];
 
     const aX = new THREE.Vector3(1, 0, 0).normalize();
     const aY = new THREE.Vector3(0, 1, 0).normalize();
