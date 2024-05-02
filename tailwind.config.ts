@@ -14,6 +14,7 @@ const config: Config = {
       },
       fontFamily: {
         sarabun: ['"Sarabun"', "sans-serif"],
+        roboto: ['"Roboto Mono"', '"sans-serif"'],
       },
     },
   },
