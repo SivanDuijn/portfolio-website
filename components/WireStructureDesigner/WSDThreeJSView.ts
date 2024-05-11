@@ -1,8 +1,11 @@
 import * as THREE from "three";
-import { Line2 } from "three/addons/lines/Line2.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import LineStructure from "./LineStructure";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
+import WSDWire from "./WSDWire";
+
+const upVector = new THREE.Vector3(0, 1, 0);
 
 export default class WSDThreeJSView {
   private scene: THREE.Scene;
@@ -12,15 +15,18 @@ export default class WSDThreeJSView {
   private pointer = new THREE.Vector2();
   private raycaster = new THREE.Raycaster();
 
+  private lineMaterial: LineMaterial;
+
+  private wires: WSDWire[] = [];
+  private currentWire: WSDWire | undefined;
+  private tempLine = new Line2(new LineGeometry());
+  private tempStart = new THREE.Vector3();
+
+  public state: "newWireStart" | "newWireHeight" | "addingToWire" = "newWireStart";
+
   public canvas?: HTMLCanvasElement;
 
   private group: THREE.Group = new THREE.Group();
-
-  public line = new LineStructure();
-
-  // public setSize(width: number, height: number) {
-  //   this.renderer.setSize(width, height);
-  // }
 
   constructor(canvas: HTMLCanvasElement | undefined, width = 800, height = 600) {
     this.canvas = canvas;
@@ -28,62 +34,6 @@ export default class WSDThreeJSView {
     const clippingPlane = [0.1, 1000];
     this.camera = new THREE.PerspectiveCamera(50, width / height, ...clippingPlane);
     this.camera.position.set(13, 56, 47);
-
-    if (this.canvas) {
-      this.canvas.onclick = (e) => {
-        if (!e.shiftKey) return;
-        this.line.addNewLine();
-      };
-
-      this.canvas.onmousemove = (e) => {
-        this.pointer.x = (e.offsetX / width) * 2 - 1;
-        this.pointer.y = -(e.offsetY / height) * 2 + 1;
-        this.raycaster.setFromCamera(this.pointer, this.camera);
-
-        const s = new THREE.Vector3()
-          .copy(this.line.curve.startPoint)
-          .addScaledVector(this.line.curve.startDir, this.line.curve.size)
-          .projectOnVector(new THREE.Vector3().copy(this.line.curve.startDir).negate());
-        const plane = new THREE.Plane(this.line.curve.startDir, -s.length());
-
-        const intersection = new THREE.Vector3();
-        this.raycaster.ray.intersectPlane(plane, intersection);
-        const endP = new THREE.Vector3()
-          .copy(this.line.curve.startPoint)
-          .addScaledVector(this.line.curve.startDir, this.line.curve.size);
-
-        const dir = new THREE.Vector3().subVectors(intersection, endP).normalize();
-        this.line.updateNewLine(
-          dir,
-          Math.max(0, intersection.distanceTo(endP) - this.line.curve.size),
-        );
-
-        // if (this.line.mode == "line") {
-        //   const cameraDir = new THREE.Vector3();
-        //   this.camera.getWorldDirection(cameraDir);
-        //   cameraDir.y = 0;
-        //   cameraDir.normalize();
-        //   const plane = new THREE.Plane(cameraDir, 0);
-        //   const intersection = new THREE.Vector3();
-        //   this.raycaster.ray.intersectPlane(plane, intersection);
-
-        //   this.line.setLineLength(intersection.y);
-        // } else if (this.line.mode == "curve") {
-        //   const plane = new THREE.Plane(up, -(this.line.line.end.y + this.line.curve.size));
-        //   const intersection = new THREE.Vector3();
-        //   this.raycaster.ray.intersectPlane(plane, intersection);
-
-        //   const endP = new THREE.Vector3(
-        //     this.line.line.end.x,
-        //     this.line.line.end.y,
-        //     this.line.line.end.z,
-        //   ).addScaledVector(this.line.line.dir, this.line.curve.size);
-
-        //   const dir = new THREE.Vector3().subVectors(intersection, endP).normalize();
-        //   this.line.setCurve(dir);
-        // }
-      };
-    }
 
     this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enablePan = false;
@@ -103,7 +53,7 @@ export default class WSDThreeJSView {
     lightRight.position.set(30, 35, 10); //default; light shining from right
     this.scene.add(lightRight);
 
-    const lineMat = new LineMaterial({
+    this.lineMaterial = new LineMaterial({
       color: 0x000000,
       linewidth: 3,
       alphaToCoverage: false,
@@ -113,16 +63,9 @@ export default class WSDThreeJSView {
       ),
     });
 
-    this.group.add(new Line2(this.line.geometry, lineMat));
-
-    // const curve = new THREE.QuadraticBezierCurve3(
-    //   new THREE.Vector3(10, 0, 0),
-    //   new THREE.Vector3(10, 10, 0),
-    //   new THREE.Vector3(0, 10, 0),
-    // );
-    // const points = curve.getPoints(50);
-    // const geometry = new LineGeometry().setPositions(points.map((v) => v.toArray()).flat());
-    // this.group.add(new Line2(geometry, lineMat));
+    this.tempLine.material = this.lineMaterial;
+    this.tempLine.geometry.setPositions(new Float32Array(2 * 3));
+    this.group.add(this.tempLine);
 
     this.group.add(
       new THREE.Mesh(
@@ -132,6 +75,105 @@ export default class WSDThreeJSView {
     );
 
     this.scene.add(this.group);
+
+    // AXIS
+    // const xMat = new LineMaterial().copy(this.lineMaterial);
+    // xMat.color = new THREE.Color(0x00aa00);
+    // this.scene.add(
+    //   new Line2(new LineGeometry().setPositions(new Float32Array([0, 0, 0, 30, 0, 0])), xMat),
+    // );
+    // const yMat = new LineMaterial().copy(this.lineMaterial);
+    // yMat.color = new THREE.Color(0xaa0000);
+    // this.scene.add(
+    //   new Line2(new LineGeometry().setPositions(new Float32Array([0, 0, 0, 0, 30, 0])), yMat),
+    // );
+    // const zMat = new LineMaterial().copy(this.lineMaterial);
+    // zMat.color = new THREE.Color(0x0000aa);
+    // this.scene.add(
+    //   new Line2(new LineGeometry().setPositions(new Float32Array([0, 0, 0, 0, 0, 30])), zMat),
+    // );
+
+    const getNewWireHeight = () => {
+      const cameraDir = new THREE.Vector3();
+      this.camera.getWorldDirection(cameraDir);
+      cameraDir.y = 0;
+      cameraDir.normalize();
+      const plane = new THREE.Plane(cameraDir, 0);
+      const d = plane.distanceToPoint(this.tempStart);
+      plane.constant = -d;
+      const intersection = new THREE.Vector3();
+      this.raycaster.ray.intersectPlane(plane, intersection);
+
+      const p2 = new THREE.Vector3().copy(this.tempStart);
+      p2.y = intersection.y;
+      return p2;
+    };
+
+    if (this.canvas) {
+      this.canvas.onclick = (e) => {
+        if (e.ctrlKey) {
+          this.state = "newWireStart";
+          this.tempLine.geometry.setPositions(new Float32Array([0, 0, 0, 0, 0, 0]));
+        }
+
+        if (e.shiftKey) {
+          if (this.state == "newWireStart") {
+            // Intersect with plane in xy axis
+            const plane = new THREE.Plane(upVector, 0);
+            const intersection = new THREE.Vector3();
+            this.raycaster.ray.intersectPlane(plane, intersection);
+
+            this.tempStart = intersection;
+            this.state = "newWireHeight";
+          } //
+          else if (this.state == "newWireHeight") {
+            const p2 = getNewWireHeight();
+            const newWire = new WSDWire(
+              this.lineMaterial,
+              colors[this.wires.length],
+              this.tempStart,
+              p2,
+            );
+            this.group.add(newWire.linesGroup);
+
+            this.currentWire = newWire;
+            this.wires.push(newWire);
+            this.state = "addingToWire";
+          } //
+          else if (this.state == "addingToWire") {
+            if (!this.currentWire) return;
+            const intersection = this.currentWire.getIntersectionForNewPoint(this.raycaster.ray);
+            this.currentWire.addPoint(intersection);
+          }
+        }
+      };
+
+      this.canvas.onmousemove = (e) => {
+        this.pointer.x = (e.offsetX / width) * 2 - 1;
+        this.pointer.y = -(e.offsetY / height) * 2 + 1;
+        this.raycaster.setFromCamera(this.pointer, this.camera);
+
+        if (this.state == "newWireHeight") {
+          const p2 = getNewWireHeight();
+          this.tempLine.geometry.setPositions(
+            new Float32Array([...this.tempStart.toArray(), ...p2.toArray()]),
+          );
+        } //
+        else if (this.state == "addingToWire") {
+          if (!this.currentWire) return;
+          const intersection = this.currentWire.getIntersectionForNewPoint(this.raycaster.ray);
+
+          if (intersection.length() == 0) return;
+
+          this.tempLine.geometry.setPositions(
+            new Float32Array([
+              ...this.currentWire.points[this.currentWire.points.length - 1].toArray(),
+              ...intersection.toArray(),
+            ]),
+          );
+        }
+      };
+    }
 
     requestAnimationFrame(this.update.bind(this));
   }
@@ -143,3 +185,8 @@ export default class WSDThreeJSView {
     this.controls.update();
   }
 }
+const colors = [
+  0xe6194b, 0x3cb44b, 0xffe119, 0x4363d8, 0xf58231, 0x911eb4, 0x46f0f0, 0xf032e6, 0xbcf60c,
+  0xfabebe, 0x008080, 0xe6beff, 0x9a6324, 0xfffac8, 0x800000, 0xaaffc3, 0x808000, 0xffd8b1,
+  0x000075, 0x808080,
+];
