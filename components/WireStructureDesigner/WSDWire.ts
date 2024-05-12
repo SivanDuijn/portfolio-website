@@ -8,6 +8,7 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
  */
 export default class WSDWire {
   public points: THREE.Vector3[] = [];
+  public color: THREE.Color;
 
   // --- THREE properties for rendering ---
   // For each point we need a line
@@ -17,19 +18,22 @@ export default class WSDWire {
 
   constructor(
     material: LineMaterial,
-    color: number,
+    color: THREE.Color,
     sp1 = new THREE.Vector3(0, 0, 0),
     sp2 = new THREE.Vector3(0, 10, 0),
   ) {
     this.material = new LineMaterial().copy(material);
-    this.material.color = new THREE.Color(color);
-    // this.material.color = new THREE.Color(
-    //   Math.random() * 0.8,
-    //   Math.random() * 0.8,
-    //   Math.random() * 0.8,
-    // );
+    this.color = color;
+    this.material.color = this.color;
     this.points.push(sp1);
     this.addPoint(sp2);
+  }
+
+  public setColor(color: THREE.Color) {
+    this.material.color = color;
+  }
+  public resetColor() {
+    this.material.color = this.color;
   }
 
   public addPoint(point: THREE.Vector3) {
@@ -69,5 +73,20 @@ export default class WSDWire {
     const l = Math.abs(intersection.toArray()[maxI] - p1.toArray()[maxI]);
 
     return new THREE.Vector3().copy(p1).addScaledVector(new THREE.Vector3(...dir), l);
+  }
+
+  public getDistance(ray: THREE.Ray, minDist = 1): number {
+    let p1 = this.points[0];
+    let p2 = this.points[1];
+    let minD = Number.MAX_VALUE;
+    for (let pi = 1; pi < this.points.length; pi++) {
+      p2 = this.points[pi];
+      const d = ray.distanceSqToSegment(p1, p2);
+      if (d <= minDist && d < minD) minD = d;
+
+      p1 = p2;
+    }
+
+    return minD;
   }
 }

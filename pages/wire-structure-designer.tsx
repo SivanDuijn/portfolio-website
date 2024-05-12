@@ -7,7 +7,7 @@ export default function WireStructureDesigner() {
   const viewGLRef = useRef<WSDThreeJSView>();
 
   useEffect(() => {
-    viewGLRef.current = new WSDThreeJSView(threeCanvasRef.current || undefined);
+    viewGLRef.current = new WSDThreeJSView(threeCanvasRef.current || undefined, 900, 700);
   }, []);
 
   return (
