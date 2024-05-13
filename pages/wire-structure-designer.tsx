@@ -17,26 +17,37 @@ export default function WireStructureDesigner() {
           style={{
             textShadow: "-1px 1px 1px black",
             WebkitTextStroke: "1.5px black",
-            color: "pink",
+            color: "#dddddd",
           }}
           className={clsx(
             "font-roboto",
             "font-extrabold",
-            "text-5xl",
-            "pt-6",
+            "text-4xl",
+            "pt-5",
             "px-10",
-            "md:text-5xl",
+            // "md:text-4xl",
             "w-full",
             "text-center",
-            "hidden",
+            // "hidden",
           )}
         >
           Wire Structure Designer
         </p>
-        <canvas
-          className={clsx("mt-10", "border-2", "rounded-md", "border-black")}
-          ref={threeCanvasRef}
-        />
+        <div className={clsx("flex", "flex-row", "space-x-4", "font-roboto", "mt-8")}>
+          <div className={clsx("w-52", "mt-6", "space-y-2")}>
+            <p>
+              <span className={clsx("font-bold", "text-green-700")}>Shift</span> click to add
+            </p>
+            <p>
+              <span className={clsx("font-bold", "text-blue-700")}>Ctrl</span> click to stop
+            </p>
+            <p>
+              <span className={clsx("font-bold", "text-red-700")}>Alt</span> click to delete
+            </p>
+          </div>
+          <canvas className={clsx("border-2", "rounded-md", "border-black")} ref={threeCanvasRef} />
+          <div className={clsx("w-52")}></div>
+        </div>
       </div>
     </div>
   );

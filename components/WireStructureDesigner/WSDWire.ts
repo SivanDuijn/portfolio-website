@@ -11,7 +11,6 @@ export default class WSDWire {
   public color: THREE.Color;
 
   // --- THREE properties for rendering ---
-  // For each point we need a line
   private material: LineMaterial;
   private lineGeometries: LineGeometry[] = [];
   public linesGroup = new THREE.Group();
@@ -52,12 +51,6 @@ export default class WSDWire {
     const p1 = this.points[this.points.length - 1];
     const p2 = this.points[this.points.length - 2];
     const planeVector = new THREE.Vector3().subVectors(p1, p2).normalize();
-    // const maxPVI = planeVector
-    //   .toArray()
-    //   .map((v) => Math.abs(v))
-    //   .reduce((maxI, v, i, arr) => (v > arr[maxI] ? i : maxI), 0);
-
-    // const planeDist = p1.toArray()[maxPVI] * (planeVector.toArray()[maxPVI] > 0 ? -1 : 1);
     const plane = new THREE.Plane(planeVector, 0);
     const d = plane.distanceToPoint(p1);
     plane.constant = -d;
@@ -88,5 +81,23 @@ export default class WSDWire {
     }
 
     return minD;
+  }
+
+  public serialize(): string {
+    return (
+      this.points.map((p) => p.x + "," + p.y + "," + p.z).join(";") + "color=" + this.color.toJSON()
+    );
+  }
+  public static fromString(s: string, lineMaterial: LineMaterial) {
+    const [pts, clr] = s.split("color=");
+    const [p1, p2, ...points] = pts
+      .split(";")
+      .map((p) => new THREE.Vector3(...p.split(",").map((c) => parseFloat(c))));
+
+    const color = new THREE.Color(parseInt(clr));
+
+    const wire = new this(lineMaterial, color, p1, p2);
+    points.forEach((p) => wire.addPoint(p));
+    return wire;
   }
 }

@@ -70,14 +70,12 @@ export default function getOutlinedDisc(
     i += 2;
   }
 
-  const group = new THREE.Group();
   const geometry = new THREE.BufferGeometry();
   geometry.setIndex(indices);
   geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
 
   const material = new THREE.MeshBasicMaterial({ color });
   const mesh = new THREE.Mesh(geometry, material);
-  group.add(mesh);
 
   const lineGeometry = new LineGeometry();
   lineGeometry.setPositions(outlineVertices);
@@ -88,16 +86,15 @@ export default function getOutlinedDisc(
     resolution: resolution,
   });
 
-  const outline = new Line2(lineGeometry, lineMaterial);
-  group.add(outline);
+  const lines = [new Line2(lineGeometry, lineMaterial)];
 
   // Add missing vertical outlines
   for (let i = 1; i < points.length; i++) {
     const p = points[i];
     const lg = new LineGeometry();
     lg.setPositions(new Float32Array([p[0], 0, p[1], p[0], -height, p[1]]));
-    group.add(new Line2(lg, lineMaterial));
+    lines.push(new Line2(lg, lineMaterial));
   }
 
-  return group;
+  return { mesh, lines };
 }
