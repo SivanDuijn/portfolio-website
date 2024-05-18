@@ -5,7 +5,7 @@ import { ProjectContainer } from "@/components/ProjectContainer";
 export default function DandelionGlow() {
   return (
     <ProjectContainer
-      index={3}
+      index={4}
       title="Dandelion Glow"
       thumbnailUrl="/imgs/projects/dandelion-glow/thumbnail.jpeg"
     >

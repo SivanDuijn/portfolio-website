@@ -5,7 +5,7 @@ import { ProjectContainer } from "@/components/ProjectContainer";
 export default function BookGlowShelf() {
   return (
     <ProjectContainer
-      index={2}
+      index={3}
       title="Book Glow Shelf"
       thumbnailUrl="/imgs/projects/book-glow-shelf/thumbnail.jpg"
     >

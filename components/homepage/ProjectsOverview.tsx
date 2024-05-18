@@ -4,13 +4,13 @@ import { ProjectCard } from "./ProjectCard";
 
 export function ProjectsOverview() {
   return (
-    <div id="projects" className={clsx("bg-[#141414]", "flex", "flex-col", "items-center")}>
+    <div id="projects" className={clsx("bg-[#111111]", "flex", "flex-col", "items-center")}>
       <div className={clsx("pl-0", "md:pl-16", "md:max-w-6xl", "md:w-full")}>
         <div
           className={clsx(
             "group",
             "inline-block",
-            "text-[#c0c0c0]",
+            "text-[#cbcbcb]",
             "font-extrabold",
             "text-4xl",
             "md:text-5xl",
@@ -23,22 +23,6 @@ export function ProjectsOverview() {
         </div>
       </div>
       <div className={clsx("md:max-w-6xl", "md:w-full")}>
-        {/* <div
-          className={clsx(
-            "inline-block",
-            "relative",
-            "text-[#474747]",
-            "font-extrabold",
-            "text-3xl",
-            "md:text-5xl",
-            "md:ml-28",
-            "mt-8"
-          )}
-        >
-          <p>LAMPS</p>
-          <UnderlineSVG />
-        </div> */}
-
         <div
           className={clsx(
             "grid",
@@ -56,46 +40,62 @@ export function ProjectsOverview() {
           )}
         >
           <ProjectCard
-            index={0}
+            index={1}
+            className={clsx("mr-0", "lg:mr-48")}
             title={"Physalis Glow Light"}
             imgUrl={"chinese-lantern/thumbnail.jpeg"}
             url={"chinese-lantern-lamp"}
           />
           <ProjectCard
-            index={1}
+            index={2}
+            className={clsx("mr-0", "lg:mr-16")}
             title={"Flock Lights"}
             imgUrl={"flock-lights/thumbnail.jpeg"}
             url={"flock-lights"}
           />
           <ProjectCard
-            index={2}
+            index={3}
+            className={clsx("mr-0", "lg:mr-12")}
             title={"Book Glow Shelf"}
             imgUrl={"book-glow-shelf/thumbnail.jpg"}
             url={"book-glow-shelf"}
           />
           <ProjectCard
-            index={3}
+            index={4}
+            className={clsx("m-0", "lg:mr-32", "lg:mb-10")}
             title={"Dandelion Glow"}
             imgUrl={"dandelion-glow/thumbnail.jpeg"}
             url={"dandelion-glow"}
           />
           <ProjectCard
-            index={4}
+            index={5}
+            className={clsx("m-0", "p-0", "lg:mr-40", "lg:mt-4")}
             title={"Flocking Simulation"}
             imgUrl={"flocking-simulation/thumbnail.png"}
             url={"flocking-simulation"}
           />
           <ProjectCard
-            index={5}
+            index={6}
+            className={clsx("m-0", "lg:mb-10")}
+            titleClassName={clsx("max-w-[14rem]")}
             title={"Model Search Engine"}
             imgUrl={"3D-model-search-engine/thumbnail.png"}
             url={"3D-model-search-engine"}
           />
           <ProjectCard
-            index={6}
+            index={7}
             title={"Circuit Text"}
             imgUrl={"circuit-text/thumbnail.png"}
             url={"circuit-text"}
+          />
+          <ProjectCard
+            index={8}
+            className={clsx("m-0", "lg:mb-16")}
+            titleClassName={clsx("max-w-[16rem]")}
+            imgClassName={clsx("top-[4.5rem]")}
+            title={"Triplet Designer"}
+            imgUrl={"triplet-designer/smileytriplet.gif"}
+            url={"triplet-designer-overview"}
           />
         </div>
       </div>

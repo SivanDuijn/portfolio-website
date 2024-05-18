@@ -49,9 +49,9 @@ export function About() {
             <h2 className={clsx("text-lg", "font-semibold", "mb-1")}>About me</h2>
             <p className={clsx("text-sm", "md:text-base")}>
               Hello! I&apos;m passionate about programming, woodworking, tinkering with electronics,
-              and drumming. Currently, I&apos;m completing my Master&apos;s degree in Game and Media
-              Technology at Utrecht University, after a cum laude Bachelor&apos;s degree in Computer
-              Science.
+              and drumming. Currently, I&apos;ve just completed my Master&apos;s degree in Game and
+              Media Technology at Utrecht University, after a cum laude Bachelor&apos;s degree in
+              Computer Science.
             </p>
             <h2 className={clsx("text-lg", "font-semibold", "mt-6", "mb-1")}>Professional Path</h2>
             {/* <br /> */}

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { twMerge } from "tailwind-merge";
 import { TiltOnlyBigScreen } from "../TiltOnlyBigScreen";
 
 export type ProjectCardProps = {
@@ -9,6 +10,8 @@ export type ProjectCardProps = {
   imgUrl: string;
   url: string;
   className?: string;
+  imgClassName?: string;
+  titleClassName?: string;
 };
 
 export function ProjectCard(props: ProjectCardProps) {
@@ -17,14 +20,17 @@ export function ProjectCard(props: ProjectCardProps) {
       <TiltOnlyBigScreen className={clsx(props.className)}>
         <Link href={props.url}>
           <div
-            className={clsx(
-              "absolute",
-              "block",
-              "bottom-0",
-              "left-28",
-              "w-48",
-              "md:w-56",
-              "overflow-visible",
+            className={twMerge(
+              clsx(
+                "absolute",
+                "block",
+                "bottom-0",
+                "left-28",
+                "w-48",
+                "md:w-56",
+                "overflow-visible",
+              ),
+              props.imgClassName,
             )}
           >
             <Image
@@ -42,7 +48,12 @@ export function ProjectCard(props: ProjectCardProps) {
               transform: "translateZ(20px)",
             }}
           >
-            <h2 className={clsx("mb-4", "max-w-[8rem]", "text-2xl", "font-extrabold")}>
+            <h2
+              className={twMerge(
+                clsx("mb-4", "max-w-[8rem]", "text-2xl", "font-extrabold"),
+                props.titleClassName,
+              )}
+            >
               {props.title}
             </h2>
             <div className={clsx("h-1", "w-48", "mb-4", "bg-white")}></div>

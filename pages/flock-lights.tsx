@@ -6,7 +6,7 @@ import { ProjectContainer } from "@/components/ProjectContainer";
 export default function FlockLights() {
   return (
     <ProjectContainer
-      index={1}
+      index={2}
       title="Flock Lights"
       thumbnailUrl="/imgs/projects/flock-lights/thumbnail.jpeg"
     >

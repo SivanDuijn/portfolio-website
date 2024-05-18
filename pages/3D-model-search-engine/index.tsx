@@ -5,7 +5,7 @@ import { ProjectContainer } from "@/components/ProjectContainer";
 export default function ModelSearchEngineOverview() {
   return (
     <ProjectContainer
-      index={4}
+      index={6}
       title="3D Model Search Engine"
       thumbnailUrl="/imgs/projects/3D-model-search-engine/thumbnail.png"
     >

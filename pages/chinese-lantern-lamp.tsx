@@ -5,7 +5,7 @@ import { ProjectContainer } from "@/components/ProjectContainer";
 export default function ChineseLanterLamp() {
   return (
     <ProjectContainer
-      index={0}
+      index={1}
       title="Physalis Glow Light"
       thumbnailUrl="/imgs/projects/chinese-lantern/thumbnail.jpeg"
     >

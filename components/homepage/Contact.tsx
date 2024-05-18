@@ -36,8 +36,8 @@ export function Contact() {
         )}
       >
         <p>
-          Interested in connecting with me, discussing opportunities, or curious about what I can do
-          for you? Please don&apos;t hesitate to reach out using any of these methods.
+          Interested in connecting with me, or curious about what I can do for you? Please
+          don&apos;t hesitate to reach out!
         </p>
 
         <div className={clsx("flex", "justify-center", "w-full", "mt-12", "lg:mt-0")}>
@@ -61,10 +61,10 @@ export function Contact() {
                   linkedin.com/in/sivan-duijn
                 </a>
                 <a
-                  href="mailto:shjduijn1997@gmail.com"
+                  href="mailto:sivanduijn@gmail.com"
                   className={clsx("underline", "hover:text-blue-300", "block")}
                 >
-                  shjduijn1997@gmail.com
+                  sivanduijn@gmail.com
                 </a>
               </div>
             </div>

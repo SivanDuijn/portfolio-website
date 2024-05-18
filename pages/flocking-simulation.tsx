@@ -8,7 +8,7 @@ export default function FlockingSimulation() {
 
   return (
     <ProjectContainer
-      index={4}
+      index={5}
       title="Flocking Simulation"
       thumbnailUrl="/imgs/projects/flocking-simulation/thumbnail.png"
     >

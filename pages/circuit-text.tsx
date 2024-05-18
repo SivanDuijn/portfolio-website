@@ -16,7 +16,7 @@ export default function CircuitText() {
   }, []);
 
   return (
-    <ProjectContainer index={6} title="Circuit Text">
+    <ProjectContainer index={7} title="Circuit Text">
       <div className={clsx("flex", "flex-col", "items-center")}>
         <div className={clsx("z-10")}>
           <P5CircuitText text={text} fontSize={isSmallScreen ? 50 : 80} debug={debug} />
