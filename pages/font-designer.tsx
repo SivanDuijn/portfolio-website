@@ -7,7 +7,7 @@ import {
 import clsx from "clsx";
 import Head from "next/head";
 import { useCallback, useRef, useState } from "react";
-import Button from "@/components/triplets/atoms/Button";
+import Button from "@/components/atoms/Button";
 import { MemoizedFontCharacterEditor } from "@/components/triplets/FontCharacterEditor";
 import { MemoizedFontCharacterViewer } from "@/components/triplets/FontCharacterViewer";
 

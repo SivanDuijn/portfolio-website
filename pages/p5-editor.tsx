@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
-import Button from "@/components/triplets/atoms/Button";
+import Button from "@/components/atoms/Button";
 import { P5GridEditor, P5GridEditorElement } from "@/components/triplets/P5ShapePlaneEditor";
 
 export default function P5Editor() {

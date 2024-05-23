@@ -29,6 +29,7 @@ export default class WSDThreeJSView {
   private currentWire: WSDWire | undefined;
   private tempLine = new Line2(new LineGeometry());
   private tempStart = new THREE.Vector3();
+  private lanternsShown = true;
 
   public state: "newWireStart" | "newWireHeight" | "addingToWire" = "newWireStart";
 
@@ -45,7 +46,7 @@ export default class WSDThreeJSView {
 
     this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enablePan = false;
-    this.controls.target.set(0, 7, 0);
+    this.controls.target.set(0, 9, 0);
 
     this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     this.renderer.setSize(width, height);
@@ -126,7 +127,14 @@ export default class WSDThreeJSView {
       this.canvas.onclick = (e) => {
         // Delete wire
         if (e.ctrlKey) {
-          if (this.state == "addingToWire") this.saveToLocalStorage();
+          if (this.state == "addingToWire") {
+            // Finishing up current line
+            if (this.currentWire) {
+              this.currentWire.addLanternToEnd(this.wires);
+              if (this.lanternsShown) this.currentWire.showLantern();
+            }
+            this.saveToLocalStorage();
+          }
           this.state = "newWireStart";
           this.tempLine.geometry.setPositions(new Float32Array([0, 0, 0, 0, 0, 0]));
         } else if (e.altKey && this.state == "newWireStart") {
@@ -206,6 +214,15 @@ export default class WSDThreeJSView {
     requestAnimationFrame(this.update.bind(this));
   }
 
+  public showLanterns() {
+    this.wires.forEach((w) => w.showLantern());
+    this.lanternsShown = true;
+  }
+  public hideLanterns() {
+    this.wires.forEach((w) => w.hideLantern());
+    this.lanternsShown = false;
+  }
+
   private update() {
     requestAnimationFrame(this.update.bind(this));
     this.renderer.render(this.scene, this.camera);
@@ -235,6 +252,8 @@ export default class WSDThreeJSView {
     wires.forEach((w) => {
       const i = this.colorPool.findIndex((c) => c.getHex() == w.color.getHex());
       if (i >= 0) this.colorPool.splice(i, 1);
+      w.addLanternToEnd(wires);
+      if (this.lanternsShown) w.showLantern();
     });
     // Add meshes to group to render
     wires.forEach((w) => this.group.add(w.linesGroup));

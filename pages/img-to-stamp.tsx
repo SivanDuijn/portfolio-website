@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { STLExporter } from "three/examples/jsm/exporters/STLExporter.js";
-import Button from "@/components/triplets/atoms/Button";
+import Button from "@/components/atoms/Button";
 
 export default function ImageToStamp() {
   const imageCanvasRef = useRef<HTMLCanvasElement>(null);

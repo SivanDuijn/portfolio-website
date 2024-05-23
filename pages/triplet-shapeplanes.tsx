@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import Head from "next/head";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Button from "@/components/atoms/Button";
 import NumberInput from "@/components/NumberInput";
-import Button from "@/components/triplets/atoms/Button";
 import { fromWasmShapePlane } from "@/components/triplets/models";
 import { P5GridEditor, P5GridEditorElement } from "@/components/triplets/P5ShapePlaneEditor";
 import init, {

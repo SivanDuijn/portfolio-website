@@ -2,8 +2,8 @@
 import clsx from "clsx";
 import Head from "next/head";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import Button from "@/components/atoms/Button";
 import NumberInput from "@/components/NumberInput";
-import Button from "@/components/triplets/atoms/Button";
 import { TripletWebWorker } from "@/components/triplets/lib/tripletWebWorker";
 
 const nWorkers = 4;

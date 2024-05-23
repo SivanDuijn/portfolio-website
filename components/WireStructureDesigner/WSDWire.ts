@@ -9,11 +9,13 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 export default class WSDWire {
   public points: THREE.Vector3[] = [];
   public color: THREE.Color;
+  public hasLantern = false;
 
   // --- THREE properties for rendering ---
   private material: LineMaterial;
   private lineGeometries: LineGeometry[] = [];
   public linesGroup = new THREE.Group();
+  public lanternMesh: THREE.Mesh | undefined;
 
   constructor(
     material: LineMaterial,
@@ -45,6 +47,22 @@ export default class WSDWire {
     this.points.push(point);
     this.lineGeometries.push(lineGeometry);
     return this;
+  }
+
+  /** Adds lantern mesh to end of wire, not shown yet! */
+  public addLanternToEnd(otherWires: WSDWire[] = [], radius = 3) {
+    const lp = this.points[this.points.length - 1]; // last point
+    if (
+      otherWires.some((w) => w.hasLantern && lp.distanceTo(w.points[w.points.length - 1]) < radius)
+    )
+      return;
+
+    this.lanternMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(radius),
+      new THREE.MeshBasicMaterial({ opacity: 0.55, color: "orange", transparent: true }),
+    );
+    this.lanternMesh.position.set(lp.x, lp.y - radius, lp.z);
+    this.hasLantern = true;
   }
 
   public getIntersectionForNewPoint(ray: THREE.Ray): THREE.Vector3 {
@@ -81,6 +99,13 @@ export default class WSDWire {
     }
 
     return minD;
+  }
+
+  public showLantern() {
+    if (this.lanternMesh) this.linesGroup.add(this.lanternMesh);
+  }
+  public hideLantern() {
+    if (this.lanternMesh) this.linesGroup.remove(this.lanternMesh);
   }
 
   public serialize(): string {

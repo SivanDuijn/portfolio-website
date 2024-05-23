@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import CheckBox from "@/components/atoms/CheckBox";
 import WSDThreeJSView from "@/components/WireStructureDesigner/WSDThreeJSView";
 
 export default function WireStructureDesigner() {
@@ -8,6 +9,12 @@ export default function WireStructureDesigner() {
 
   useEffect(() => {
     viewGLRef.current = new WSDThreeJSView(threeCanvasRef.current || undefined, 900, 700);
+  }, []);
+
+  const onLanternsShowChanged = useCallback((show: boolean) => {
+    if (viewGLRef.current)
+      if (show) viewGLRef.current.showLanterns();
+      else viewGLRef.current.hideLanterns();
   }, []);
 
   return (
@@ -46,7 +53,15 @@ export default function WireStructureDesigner() {
             </p>
           </div>
           <canvas className={clsx("border-2", "rounded-md", "border-black")} ref={threeCanvasRef} />
-          <div className={clsx("w-52")}></div>
+          <div className={clsx("w-52")}>
+            <CheckBox
+              className={clsx("mt-6")}
+              label="Show lanterns"
+              size="medium"
+              initial={true}
+              onChange={onLanternsShowChanged}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { memo, useEffect, useRef, useState } from "react";
-import Button from "./atoms/Button";
+import Button from "../atoms/Button";
 import { Kernels, dilate, erode } from "./lib/morphOperations";
 import { MemoizedSVGPixelCell } from "./SVGPixelCell";
 
