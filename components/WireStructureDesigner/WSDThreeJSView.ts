@@ -37,7 +37,12 @@ export default class WSDThreeJSView {
 
   private group: THREE.Group = new THREE.Group();
 
-  constructor(canvas: HTMLCanvasElement | undefined, width = 800, height = 600) {
+  constructor(
+    canvas: HTMLCanvasElement | undefined,
+    width = 800,
+    height = 600,
+    treeData: string | null = null,
+  ) {
     this.canvas = canvas;
 
     const clippingPlane = [0.1, 1000];
@@ -70,7 +75,9 @@ export default class WSDThreeJSView {
     this.tempLine.geometry.setPositions(new Float32Array(2 * 3));
     this.group.add(this.tempLine);
 
-    this.loadFromLocalStorage();
+    // Don't load local storage if initial tree is provided (through url params)
+    if (treeData) this.fromString(treeData);
+    else this.loadFromLocalStorage();
 
     this.scene.add(this.group);
 
@@ -125,7 +132,6 @@ export default class WSDThreeJSView {
 
     if (this.canvas) {
       this.canvas.onclick = (e) => {
-        // Delete wire
         if (e.ctrlKey) {
           if (this.state == "addingToWire") {
             // Finishing up current line
@@ -138,6 +144,7 @@ export default class WSDThreeJSView {
           this.state = "newWireStart";
           this.tempLine.geometry.setPositions(new Float32Array([0, 0, 0, 0, 0, 0]));
         } else if (e.altKey && this.state == "newWireStart") {
+          // Deleting a wire
           const wireIndex = selectWire();
           if (wireIndex == -1) return;
           this.group.remove(this.wires[wireIndex].linesGroup);
@@ -223,24 +230,11 @@ export default class WSDThreeJSView {
     this.lanternsShown = false;
   }
 
-  private update() {
-    requestAnimationFrame(this.update.bind(this));
-    this.renderer.render(this.scene, this.camera);
-
-    this.controls.update();
+  public toString() {
+    return this.wires.map((w) => w.serialize()).join("$$");
   }
-
-  private popColorFromPool() {
-    return this.colorPool.pop() ?? new THREE.Color(Math.random(), Math.random(), Math.random());
-  }
-
-  private saveToLocalStorage() {
-    const s = this.wires.map((w) => w.serialize()).join("$$");
-    localStorage.setItem("wires", s);
-  }
-  private loadFromLocalStorage() {
-    const text = localStorage.getItem("wires");
-    if (text?.length == 0) return;
+  public fromString(text: string) {
+    this.group.clear();
     const wires = text
       ?.split("$$")
       .filter((w) => !w.includes("NaN"))
@@ -259,6 +253,27 @@ export default class WSDThreeJSView {
     wires.forEach((w) => this.group.add(w.linesGroup));
 
     this.wires = wires;
+  }
+
+  private update() {
+    requestAnimationFrame(this.update.bind(this));
+    this.renderer.render(this.scene, this.camera);
+
+    this.controls.update();
+  }
+
+  private popColorFromPool() {
+    return this.colorPool.pop() ?? new THREE.Color(Math.random(), Math.random(), Math.random());
+  }
+
+  private saveToLocalStorage() {
+    const s = this.toString();
+    localStorage.setItem("wires", s);
+  }
+  private loadFromLocalStorage() {
+    const text = localStorage.getItem("wires");
+    if (!text || text.length == 0) return;
+    this.fromString(text);
   }
 }
 

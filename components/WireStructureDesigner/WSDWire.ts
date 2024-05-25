@@ -110,7 +110,16 @@ export default class WSDWire {
 
   public serialize(): string {
     return (
-      this.points.map((p) => p.x + "," + p.y + "," + p.z).join(";") + "color=" + this.color.toJSON()
+      this.points
+        .map((p) =>
+          p
+            .toArray()
+            .map((c) => c.toFixed(4))
+            .join(","),
+        )
+        .join(";") +
+      "color=" +
+      this.color.toJSON()
     );
   }
   public static fromString(s: string, lineMaterial: LineMaterial) {

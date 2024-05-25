@@ -1,9 +1,14 @@
 import clsx from "clsx";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import Button from "@/components/atoms/Button";
 import CheckBox from "@/components/atoms/CheckBox";
 import WSDThreeJSView from "@/components/WireStructureDesigner/WSDThreeJSView";
 
 export default function WireStructureDesigner() {
+  const searchParams = useSearchParams();
+
   const threeCanvasRef = useRef<HTMLCanvasElement>(null);
   const viewGLRef = useRef<WSDThreeJSView>();
 
@@ -11,14 +16,42 @@ export default function WireStructureDesigner() {
     viewGLRef.current = new WSDThreeJSView(threeCanvasRef.current || undefined, 900, 700);
   }, []);
 
+  useEffect(() => {
+    const treeData = searchParams.get("tree");
+    if (treeData && treeData.length > 0 && viewGLRef.current) {
+      viewGLRef.current.fromString(treeData);
+    }
+  }, [searchParams]);
+
   const onLanternsShowChanged = useCallback((show: boolean) => {
     if (viewGLRef.current)
       if (show) viewGLRef.current.showLanterns();
       else viewGLRef.current.hideLanterns();
   }, []);
 
+  const onSharePressed = useCallback(() => {
+    if (!viewGLRef.current) return;
+
+    const hostName = "www.sivanduijn.com";
+    // const hostName = "localhost:3000";
+    const s = hostName + "/wire-structure-designer?tree=" + viewGLRef.current.toString();
+    navigator.clipboard.writeText(s);
+    toast.success("Copied to clipboard!");
+  }, []);
+
   return (
     <div className={clsx("text-black", "bg-white", "min-h-[100svh]")}>
+      <Toaster
+        toastOptions={{
+          style: {
+            boxShadow: "-1px 1px black",
+            border: "1px solid black",
+            paddingTop: 5,
+            paddingBottom: 5,
+          },
+        }}
+        containerStyle={{ top: 25 }}
+      />
       <div className={clsx("flex", "flex-col", "justify-center", "items-center")}>
         <p
           style={{
@@ -61,6 +94,7 @@ export default function WireStructureDesigner() {
               initial={true}
               onChange={onLanternsShowChanged}
             />
+            <Button className={clsx("mt-5")} label="Share" onClick={onSharePressed} />
           </div>
         </div>
       </div>
