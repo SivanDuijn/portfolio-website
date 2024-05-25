@@ -73,7 +73,7 @@ export default class WSDThreeJSView {
 
     this.tempLine.material = this.lineMaterial;
     this.tempLine.geometry.setPositions(new Float32Array(2 * 3));
-    this.group.add(this.tempLine);
+    this.scene.add(this.tempLine);
 
     // Don't load local storage if initial tree is provided (through url params)
     if (treeData) this.fromString(treeData);
