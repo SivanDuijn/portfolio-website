@@ -36,6 +36,9 @@ export default class WSDWire {
   public resetColor() {
     this.material.color = this.color;
   }
+  public setCopperColor() {
+    this.material.color = new THREE.Color(0x804916);
+  }
 
   public addPoint(point: THREE.Vector3) {
     const lineGeometry = new LineGeometry();

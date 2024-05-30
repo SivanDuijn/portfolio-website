@@ -174,6 +174,7 @@ export default class WSDThreeJSView {
               this.tempStart,
               p2,
             );
+            newWire.setCopperColor();
             this.group.add(newWire.linesGroup);
 
             this.currentWire = newWire;
@@ -230,6 +231,13 @@ export default class WSDThreeJSView {
     this.lanternsShown = false;
   }
 
+  public setWireColorsToCopper() {
+    this.wires.forEach((w) => w.setCopperColor());
+  }
+  public resetWireColors() {
+    this.wires.forEach((w) => w.resetColor());
+  }
+
   public toString() {
     return this.wires.map((w) => w.serialize()).join("$$");
   }
@@ -247,6 +255,7 @@ export default class WSDThreeJSView {
       const i = this.colorPool.findIndex((c) => c.getHex() == w.color.getHex());
       if (i >= 0) this.colorPool.splice(i, 1);
       w.addLanternToEnd(wires);
+      w.setCopperColor();
       if (this.lanternsShown) w.showLantern();
     });
     // Add meshes to group to render

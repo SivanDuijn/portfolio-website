@@ -29,6 +29,12 @@ export default function WireStructureDesigner() {
       else viewGLRef.current.hideLanterns();
   }, []);
 
+  const onDistinctColorsChanged = useCallback((distinct: boolean) => {
+    if (viewGLRef.current)
+      if (distinct) viewGLRef.current.resetWireColors();
+      else viewGLRef.current.setWireColorsToCopper();
+  }, []);
+
   const onSharePressed = useCallback(() => {
     if (!viewGLRef.current) return;
 
@@ -93,6 +99,13 @@ export default function WireStructureDesigner() {
               size="medium"
               initial={true}
               onChange={onLanternsShowChanged}
+            />
+            <CheckBox
+              className={clsx("mt-2")}
+              label="Distinct colors"
+              size="medium"
+              initial={false}
+              onChange={onDistinctColorsChanged}
             />
             <Button className={clsx("mt-5")} label="Share" onClick={onSharePressed} />
           </div>
