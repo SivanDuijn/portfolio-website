@@ -10,17 +10,17 @@ export default function ModelSearchEngineOverview() {
       thumbnailUrl="/imgs/projects/3D-model-search-engine/thumbnail.png"
     >
       <p className={clsx("mb-8")}>
-        This is a multimedia retrieval pipeline build for the course Multimedia Retrieval at Utrecht
-        University. It is a 3D search engine that takes as input a 3D model, and gives as output the
-        top 10 closest models that should look similar. Each model in the database is normalized,
-        that is, it is put in a unit box, uniformed the number of vertices and oriented using PCA.
-        Then, the models are compared against each other based on certain descriptors and
-        histograms.
+        This multimedia retrieval pipeline was developed for the Multimedia Retrieval course at
+        Utrecht University. It functions as a 3D search engine that accepts a 3D model as input and
+        returns the top 10 most similar models from the database. Each model in the database
+        undergoes normalization, which includes fitting it into a unit box, standardizing the number
+        of vertices, and orienting it using Principal Component Analysis. Models are then compared
+        based on specific descriptors and histograms.
         <br />
         <br />
-        Previously it was possible to upload a model and query the database against it. But,
-        currently, there is no backend connected to preprocess the uploaded model. It is still a
-        valuable showcase for visualizing models and seeing which ones are the most similar.
+        Although the previous version allowed users to upload a model and query the database, the
+        current version lacks a backend for preprocessing uploaded models. Nevertheless, it remains
+        an interesting demo for visualizing models and identifying similar ones.
       </p>
 
       <div className={clsx("text-center")}>

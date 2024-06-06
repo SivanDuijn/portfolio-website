@@ -18,17 +18,17 @@ export default function BookGlowShelf() {
         >
           Hout- en Meubeleringscollege
         </a>{" "}
-        and finished properly at home. There is a LED strip at the bottom of the shelf and the idea
-        is that light follows the books. So if you add a book to the shelf the light will expand to
-        also highlight the spine of the newly added book. Can be controlled by two switches at the
-        top. The color of the LEDs can be changed or a color cycle mode can be set.
+        and finished properly at home. There is a LED strip at the bottom of the shelf and the
+        concept is that light follows the books. So, if you add a book to the shelf, the light will
+        expand to also highlight the spine of the newly added book. It can be controlled by two
+        switches at the top. The color of the LEDs can be changed or a color cycle mode can be set.
         <br />
         <br />
         Made with WS2812b individually addressable LEDs, MDF boards and very thin veneer multiplex
         to cover the whole shelf with. Two infrared proximity sensors on both sides of the shelf are
         used to measure the distance between one side of the shelf and the books. An Arduino Nano
         uses this information to control the LEDs. It was quite tricky to get the sensors to measure
-        correctly, so I had to tune them.
+        correctly, which required some tuning.
       </p>
       <div
         className={clsx(
