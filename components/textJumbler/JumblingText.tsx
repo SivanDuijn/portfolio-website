@@ -15,9 +15,9 @@ export function JumblingText(props: JumblingTextProps) {
   const updateText = useCallback(
     (text: string) => {
       setText(text);
-      if (text == "unwise.") {
+      if (text == "unwise") {
         // setTimeout(() => {
-        setColor("#d20300");
+        setColor("#bf0000");
         // }, 600);
         setTimeout(() => {
           setColor("black");
