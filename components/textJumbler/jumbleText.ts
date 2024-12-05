@@ -3,9 +3,10 @@ import { getRandomInt } from "../utils";
 export function jumbleText(
   texts: string[],
   update: (text: string) => void,
-  args?: { waitBetweenMs?: number; repeat?: boolean },
+  args?: { waitBetweenMs?: number; repeat?: boolean; initialWaitMs?: number },
 ) {
   const waitBetweenMs = args?.waitBetweenMs ?? 2000;
+  const initialWaitMs = args?.initialWaitMs ?? 1000;
 
   const textsArrays = texts.map((text) => Array.from(text).map((c) => (c === " " ? "\u00A0" : c)));
 
@@ -50,7 +51,7 @@ export function jumbleText(
     else if (args?.repeat)
       setTimeout(() => {
         jumbleDown(current, { min: 0, max: current.length - 1 }, [...textsArrays]);
-      }, waitBetweenMs + 2000);
+      }, waitBetweenMs + 4000);
   };
 
   const jumbleDown = (
@@ -97,5 +98,5 @@ export function jumbleText(
 
   setTimeout(() => {
     jumbleDown([], { min: 1, max: 0 }, [...textsArrays]);
-  }, 1000);
+  }, initialWaitMs);
 }
