@@ -16,11 +16,6 @@ export function Welcome() {
         description:
           "Explore projects I've worked on, related to woodworking, electronics and programming.",
       },
-      // {
-      //   url: "#work",
-      //   title: "Work",
-      //   description: "Gain insights into my professional background.",
-      // },
       {
         url: "#about",
         title: "About",
